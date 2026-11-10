@@ -202,8 +202,7 @@ impl JsonParser {
 
     fn parse_number(&mut self) -> JVal {
         let start = self.pos;
-        while matches!(self.peek(), Some(ch) if ch.is_ascii_digit() || matches!(ch, '-' | '+' | '.' | 'e' | 'E'))
-        {
+        while matches!(self.peek(), Some(ch) if ch.is_ascii_digit() || matches!(ch, '-' | '+' | '.' | 'e' | 'E')) {
             self.pos += 1;
         }
         let text: String = self.chars[start..self.pos].iter().collect();
@@ -261,8 +260,8 @@ impl JVal {
 }
 
 fn load_recording(path: &str) -> JVal {
-    let text =
-        std::fs::read_to_string(path).unwrap_or_else(|_| panic!("recording missing: {}", path));
+    let text = std::fs::read_to_string(path)
+        .unwrap_or_else(|_| panic!("recording missing: {}", path));
     JsonParser::parse(&text)
 }
 
@@ -439,7 +438,9 @@ fn aggregate_recordings_fold_as_recorded() {
             .map(build_function)
             .collect();
         let folded = aggregate_outcomes(&functions);
-        let rendered = JsonValue::List(folded.iter().map(|item| item.to_dict()).collect());
+        let rendered = JsonValue::List(
+            folded.iter().map(|item| item.to_dict()).collect(),
+        );
         assert_eq!(
             canon(&rendered),
             canon_jval(case.get("expected_outcomes")),
@@ -482,8 +483,11 @@ fn base64_decode(text: &str) -> Vec<u8> {
 }
 
 fn fresh_base(tag: &str) -> PathBuf {
-    let base =
-        std::env::temp_dir().join(format!("ostensible-port1-{}-{}", std::process::id(), tag));
+    let base = std::env::temp_dir().join(format!(
+        "ostensible-port1-{}-{}",
+        std::process::id(),
+        tag
+    ));
     if base.exists() {
         std::fs::remove_dir_all(&base).unwrap();
     }
@@ -521,14 +525,25 @@ fn settings_load_recordings_resolve_as_recorded() {
                     let target = base.join(relative);
                     std::fs::create_dir_all(target.parent().unwrap()).unwrap();
                     match content {
-                        JVal::Str(text) => std::fs::write(&target, text).unwrap(),
+                        JVal::Str(text) => {
+                            std::fs::write(&target, text).unwrap()
+                        }
                         JVal::Object(spec) => {
-                            if let Some(encoded) = spec.iter().find(|(k, _)| k == "b64") {
-                                let bytes = base64_decode(encoded.1.as_str());
+                            if let Some(encoded) =
+                                spec.iter().find(|(k, _)| k == "b64")
+                            {
+                                let bytes =
+                                    base64_decode(encoded.1.as_str());
                                 std::fs::write(&target, bytes).unwrap();
-                            } else if let Some(link) = spec.iter().find(|(k, _)| k == "link") {
+                            } else if let Some(link) =
+                                spec.iter().find(|(k, _)| k == "link")
+                            {
                                 #[cfg(unix)]
-                                std::os::unix::fs::symlink(link.1.as_str(), &target).unwrap();
+                                std::os::unix::fs::symlink(
+                                    link.1.as_str(),
+                                    &target,
+                                )
+                                .unwrap();
                             } else {
                                 panic!("bad file spec in {}", name);
                             }
@@ -644,7 +659,9 @@ fn spec_to_value(spec: &JVal) -> PyValue {
         "int" => PyValue::Int(spec.get("v").as_str().to_string()),
         "float" => PyValue::Float(spec.get("v").as_str().parse().unwrap()),
         "bool" => PyValue::Bool(spec.get("v").as_bool()),
-        "list" => PyValue::List(spec.get("v").as_list().iter().map(spec_to_value).collect()),
+        "list" => PyValue::List(
+            spec.get("v").as_list().iter().map(spec_to_value).collect(),
+        ),
         "table" => PyValue::Table(
             spec.get("v")
                 .as_list()
