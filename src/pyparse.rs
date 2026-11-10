@@ -55,8 +55,17 @@ fn parse_module_inner(source: &str) -> Result<Module, ParseError> {
 }
 
 /// Parse the expression of one f-string field from its
-/// fragment tokens.
-fn parse_fragment(field: &crate::pytoken::FieldData) -> Result<Expr, ParseError> {
+/// fragment tokens. The fragment stands inside the tree
+/// the outer parser is building, so its parser carries
+/// the outer parser's id run and depth in and brings the
+/// advanced id run back: the walks key on the id over
+/// the whole module, and the port bound of PORT7-2
+/// stands over the whole expression, the field's nesting
+/// counted with the nesting around the string.
+fn parse_fragment(
+    outer: &mut Parser,
+    field: &crate::pytoken::FieldData,
+) -> Result<Expr, ParseError> {
     let trimmed = field.expr.trim_start();
     if trimmed.starts_with("lambda")
         && (trimmed.len() == 6 || !is_ident_char(trimmed.chars().nth(6).unwrap_or(' ')))
@@ -83,8 +92,12 @@ fn parse_fragment(field: &crate::pytoken::FieldData) -> Result<Expr, ParseError>
         field.expr_col + lead as u32,
     )?;
     let mut parser = Parser::new(tokens);
+    parser.next_id = outer.next_id;
+    parser.depth = outer.depth;
     parser.skip_newlines();
-    let expr = parser.parse_expr()?;
+    let expr = parser.parse_expr();
+    outer.next_id = parser.next_id;
+    let expr = expr?;
     parser.skip_newlines();
     if !matches!(parser.peek_kind(), Tok::End) {
         return Err(err("f-string field does not hold one expression"));
@@ -1251,6 +1264,12 @@ impl Parser {
         // interpreter's arrangement.
         let mut posonly: Vec<(Arg, Option<Expr>)> = Vec::new();
         let mut positional: Vec<(Arg, Option<Expr>)> = Vec::new();
+        // The default rule stands over the whole positional
+        // run, on both sides of the slash: once a positional
+        // parameter carries a default, every positional
+        // parameter after it must carry one. Keyword only
+        // parameters stand outside the rule and mix freely.
+        let mut saw_default = false;
         if self.at_op(")") {
             return Ok(args);
         }
@@ -1298,7 +1317,16 @@ impl Parser {
                 None
             };
             match zone {
-                Zone::Positional => positional.push((arg, default)),
+                Zone::Positional => {
+                    if default.is_some() {
+                        saw_default = true;
+                    } else if saw_default {
+                        return Err(err(
+                            "a positional parameter without a default stands after one with a default",
+                        ));
+                    }
+                    positional.push((arg, default))
+                }
                 Zone::KwOnly => {
                     args.kwonlyargs.push(arg);
                     args.kw_defaults.push(default);
@@ -2282,7 +2310,7 @@ impl Parser {
                                         &PyText::from_text(debug),
                                     );
                                 }
-                                let value = parse_fragment(&field)?;
+                                let value = parse_fragment(self, &field)?;
                                 // The self documenting form
                                 // defaults to the repr conversion
                                 // only where no format spec
@@ -2333,7 +2361,7 @@ impl Parser {
                     if let Some(debug) = &field.debug {
                         push_literal(self, &mut values, field.pos, &PyText::from_text(debug));
                     }
-                    let value = parse_fragment(field)?;
+                    let value = parse_fragment(self, field)?;
                     let conversion = field.conversion.map(|ch| ch as i32).unwrap_or(
                         if field.debug.is_some() && field.spec.is_none() {
                             114

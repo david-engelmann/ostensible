@@ -573,7 +573,7 @@ fn scan_string(scanner: &mut Scanner, prefix: Option<&str>) -> Result<StrTok, To
                 }
                 // A bare quote inside a triple quoted string.
                 scanner.bump();
-                push_char(&spec, &mut text, &mut bytes, ch);
+                push_char(&spec, &mut text, &mut bytes, ch)?;
                 continue;
             }
             scanner.bump();
@@ -584,7 +584,7 @@ fn scan_string(scanner: &mut Scanner, prefix: Option<&str>) -> Result<StrTok, To
                 return Err(err("unterminated string literal"));
             }
             scanner.bump();
-            push_char(&spec, &mut text, &mut bytes, '\n');
+            push_char(&spec, &mut text, &mut bytes, '\n')?;
             continue;
         }
         if ch == '\\' && !spec.raw {
@@ -597,15 +597,15 @@ fn scan_string(scanner: &mut Scanner, prefix: Option<&str>) -> Result<StrTok, To
             // quote from ending the string, and both
             // characters stand in the value.
             scanner.bump();
-            push_char(&spec, &mut text, &mut bytes, '\\');
+            push_char(&spec, &mut text, &mut bytes, '\\')?;
             if let Some(next) = scanner.peek() {
                 scanner.bump();
-                push_char(&spec, &mut text, &mut bytes, next);
+                push_char(&spec, &mut text, &mut bytes, next)?;
             }
             continue;
         }
         scanner.bump();
-        push_char(&spec, &mut text, &mut bytes, ch);
+        push_char(&spec, &mut text, &mut bytes, ch)?;
     }
     if spec.bytes {
         Ok(StrTok::Value(ConstVal::Bytes(bytes)))
@@ -614,14 +614,26 @@ fn scan_string(scanner: &mut Scanner, prefix: Option<&str>) -> Result<StrTok, To
     }
 }
 
-fn push_char(spec: &StrSpec, text: &mut Vec<u32>, bytes: &mut Vec<u8>, ch: char) {
+fn push_char(
+    spec: &StrSpec,
+    text: &mut Vec<u32>,
+    bytes: &mut Vec<u8>,
+    ch: char,
+) -> Result<(), TokenError> {
     if spec.bytes {
-        // A byte string holds one byte per character, and a
-        // character past Latin 1 cannot stand in one.
-        bytes.push((ch as u32) as u8);
+        // A bytes literal holds literal ASCII characters
+        // alone. A literal character past ASCII cannot
+        // stand in one, where an escape may still name
+        // any byte, so the refusal fires here rather
+        // than the character truncating to one byte.
+        if (ch as u32) > 0x7f {
+            return Err(err("character past ASCII in a bytes literal"));
+        }
+        bytes.push(ch as u8);
     } else {
         text.push(ch as u32);
     }
+    Ok(())
 }
 
 fn push_codepoint(
@@ -745,7 +757,14 @@ fn decode_escape(
         }
         other => {
             // An escape the language does not define keeps
-            // both of its characters.
+            // both of its characters. The character after
+            // the backslash is still a literal character of
+            // the source, so a bytes literal refuses it
+            // past ASCII the way it refuses it standing
+            // alone, under the same wording.
+            if spec.bytes && (other as u32) > 0x7f {
+                return Err(err("character past ASCII in a bytes literal"));
+            }
             push_codepoint(spec, text, bytes, '\\' as u32)?;
             push_codepoint(spec, text, bytes, other as u32)
         }
