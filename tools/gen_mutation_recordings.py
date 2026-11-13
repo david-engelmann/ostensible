@@ -20,6 +20,18 @@ the spellings it records are that interpreter's spellings. After
 the retirement the program stands as the provenance record of the
 battery; re-running it needs the pre-retirement tree.
 
+The f-string nesting families are measured rather than listed.
+The cap, bracket, and spec chain cases stand at the interpreter's
+fixed tokenizer bounds, one case on each side of each bound. The
+recursion band cases stand at depths this run bisects out of the
+interpreter in this process, the deepest depth the interpreter
+answers and the first depth it refuses for the return value,
+comparison, and module shapes, because the band of PORT8-5 is
+the interpreter's stack speaking and its edges move with the
+caller. The port prices its generate standings from the same
+measured edges, as the closing entry of PORT8-9 states after
+this fix.
+
 One case family is transformed, and the transformation is stated
 here rather than hidden. For the format spec lone surrogate
 shape, the interpreter's unparse leaves the raw surrogate
@@ -65,6 +77,44 @@ def names_chain(terms: int) -> str:
 
 def parens(depth: int, inner: str) -> str:
     return "(" * depth + inner + ")" * depth
+
+
+def fnest(depth: int, core: str) -> str:
+    # A chain of f-strings, each standing in the replacement
+    # field of the one before, quotes alternating the way a
+    # written chain must.
+    text = core
+    for level in range(depth):
+        quote = '"' if level % 2 == 0 else "'"
+        text = "f" + quote + "{" + text + "}" + quote
+    return text
+
+
+def spec_fnest(depth: int, core: str) -> str:
+    # A chain of f-strings, each standing in a field of the
+    # format spec of the one before, so every level opens
+    # two braces on the interpreter's one bracket account.
+    text = core
+    for level in range(depth):
+        quote = '"' if level % 2 == 0 else "'"
+        text = "f" + quote + "{x:{" + text + "}}" + quote
+    return text
+
+
+def measure_refusal_depth(make) -> int:
+    # The first depth at which the interpreter's generation
+    # refuses with RecursionError for one shape, bisected in
+    # this run, at the same call depth the case recording
+    # itself runs at.
+    lo, hi = 120, 149
+    while lo < hi:
+        mid = (lo + hi) // 2
+        try:
+            generate_mutants(make(mid))
+            lo = mid + 1
+        except RecursionError:
+            hi = mid
+    return lo
 
 
 def mixed_nesting(total: int, inner: str) -> str:
@@ -188,6 +238,46 @@ CASES: list[tuple[str, str, str]] = [
     # which is an answer and not a refusal.
     ("shape_deep_assign_names_empty", "shapes",
      "y = " + names_chain(400) + "\n"),
+    # Line ends inside string literals, normalized by the
+    # interpreter to one line feed in the value, on every
+    # reading path.
+    ("crlf_docstring", "shapes",
+     "\"\"\"doc\r\nmore\"\"\"\ndef f():\n    return 9\n"),
+    ("crlf_return_detail", "shapes",
+     "def f():\n    return \"\"\"a\r\nb\"\"\"\n"),
+    ("crlf_compare_detail", "shapes",
+     "def f(x):\n    return \"\"\"a\r\nb\"\"\" == x\n"),
+    ("crlf_raw_literal", "shapes",
+     "def f():\n    return r\"\"\"a\r\nb\"\"\"\n"),
+    ("crlf_bytes_literal", "shapes",
+     "def f():\n    return b\"\"\"a\r\nb\"\"\"\n"),
+    ("crlf_fstring_literal", "shapes",
+     "def f():\n    return f\"\"\"a\r\nb\"\"\"\n"),
+    ("crlf_two_pairs", "shapes",
+     "def f():\n    return \"\"\"a\r\nb\r\nc\"\"\"\n"),
+    # The fixed tokenizer bounds on f-string shapes, one
+    # case standing on each side of each bound. The nested
+    # f-string cap at one hundred and fifty, site free and
+    # with a site.
+    ("shape_fstring_cap_standing", "shapes",
+     "x = " + fnest(149, "y") + "\n"),
+    ("refusal_fstring_cap", "refusals",
+     "x = " + fnest(150, "y") + "\n"),
+    ("refusal_fstring_cap_with_site", "refusals",
+     "x = " + fnest(150, "1") + "\n"),
+    # The bracket ceiling over format spec braces: a chain
+    # opening two hundred braces stands, two hundred and
+    # two refuses at the tokenizer.
+    ("shape_fstring_spec_braces_standing", "shapes",
+     "x = " + spec_fnest(100, "y") + "\n"),
+    ("refusal_fstring_spec_braces", "refusals",
+     "x = " + spec_fnest(101, "y") + "\n"),
+    # Fields chained through format specs inside one
+    # string: three deep stands, four refuses.
+    ("shape_spec_nest_standing", "shapes",
+     "x = f\"{x:{y:{1}}}\"\n"),
+    ("refusal_spec_nest", "refusals",
+     "x = f\"{x:{y:{z:{w}}}}\"\n"),
 ]
 
 # The format spec lone surrogate shape carries its own generation
@@ -255,6 +345,23 @@ def main() -> None:
     cases = [record_case(name, family, source, False) for name, family, source in CASES]
     name, family, source = FORMAT_SPEC_CASE
     cases.append(record_case(name, family, source, True))
+
+    # The recursion band of the f-string shapes, at the
+    # edges this run measures: for each shape the deepest
+    # depth the interpreter answers and the first depth it
+    # refuses, recorded in this process.
+    for label, make in (
+        ("return", lambda d: "def f():\n    return " + fnest(d, "1") + "\n"),
+        ("compare", lambda d: "def f():\n    return " + fnest(d, "1") + " == 1\n"),
+        ("module", lambda d: "x = " + fnest(d, "1") + "\ndef f():\n    return 9\n"),
+    ):
+        first_refusal = measure_refusal_depth(make)
+        cases.append(record_case(
+            f"shape_fstring_nest_{label}_deepest", "shapes",
+            make(first_refusal - 1), False))
+        cases.append(record_case(
+            f"refusal_fstring_nest_{label}", "refusals",
+            make(first_refusal), False))
 
     # The demo project and the module over itself, read from the
     # tree at generation time.

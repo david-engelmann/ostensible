@@ -346,7 +346,7 @@ fn mutation_battery_replays() {
         replayed += 1;
     }
     assert_eq!(
-        replayed, 85,
+        replayed, 105,
         "the battery case count stands at the figure the closing entry of PORT8-9 states"
     );
 }
