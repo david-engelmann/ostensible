@@ -1,0 +1,2212 @@
+{
+ "cases": [
+  {
+   "family": "suite",
+   "mutants": [
+    {
+     "detail": "return value x + 2",
+     "kind": "return_none",
+     "line": 4,
+     "source": "def check(x):\n    if x > 3:\n        return True\n    return None",
+     "tree_equal": false
+    },
+    {
+     "detail": "comparison x > 3 operator 0",
+     "kind": "compare_invert",
+     "line": 2,
+     "source": "def check(x):\n    if x <= 3:\n        return True\n    return x + 2",
+     "tree_equal": false
+    },
+    {
+     "detail": "return value True",
+     "kind": "return_none",
+     "line": 3,
+     "source": "def check(x):\n    if x > 3:\n        return None\n    return x + 2",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 3 moved plus one",
+     "kind": "constant_shift",
+     "line": 2,
+     "source": "def check(x):\n    if x > 4:\n        return True\n    return x + 2",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 3 moved minus one",
+     "kind": "constant_shift",
+     "line": 2,
+     "source": "def check(x):\n    if x > 2:\n        return True\n    return x + 2",
+     "tree_equal": false
+    },
+    {
+     "detail": "boolean constant True",
+     "kind": "bool_negate",
+     "line": 3,
+     "source": "def check(x):\n    if x > 3:\n        return False\n    return x + 2",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 2 moved plus one",
+     "kind": "constant_shift",
+     "line": 4,
+     "source": "def check(x):\n    if x > 3:\n        return True\n    return x + 3",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 2 moved minus one",
+     "kind": "constant_shift",
+     "line": 4,
+     "source": "def check(x):\n    if x > 3:\n        return True\n    return x + 1",
+     "tree_equal": false
+    }
+   ],
+   "name": "suite_panel",
+   "source": "def check(x):\n    if x > 3:\n        return True\n    return x + 2\n"
+  },
+  {
+   "family": "suite",
+   "mutants": [
+    {
+     "detail": "return value 9",
+     "kind": "return_none",
+     "line": 2,
+     "source": "def f():\n    return None",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 9 moved plus one",
+     "kind": "constant_shift",
+     "line": 2,
+     "source": "def f():\n    return 10",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 9 moved minus one",
+     "kind": "constant_shift",
+     "line": 2,
+     "source": "def f():\n    return 8",
+     "tree_equal": false
+    }
+   ],
+   "name": "suite_return_none_exec",
+   "source": "def f():\n    return 9\n"
+  },
+  {
+   "family": "suite",
+   "mutants": [
+    {
+     "detail": "return value x > 3",
+     "kind": "return_none",
+     "line": 2,
+     "source": "def f(x):\n    return None",
+     "tree_equal": false
+    },
+    {
+     "detail": "comparison x > 3 operator 0",
+     "kind": "compare_invert",
+     "line": 2,
+     "source": "def f(x):\n    return x <= 3",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 3 moved plus one",
+     "kind": "constant_shift",
+     "line": 2,
+     "source": "def f(x):\n    return x > 4",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 3 moved minus one",
+     "kind": "constant_shift",
+     "line": 2,
+     "source": "def f(x):\n    return x > 2",
+     "tree_equal": false
+    }
+   ],
+   "name": "suite_compare_invert_exec",
+   "source": "def f(x):\n    return x > 3\n"
+  },
+  {
+   "family": "suite",
+   "mutants": [
+    {
+     "detail": "return value True",
+     "kind": "return_none",
+     "line": 2,
+     "source": "def f():\n    return None",
+     "tree_equal": false
+    },
+    {
+     "detail": "boolean constant True",
+     "kind": "bool_negate",
+     "line": 2,
+     "source": "def f():\n    return False",
+     "tree_equal": false
+    }
+   ],
+   "name": "suite_bool_negate_exec",
+   "source": "def f():\n    return True\n"
+  },
+  {
+   "family": "panel",
+   "mutants": [
+    {
+     "detail": "return value a == b",
+     "kind": "return_none",
+     "line": 2,
+     "source": "def f(a, b):\n    return None",
+     "tree_equal": false
+    },
+    {
+     "detail": "comparison a == b operator 0",
+     "kind": "compare_invert",
+     "line": 2,
+     "source": "def f(a, b):\n    return a != b",
+     "tree_equal": false
+    }
+   ],
+   "name": "panel_eq",
+   "source": "def f(a, b):\n    return a == b\n"
+  },
+  {
+   "family": "panel",
+   "mutants": [
+    {
+     "detail": "return value a != b",
+     "kind": "return_none",
+     "line": 2,
+     "source": "def f(a, b):\n    return None",
+     "tree_equal": false
+    },
+    {
+     "detail": "comparison a != b operator 0",
+     "kind": "compare_invert",
+     "line": 2,
+     "source": "def f(a, b):\n    return a == b",
+     "tree_equal": false
+    }
+   ],
+   "name": "panel_not_eq",
+   "source": "def f(a, b):\n    return a != b\n"
+  },
+  {
+   "family": "panel",
+   "mutants": [
+    {
+     "detail": "return value a < b",
+     "kind": "return_none",
+     "line": 2,
+     "source": "def f(a, b):\n    return None",
+     "tree_equal": false
+    },
+    {
+     "detail": "comparison a < b operator 0",
+     "kind": "compare_invert",
+     "line": 2,
+     "source": "def f(a, b):\n    return a >= b",
+     "tree_equal": false
+    }
+   ],
+   "name": "panel_lt",
+   "source": "def f(a, b):\n    return a < b\n"
+  },
+  {
+   "family": "panel",
+   "mutants": [
+    {
+     "detail": "return value a >= b",
+     "kind": "return_none",
+     "line": 2,
+     "source": "def f(a, b):\n    return None",
+     "tree_equal": false
+    },
+    {
+     "detail": "comparison a >= b operator 0",
+     "kind": "compare_invert",
+     "line": 2,
+     "source": "def f(a, b):\n    return a < b",
+     "tree_equal": false
+    }
+   ],
+   "name": "panel_gt_e",
+   "source": "def f(a, b):\n    return a >= b\n"
+  },
+  {
+   "family": "panel",
+   "mutants": [
+    {
+     "detail": "return value a > b",
+     "kind": "return_none",
+     "line": 2,
+     "source": "def f(a, b):\n    return None",
+     "tree_equal": false
+    },
+    {
+     "detail": "comparison a > b operator 0",
+     "kind": "compare_invert",
+     "line": 2,
+     "source": "def f(a, b):\n    return a <= b",
+     "tree_equal": false
+    }
+   ],
+   "name": "panel_gt",
+   "source": "def f(a, b):\n    return a > b\n"
+  },
+  {
+   "family": "panel",
+   "mutants": [
+    {
+     "detail": "return value a <= b",
+     "kind": "return_none",
+     "line": 2,
+     "source": "def f(a, b):\n    return None",
+     "tree_equal": false
+    },
+    {
+     "detail": "comparison a <= b operator 0",
+     "kind": "compare_invert",
+     "line": 2,
+     "source": "def f(a, b):\n    return a > b",
+     "tree_equal": false
+    }
+   ],
+   "name": "panel_lt_e",
+   "source": "def f(a, b):\n    return a <= b\n"
+  },
+  {
+   "family": "panel",
+   "mutants": [
+    {
+     "detail": "return value a in b",
+     "kind": "return_none",
+     "line": 2,
+     "source": "def f(a, b):\n    return None",
+     "tree_equal": false
+    },
+    {
+     "detail": "comparison a in b operator 0",
+     "kind": "compare_invert",
+     "line": 2,
+     "source": "def f(a, b):\n    return a not in b",
+     "tree_equal": false
+    }
+   ],
+   "name": "panel_in",
+   "source": "def f(a, b):\n    return a in b\n"
+  },
+  {
+   "family": "panel",
+   "mutants": [
+    {
+     "detail": "return value a not in b",
+     "kind": "return_none",
+     "line": 2,
+     "source": "def f(a, b):\n    return None",
+     "tree_equal": false
+    },
+    {
+     "detail": "comparison a not in b operator 0",
+     "kind": "compare_invert",
+     "line": 2,
+     "source": "def f(a, b):\n    return a in b",
+     "tree_equal": false
+    }
+   ],
+   "name": "panel_not_in",
+   "source": "def f(a, b):\n    return a not in b\n"
+  },
+  {
+   "family": "panel",
+   "mutants": [
+    {
+     "detail": "return value a is b",
+     "kind": "return_none",
+     "line": 2,
+     "source": "def f(a, b):\n    return None",
+     "tree_equal": false
+    },
+    {
+     "detail": "comparison a is b operator 0",
+     "kind": "compare_invert",
+     "line": 2,
+     "source": "def f(a, b):\n    return a is not b",
+     "tree_equal": false
+    }
+   ],
+   "name": "panel_is",
+   "source": "def f(a, b):\n    return a is b\n"
+  },
+  {
+   "family": "panel",
+   "mutants": [
+    {
+     "detail": "return value a is not b",
+     "kind": "return_none",
+     "line": 2,
+     "source": "def f(a, b):\n    return None",
+     "tree_equal": false
+    },
+    {
+     "detail": "comparison a is not b operator 0",
+     "kind": "compare_invert",
+     "line": 2,
+     "source": "def f(a, b):\n    return a is b",
+     "tree_equal": false
+    }
+   ],
+   "name": "panel_is_not",
+   "source": "def f(a, b):\n    return a is not b\n"
+  },
+  {
+   "family": "panel",
+   "mutants": [
+    {
+     "detail": "return value a < b < c",
+     "kind": "return_none",
+     "line": 2,
+     "source": "def f(a, b, c):\n    return None",
+     "tree_equal": false
+    },
+    {
+     "detail": "comparison a < b < c operator 0",
+     "kind": "compare_invert",
+     "line": 2,
+     "source": "def f(a, b, c):\n    return a >= b < c",
+     "tree_equal": false
+    }
+   ],
+   "name": "panel_chained",
+   "source": "def f(a, b, c):\n    return a < b < c\n"
+  },
+  {
+   "family": "panel",
+   "mutants": [
+    {
+     "detail": "return value a < b == c > d",
+     "kind": "return_none",
+     "line": 2,
+     "source": "def f(a, b, c, d):\n    return None",
+     "tree_equal": false
+    },
+    {
+     "detail": "comparison a < b == c > d operator 0",
+     "kind": "compare_invert",
+     "line": 2,
+     "source": "def f(a, b, c, d):\n    return a >= b == c > d",
+     "tree_equal": false
+    }
+   ],
+   "name": "panel_chained_mixed",
+   "source": "def f(a, b, c, d):\n    return a < b == c > d\n"
+  },
+  {
+   "family": "panel",
+   "mutants": [
+    {
+     "detail": "return value x > 3",
+     "kind": "return_none",
+     "line": 2,
+     "source": "def f(x):\n    return None",
+     "tree_equal": false
+    },
+    {
+     "detail": "comparison x > 3 operator 0",
+     "kind": "compare_invert",
+     "line": 2,
+     "source": "def f(x):\n    return x <= 3",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 3 moved plus one",
+     "kind": "constant_shift",
+     "line": 3,
+     "source": "def f(x):\n    return x > 4",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 3 moved minus one",
+     "kind": "constant_shift",
+     "line": 3,
+     "source": "def f(x):\n    return x > 2",
+     "tree_equal": false
+    }
+   ],
+   "name": "panel_compare_multiline",
+   "source": "def f(x):\n    return (x\n            > 3)\n"
+  },
+  {
+   "family": "order",
+   "mutants": [
+    {
+     "detail": "return value g",
+     "kind": "return_none",
+     "line": 4,
+     "source": "def f():\n\n    def g():\n        return 1\n    return None",
+     "tree_equal": false
+    },
+    {
+     "detail": "return value 1",
+     "kind": "return_none",
+     "line": 3,
+     "source": "def f():\n\n    def g():\n        return None\n    return g",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 1 moved plus one",
+     "kind": "constant_shift",
+     "line": 3,
+     "source": "def f():\n\n    def g():\n        return 2\n    return g",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 1 moved minus one",
+     "kind": "constant_shift",
+     "line": 3,
+     "source": "def f():\n\n    def g():\n        return 0\n    return g",
+     "tree_equal": false
+    }
+   ],
+   "name": "order_outer_return_first",
+   "source": "def f():\n    def g():\n        return 1\n    return g\n"
+  },
+  {
+   "family": "order",
+   "mutants": [
+    {
+     "detail": "return value 2",
+     "kind": "return_none",
+     "line": 4,
+     "source": "def f(x):\n    if x:\n        return 1\n    return None",
+     "tree_equal": false
+    },
+    {
+     "detail": "return value 1",
+     "kind": "return_none",
+     "line": 3,
+     "source": "def f(x):\n    if x:\n        return None\n    return 2",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 2 moved plus one",
+     "kind": "constant_shift",
+     "line": 4,
+     "source": "def f(x):\n    if x:\n        return 1\n    return 3",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 2 moved minus one",
+     "kind": "constant_shift",
+     "line": 4,
+     "source": "def f(x):\n    if x:\n        return 1\n    return 1",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 1 moved plus one",
+     "kind": "constant_shift",
+     "line": 3,
+     "source": "def f(x):\n    if x:\n        return 2\n    return 2",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 1 moved minus one",
+     "kind": "constant_shift",
+     "line": 3,
+     "source": "def f(x):\n    if x:\n        return 0\n    return 2",
+     "tree_equal": false
+    }
+   ],
+   "name": "order_if_nested_return",
+   "source": "def f(x):\n    if x:\n        return 1\n    return 2\n"
+  },
+  {
+   "family": "order",
+   "mutants": [
+    {
+     "detail": "numeric constant 3 moved plus one",
+     "kind": "constant_shift",
+     "line": 2,
+     "source": "x = [[[5]]]\ny = 4",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 3 moved minus one",
+     "kind": "constant_shift",
+     "line": 2,
+     "source": "x = [[[5]]]\ny = 2",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 5 moved plus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "x = [[[6]]]\ny = 3",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 5 moved minus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "x = [[[4]]]\ny = 3",
+     "tree_equal": false
+    }
+   ],
+   "name": "order_shallow_before_deep",
+   "source": "x = [[[5]]]\ny = 3\n"
+  },
+  {
+   "family": "order",
+   "mutants": [
+    {
+     "detail": "return value x > 3",
+     "kind": "return_none",
+     "line": 2,
+     "source": "def f(x):\n    return None",
+     "tree_equal": false
+    },
+    {
+     "detail": "comparison x > 3 operator 0",
+     "kind": "compare_invert",
+     "line": 2,
+     "source": "def f(x):\n    return x <= 3",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 3 moved plus one",
+     "kind": "constant_shift",
+     "line": 2,
+     "source": "def f(x):\n    return x > 4",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 3 moved minus one",
+     "kind": "constant_shift",
+     "line": 2,
+     "source": "def f(x):\n    return x > 2",
+     "tree_equal": false
+    }
+   ],
+   "name": "order_container_before_contents",
+   "source": "def f(x):\n    return x > 3\n"
+  },
+  {
+   "family": "constants",
+   "mutants": [
+    {
+     "detail": "numeric constant 1000 moved plus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "x = 1001",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 1000 moved minus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "x = 999",
+     "tree_equal": false
+    }
+   ],
+   "name": "const_underscore_int",
+   "source": "x = 1_000\n"
+  },
+  {
+   "family": "constants",
+   "mutants": [
+    {
+     "detail": "numeric constant 16 moved plus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "x = 17",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 16 moved minus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "x = 15",
+     "tree_equal": false
+    }
+   ],
+   "name": "const_hex_int",
+   "source": "x = 0x10\n"
+  },
+  {
+   "family": "constants",
+   "mutants": [
+    {
+     "detail": "numeric constant 15 moved plus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "x = 16\ny = 5",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 15 moved minus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "x = 14\ny = 5",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 5 moved plus one",
+     "kind": "constant_shift",
+     "line": 2,
+     "source": "x = 15\ny = 6",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 5 moved minus one",
+     "kind": "constant_shift",
+     "line": 2,
+     "source": "x = 15\ny = 4",
+     "tree_equal": false
+    }
+   ],
+   "name": "const_octal_binary",
+   "source": "x = 0o17\ny = 0b101\n"
+  },
+  {
+   "family": "constants",
+   "mutants": [
+    {
+     "detail": "numeric constant 123456789012345678901234567890 moved plus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "x = 123456789012345678901234567891",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 123456789012345678901234567890 moved minus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "x = 123456789012345678901234567889",
+     "tree_equal": false
+    }
+   ],
+   "name": "const_big_int",
+   "source": "x = 123456789012345678901234567890\n"
+  },
+  {
+   "family": "constants",
+   "mutants": [
+    {
+     "detail": "numeric constant 123456789012345678901234567890 moved plus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "x = -123456789012345678901234567891",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 123456789012345678901234567890 moved minus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "x = -123456789012345678901234567889",
+     "tree_equal": false
+    }
+   ],
+   "name": "const_big_int_negative",
+   "source": "x = -123456789012345678901234567890\n"
+  },
+  {
+   "family": "constants",
+   "mutants": [
+    {
+     "detail": "numeric constant 1.0 moved plus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "x = 2.0\ny = 1",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 1.0 moved minus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "x = 0.0\ny = 1",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 1 moved plus one",
+     "kind": "constant_shift",
+     "line": 2,
+     "source": "x = 1.0\ny = 2",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 1 moved minus one",
+     "kind": "constant_shift",
+     "line": 2,
+     "source": "x = 1.0\ny = 0",
+     "tree_equal": false
+    }
+   ],
+   "name": "const_float_point_zero",
+   "source": "x = 1.0\ny = 1\n"
+  },
+  {
+   "family": "constants",
+   "mutants": [
+    {
+     "detail": "numeric constant 0 moved plus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "x = 1",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 0 moved minus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "x = -1",
+     "tree_equal": false
+    }
+   ],
+   "name": "const_zero_shift_to_negative",
+   "source": "x = 0\n"
+  },
+  {
+   "family": "constants",
+   "mutants": [
+    {
+     "detail": "numeric constant 5 moved plus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "x = -6",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 5 moved minus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "x = -4",
+     "tree_equal": false
+    }
+   ],
+   "name": "const_negative_int",
+   "source": "x = -5\n"
+  },
+  {
+   "family": "constants",
+   "mutants": [
+    {
+     "detail": "numeric constant 1.5 moved plus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "x = -2.5",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 1.5 moved minus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "x = -0.5",
+     "tree_equal": false
+    }
+   ],
+   "name": "const_negative_float",
+   "source": "x = -1.5\n"
+  },
+  {
+   "family": "constants",
+   "mutants": [
+    {
+     "detail": "numeric constant 0.0 moved plus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "x = -1.0",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 0.0 moved minus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "x = --1.0",
+     "tree_equal": false
+    }
+   ],
+   "name": "const_negative_zero_float",
+   "source": "x = -0.0\n"
+  },
+  {
+   "family": "constants",
+   "mutants": [
+    {
+     "detail": "numeric constant 1e+308 moved plus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "x = 1e+308",
+     "tree_equal": true
+    },
+    {
+     "detail": "numeric constant 1e+308 moved minus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "x = 1e+308",
+     "tree_equal": true
+    }
+   ],
+   "name": "const_float_1e308_noop",
+   "source": "x = 1e308\n"
+  },
+  {
+   "family": "constants",
+   "mutants": [
+    {
+     "detail": "numeric constant inf moved plus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "x = 1e309",
+     "tree_equal": true
+    },
+    {
+     "detail": "numeric constant inf moved minus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "x = 1e309",
+     "tree_equal": true
+    }
+   ],
+   "name": "const_float_1e999_inf",
+   "source": "x = 1e999\n"
+  },
+  {
+   "family": "constants",
+   "mutants": [
+    {
+     "detail": "numeric constant inf moved plus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "x = -1e309",
+     "tree_equal": true
+    },
+    {
+     "detail": "numeric constant inf moved minus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "x = -1e309",
+     "tree_equal": true
+    }
+   ],
+   "name": "const_float_neg_1e999",
+   "source": "x = -1e999\n"
+  },
+  {
+   "family": "constants",
+   "mutants": [
+    {
+     "detail": "numeric constant 5e-324 moved plus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "x = 1.0",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 5e-324 moved minus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "x = -1.0",
+     "tree_equal": false
+    }
+   ],
+   "name": "const_float_5e_324",
+   "source": "x = 5e-324\n"
+  },
+  {
+   "family": "constants",
+   "mutants": [
+    {
+     "detail": "numeric constant 9007199254740992.0 moved plus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "x = 9007199254740992.0",
+     "tree_equal": true
+    },
+    {
+     "detail": "numeric constant 9007199254740992.0 moved minus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "x = 9007199254740991.0",
+     "tree_equal": false
+    }
+   ],
+   "name": "const_float_2_pow_53",
+   "source": "x = 9007199254740992.0\n"
+  },
+  {
+   "family": "constants",
+   "mutants": [
+    {
+     "detail": "numeric constant 1 moved plus one",
+     "kind": "constant_shift",
+     "line": 2,
+     "source": "x = 1j\ny = 2 + 2j",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 1 moved minus one",
+     "kind": "constant_shift",
+     "line": 2,
+     "source": "x = 1j\ny = 0 + 2j",
+     "tree_equal": false
+    }
+   ],
+   "name": "const_complex_no_site",
+   "source": "x = 1j\ny = 1 + 2j\n"
+  },
+  {
+   "family": "constants",
+   "mutants": [],
+   "name": "const_str_bytes_none_ellipsis",
+   "source": "x = 'text'\ny = b'bytes'\nz = None\nw = ...\n"
+  },
+  {
+   "family": "constants",
+   "mutants": [
+    {
+     "detail": "boolean constant True",
+     "kind": "bool_negate",
+     "line": 1,
+     "source": "x = False\ny = False",
+     "tree_equal": false
+    },
+    {
+     "detail": "boolean constant False",
+     "kind": "bool_negate",
+     "line": 2,
+     "source": "x = True\ny = True",
+     "tree_equal": false
+    }
+   ],
+   "name": "const_bool_pair",
+   "source": "x = True\ny = False\n"
+  },
+  {
+   "family": "constants",
+   "mutants": [
+    {
+     "detail": "return value 1000",
+     "kind": "return_none",
+     "line": 2,
+     "source": "def f():\n    return None",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 1000 moved plus one",
+     "kind": "constant_shift",
+     "line": 2,
+     "source": "def f():\n    return 1001",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 1000 moved minus one",
+     "kind": "constant_shift",
+     "line": 2,
+     "source": "def f():\n    return 999",
+     "tree_equal": false
+    }
+   ],
+   "name": "const_return_underscore_detail",
+   "source": "def f():\n    return 1_000\n"
+  },
+  {
+   "family": "positions",
+   "mutants": [
+    {
+     "detail": "return value x",
+     "kind": "return_none",
+     "line": 2,
+     "source": "def f(x=10):\n    return None",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 10 moved plus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "def f(x=11):\n    return x",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 10 moved minus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "def f(x=9):\n    return x",
+     "tree_equal": false
+    }
+   ],
+   "name": "pos_default_argument",
+   "source": "def f(x=10):\n    return x\n"
+  },
+  {
+   "family": "positions",
+   "mutants": [
+    {
+     "detail": "numeric constant 2 moved plus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "x = items[3]",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 2 moved minus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "x = items[1]",
+     "tree_equal": false
+    }
+   ],
+   "name": "pos_subscript_index",
+   "source": "x = items[2]\n"
+  },
+  {
+   "family": "positions",
+   "mutants": [
+    {
+     "detail": "numeric constant 1 moved plus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "x = [n + 2 for n in items if n > 0]",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 1 moved minus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "x = [n + 0 for n in items if n > 0]",
+     "tree_equal": false
+    },
+    {
+     "detail": "comparison n > 0 operator 0",
+     "kind": "compare_invert",
+     "line": 1,
+     "source": "x = [n + 1 for n in items if n <= 0]",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 0 moved plus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "x = [n + 1 for n in items if n > 1]",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 0 moved minus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "x = [n + 1 for n in items if n > -1]",
+     "tree_equal": false
+    }
+   ],
+   "name": "pos_comprehension",
+   "source": "x = [n + 1 for n in items if n > 0]\n"
+  },
+  {
+   "family": "positions",
+   "mutants": [
+    {
+     "detail": "numeric constant 42 moved plus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "x = f'value {43} and {3.5}'",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 42 moved minus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "x = f'value {41} and {3.5}'",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 3.5 moved plus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "x = f'value {42} and {4.5}'",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 3.5 moved minus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "x = f'value {42} and {2.5}'",
+     "tree_equal": false
+    }
+   ],
+   "name": "pos_fstring_value",
+   "source": "x = f'value {42} and {3.5}'\n"
+  },
+  {
+   "family": "positions",
+   "mutants": [
+    {
+     "detail": "return value 'one'",
+     "kind": "return_none",
+     "line": 4,
+     "source": "def f(cmd):\n    match cmd:\n        case 1:\n            return None\n        case 'go':\n            return 2",
+     "tree_equal": false
+    },
+    {
+     "detail": "return value 2",
+     "kind": "return_none",
+     "line": 6,
+     "source": "def f(cmd):\n    match cmd:\n        case 1:\n            return 'one'\n        case 'go':\n            return None",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 1 moved plus one",
+     "kind": "constant_shift",
+     "line": 3,
+     "source": "def f(cmd):\n    match cmd:\n        case 2:\n            return 'one'\n        case 'go':\n            return 2",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 1 moved minus one",
+     "kind": "constant_shift",
+     "line": 3,
+     "source": "def f(cmd):\n    match cmd:\n        case 0:\n            return 'one'\n        case 'go':\n            return 2",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 2 moved plus one",
+     "kind": "constant_shift",
+     "line": 6,
+     "source": "def f(cmd):\n    match cmd:\n        case 1:\n            return 'one'\n        case 'go':\n            return 3",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 2 moved minus one",
+     "kind": "constant_shift",
+     "line": 6,
+     "source": "def f(cmd):\n    match cmd:\n        case 1:\n            return 'one'\n        case 'go':\n            return 1",
+     "tree_equal": false
+    }
+   ],
+   "name": "pos_match_literal",
+   "source": "def f(cmd):\n    match cmd:\n        case 1:\n            return 'one'\n        case 'go':\n            return 2\n"
+  },
+  {
+   "family": "positions",
+   "mutants": [
+    {
+     "detail": "return value 'yes'",
+     "kind": "return_none",
+     "line": 4,
+     "source": "def f(cmd):\n    match cmd:\n        case True:\n            return None\n        case None:\n            return 'nothing'",
+     "tree_equal": false
+    },
+    {
+     "detail": "return value 'nothing'",
+     "kind": "return_none",
+     "line": 6,
+     "source": "def f(cmd):\n    match cmd:\n        case True:\n            return 'yes'\n        case None:\n            return None",
+     "tree_equal": false
+    }
+   ],
+   "name": "pos_match_singleton",
+   "source": "def f(cmd):\n    match cmd:\n        case True:\n            return 'yes'\n        case None:\n            return 'nothing'\n"
+  },
+  {
+   "family": "positions",
+   "mutants": [
+    {
+     "detail": "numeric constant 5 moved plus one",
+     "kind": "constant_shift",
+     "line": 2,
+     "source": "class C:\n    limit = 6",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 5 moved minus one",
+     "kind": "constant_shift",
+     "line": 2,
+     "source": "class C:\n    limit = 4",
+     "tree_equal": false
+    }
+   ],
+   "name": "pos_class_body",
+   "source": "class C:\n    limit = 5\n"
+  },
+  {
+   "family": "positions",
+   "mutants": [
+    {
+     "detail": "numeric constant 7 moved plus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "f = lambda: 8",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 7 moved minus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "f = lambda: 6",
+     "tree_equal": false
+    }
+   ],
+   "name": "pos_lambda_body",
+   "source": "f = lambda: 7\n"
+  },
+  {
+   "family": "positions",
+   "mutants": [
+    {
+     "detail": "return value 1",
+     "kind": "return_none",
+     "line": 3,
+     "source": "@register(3)\ndef f():\n    return None",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 1 moved plus one",
+     "kind": "constant_shift",
+     "line": 3,
+     "source": "@register(3)\ndef f():\n    return 2",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 1 moved minus one",
+     "kind": "constant_shift",
+     "line": 3,
+     "source": "@register(3)\ndef f():\n    return 0",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 3 moved plus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "@register(4)\ndef f():\n    return 1",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 3 moved minus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "@register(2)\ndef f():\n    return 1",
+     "tree_equal": false
+    }
+   ],
+   "name": "pos_decorator_argument",
+   "source": "@register(3)\ndef f():\n    return 1\n"
+  },
+  {
+   "family": "positions",
+   "mutants": [
+    {
+     "detail": "numeric constant 1 moved plus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "x = {2: 'a', 2: 'b'}\ny = {3, 4}",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 1 moved minus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "x = {0: 'a', 2: 'b'}\ny = {3, 4}",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 2 moved plus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "x = {1: 'a', 3: 'b'}\ny = {3, 4}",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 2 moved minus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "x = {1: 'a', 1: 'b'}\ny = {3, 4}",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 3 moved plus one",
+     "kind": "constant_shift",
+     "line": 2,
+     "source": "x = {1: 'a', 2: 'b'}\ny = {4, 4}",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 3 moved minus one",
+     "kind": "constant_shift",
+     "line": 2,
+     "source": "x = {1: 'a', 2: 'b'}\ny = {2, 4}",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 4 moved plus one",
+     "kind": "constant_shift",
+     "line": 2,
+     "source": "x = {1: 'a', 2: 'b'}\ny = {3, 5}",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 4 moved minus one",
+     "kind": "constant_shift",
+     "line": 2,
+     "source": "x = {1: 'a', 2: 'b'}\ny = {3, 3}",
+     "tree_equal": false
+    }
+   ],
+   "name": "pos_dict_and_set",
+   "source": "x = {1: 'a', 2: 'b'}\ny = {3, 4}\n"
+  },
+  {
+   "family": "positions",
+   "mutants": [
+    {
+     "detail": "return value x",
+     "kind": "return_none",
+     "line": 3,
+     "source": "def f(x):\n    assert x, 'code 8'\n    return None",
+     "tree_equal": false
+    }
+   ],
+   "name": "pos_assert_message",
+   "source": "def f(x):\n    assert x, 'code 8'\n    return x\n"
+  },
+  {
+   "family": "positions",
+   "mutants": [
+    {
+     "detail": "return value 0",
+     "kind": "return_none",
+     "line": 4,
+     "source": "def f():\n    if (n := 5) > 1:\n        return n\n    return None",
+     "tree_equal": false
+    },
+    {
+     "detail": "comparison (n := 5) > 1 operator 0",
+     "kind": "compare_invert",
+     "line": 2,
+     "source": "def f():\n    if (n := 5) <= 1:\n        return n\n    return 0",
+     "tree_equal": false
+    },
+    {
+     "detail": "return value n",
+     "kind": "return_none",
+     "line": 3,
+     "source": "def f():\n    if (n := 5) > 1:\n        return None\n    return 0",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 0 moved plus one",
+     "kind": "constant_shift",
+     "line": 4,
+     "source": "def f():\n    if (n := 5) > 1:\n        return n\n    return 1",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 0 moved minus one",
+     "kind": "constant_shift",
+     "line": 4,
+     "source": "def f():\n    if (n := 5) > 1:\n        return n\n    return -1",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 1 moved plus one",
+     "kind": "constant_shift",
+     "line": 2,
+     "source": "def f():\n    if (n := 5) > 2:\n        return n\n    return 0",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 1 moved minus one",
+     "kind": "constant_shift",
+     "line": 2,
+     "source": "def f():\n    if (n := 5) > 0:\n        return n\n    return 0",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 5 moved plus one",
+     "kind": "constant_shift",
+     "line": 2,
+     "source": "def f():\n    if (n := 6) > 1:\n        return n\n    return 0",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 5 moved minus one",
+     "kind": "constant_shift",
+     "line": 2,
+     "source": "def f():\n    if (n := 4) > 1:\n        return n\n    return 0",
+     "tree_equal": false
+    }
+   ],
+   "name": "pos_walrus",
+   "source": "def f():\n    if (n := 5) > 1:\n        return n\n    return 0\n"
+  },
+  {
+   "family": "positions",
+   "mutants": [
+    {
+     "detail": "return value 6",
+     "kind": "return_none",
+     "line": 3,
+     "source": "def f():\n    yield 5\n    return None",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 6 moved plus one",
+     "kind": "constant_shift",
+     "line": 3,
+     "source": "def f():\n    yield 5\n    return 7",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 6 moved minus one",
+     "kind": "constant_shift",
+     "line": 3,
+     "source": "def f():\n    yield 5\n    return 5",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 5 moved plus one",
+     "kind": "constant_shift",
+     "line": 2,
+     "source": "def f():\n    yield 6\n    return 6",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 5 moved minus one",
+     "kind": "constant_shift",
+     "line": 2,
+     "source": "def f():\n    yield 4\n    return 6",
+     "tree_equal": false
+    }
+   ],
+   "name": "pos_yield_value",
+   "source": "def f():\n    yield 5\n    return 6\n"
+  },
+  {
+   "family": "positions",
+   "mutants": [
+    {
+     "detail": "return value x",
+     "kind": "return_none",
+     "line": 2,
+     "source": "def f(x: int=4) -> int:\n    return None",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 4 moved plus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "def f(x: int=5) -> int:\n    return x",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 4 moved minus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "def f(x: int=3) -> int:\n    return x",
+     "tree_equal": false
+    }
+   ],
+   "name": "pos_annotation_default",
+   "source": "def f(x: int = 4) -> int:\n    return x\n"
+  },
+  {
+   "family": "positions",
+   "mutants": [
+    {
+     "detail": "return value g()",
+     "kind": "return_none",
+     "line": 4,
+     "source": "def f():\n\n    def g():\n        return 11\n    return None",
+     "tree_equal": false
+    },
+    {
+     "detail": "return value 11",
+     "kind": "return_none",
+     "line": 3,
+     "source": "def f():\n\n    def g():\n        return None\n    return g()",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 11 moved plus one",
+     "kind": "constant_shift",
+     "line": 3,
+     "source": "def f():\n\n    def g():\n        return 12\n    return g()",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 11 moved minus one",
+     "kind": "constant_shift",
+     "line": 3,
+     "source": "def f():\n\n    def g():\n        return 10\n    return g()",
+     "tree_equal": false
+    }
+   ],
+   "name": "pos_nested_function",
+   "source": "def f():\n    def g():\n        return 11\n    return g()\n"
+  },
+  {
+   "family": "duplicates",
+   "mutants": [
+    {
+     "detail": "numeric constant 1 moved plus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "x = 2 + 1",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 1 moved minus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "x = 0 + 1",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 1 moved plus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "x = 1 + 2",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 1 moved minus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "x = 1 + 0",
+     "tree_equal": false
+    }
+   ],
+   "name": "dup_one_plus_one",
+   "source": "x = 1 + 1\n"
+  },
+  {
+   "family": "duplicates",
+   "mutants": [
+    {
+     "detail": "numeric constant 2 moved plus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "x = 3\ny = 2",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 2 moved minus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "x = 1\ny = 2",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 2 moved plus one",
+     "kind": "constant_shift",
+     "line": 2,
+     "source": "x = 2\ny = 3",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 2 moved minus one",
+     "kind": "constant_shift",
+     "line": 2,
+     "source": "x = 2\ny = 1",
+     "tree_equal": false
+    }
+   ],
+   "name": "dup_same_constant_twice",
+   "source": "x = 2\ny = 2\n"
+  },
+  {
+   "family": "duplicates",
+   "mutants": [
+    {
+     "detail": "return value 1",
+     "kind": "return_none",
+     "line": 4,
+     "source": "def f(x):\n    if x:\n        return 1\n    return None",
+     "tree_equal": false
+    },
+    {
+     "detail": "return value 1",
+     "kind": "return_none",
+     "line": 3,
+     "source": "def f(x):\n    if x:\n        return None\n    return 1",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 1 moved plus one",
+     "kind": "constant_shift",
+     "line": 4,
+     "source": "def f(x):\n    if x:\n        return 1\n    return 2",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 1 moved minus one",
+     "kind": "constant_shift",
+     "line": 4,
+     "source": "def f(x):\n    if x:\n        return 1\n    return 0",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 1 moved plus one",
+     "kind": "constant_shift",
+     "line": 3,
+     "source": "def f(x):\n    if x:\n        return 2\n    return 1",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 1 moved minus one",
+     "kind": "constant_shift",
+     "line": 3,
+     "source": "def f(x):\n    if x:\n        return 0\n    return 1",
+     "tree_equal": false
+    }
+   ],
+   "name": "dup_two_returns",
+   "source": "def f(x):\n    if x:\n        return 1\n    return 1\n"
+  },
+  {
+   "family": "details",
+   "mutants": [
+    {
+     "detail": "return value \"it's\"",
+     "kind": "return_none",
+     "line": 2,
+     "source": "def f():\n    return None\n\ndef g():\n    return 'say \"hi\"'",
+     "tree_equal": false
+    },
+    {
+     "detail": "return value 'say \"hi\"'",
+     "kind": "return_none",
+     "line": 4,
+     "source": "def f():\n    return \"it's\"\n\ndef g():\n    return None",
+     "tree_equal": false
+    }
+   ],
+   "name": "detail_string_quotes",
+   "source": "def f():\n    return 'it\\'s'\ndef g():\n    return 'say \"hi\"'\n"
+  },
+  {
+   "family": "details",
+   "mutants": [
+    {
+     "detail": "return value 'a\\nb\\tc\\\\dA'",
+     "kind": "return_none",
+     "line": 2,
+     "source": "def f():\n    return None",
+     "tree_equal": false
+    }
+   ],
+   "name": "detail_string_escapes",
+   "source": "def f():\n    return 'a\\nb\\tc\\\\d\\x41'\n"
+  },
+  {
+   "family": "details",
+   "mutants": [
+    {
+     "detail": "return value 'café ☕'",
+     "kind": "return_none",
+     "line": 2,
+     "source": "def f():\n    return None",
+     "tree_equal": false
+    }
+   ],
+   "name": "detail_non_ascii",
+   "source": "def f():\n    return 'café ☕'\n"
+  },
+  {
+   "family": "details",
+   "mutants": [
+    {
+     "detail": "return value (1, 'two', 3.0)",
+     "kind": "return_none",
+     "line": 2,
+     "source": "def f():\n    return None",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 1 moved plus one",
+     "kind": "constant_shift",
+     "line": 2,
+     "source": "def f():\n    return (2, 'two', 3.0)",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 1 moved minus one",
+     "kind": "constant_shift",
+     "line": 2,
+     "source": "def f():\n    return (0, 'two', 3.0)",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 3.0 moved plus one",
+     "kind": "constant_shift",
+     "line": 2,
+     "source": "def f():\n    return (1, 'two', 4.0)",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 3.0 moved minus one",
+     "kind": "constant_shift",
+     "line": 2,
+     "source": "def f():\n    return (1, 'two', 2.0)",
+     "tree_equal": false
+    }
+   ],
+   "name": "detail_return_tuple",
+   "source": "def f():\n    return (1, 'two', 3.0)\n"
+  },
+  {
+   "family": "details",
+   "mutants": [
+    {
+     "detail": "return value len('abcd')",
+     "kind": "return_none",
+     "line": 2,
+     "source": "def f():\n    return None",
+     "tree_equal": false
+    }
+   ],
+   "name": "detail_return_call",
+   "source": "def f():\n    return len('abcd')\n"
+  },
+  {
+   "family": "details",
+   "mutants": [
+    {
+     "detail": "return value 'a' == 'b'",
+     "kind": "return_none",
+     "line": 2,
+     "source": "def f():\n    return None",
+     "tree_equal": false
+    },
+    {
+     "detail": "comparison 'a' == 'b' operator 0",
+     "kind": "compare_invert",
+     "line": 2,
+     "source": "def f():\n    return 'a' != 'b'",
+     "tree_equal": false
+    }
+   ],
+   "name": "detail_compare_strings",
+   "source": "def f():\n    return 'a' == 'b'\n"
+  },
+  {
+   "family": "details",
+   "mutants": [
+    {
+     "detail": "return value '\\ud800'",
+     "kind": "return_none",
+     "line": 2,
+     "source": "def f():\n    return None",
+     "tree_equal": false
+    }
+   ],
+   "name": "detail_surrogate_escape",
+   "source": "def f():\n    return '\\ud800'\n"
+  },
+  {
+   "family": "shapes",
+   "mutants": [
+    {
+     "detail": "return value 9",
+     "kind": "return_none",
+     "line": 2,
+     "source": "def f():\n    return None",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 9 moved plus one",
+     "kind": "constant_shift",
+     "line": 2,
+     "source": "def f():\n    return 10",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 9 moved minus one",
+     "kind": "constant_shift",
+     "line": 2,
+     "source": "def f():\n    return 8",
+     "tree_equal": false
+    }
+   ],
+   "name": "shape_crlf",
+   "source": "def f():\r\n    return 9\r\n"
+  },
+  {
+   "family": "shapes",
+   "mutants": [
+    {
+     "detail": "return value 9",
+     "kind": "return_none",
+     "line": 3,
+     "source": "def f():\n    return None",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 9 moved plus one",
+     "kind": "constant_shift",
+     "line": 3,
+     "source": "def f():\n    return 10",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 9 moved minus one",
+     "kind": "constant_shift",
+     "line": 3,
+     "source": "def f():\n    return 8",
+     "tree_equal": false
+    }
+   ],
+   "name": "shape_coding_cookie",
+   "source": "# coding: utf-8\ndef f():\n    return 9\n"
+  },
+  {
+   "family": "shapes",
+   "mutants": [],
+   "name": "shape_empty",
+   "source": ""
+  },
+  {
+   "family": "shapes",
+   "mutants": [],
+   "name": "shape_comment_only",
+   "source": "# nothing here\n# at all\n"
+  },
+  {
+   "family": "shapes",
+   "mutants": [],
+   "name": "shape_site_free",
+   "source": "x = 'text'\nimport os\n"
+  },
+  {
+   "family": "shapes",
+   "mutants": [
+    {
+     "detail": "return value x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x",
+     "kind": "return_none",
+     "line": 2,
+     "source": "def f(x):\n    return None",
+     "tree_equal": false
+    }
+   ],
+   "name": "shape_deep_names_standing",
+   "source": "def f(x):\n    return x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x\n"
+  },
+  {
+   "family": "shapes",
+   "mutants": [
+    {
+     "detail": "numeric constant 1 moved plus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "x = 2",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 1 moved minus one",
+     "kind": "constant_shift",
+     "line": 1,
+     "source": "x = 0",
+     "tree_equal": false
+    }
+   ],
+   "name": "shape_parens_200_standing",
+   "source": "x = ((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((1))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))\n"
+  },
+  {
+   "family": "refusals",
+   "name": "refusal_syntax_error",
+   "refusal": "the source does not parse under the port's reading",
+   "source": "def f(:\n"
+  },
+  {
+   "family": "refusals",
+   "name": "refusal_null_byte",
+   "refusal": "the source does not parse under the port's reading",
+   "source": "x = 1\u0000\n"
+  },
+  {
+   "family": "refusals",
+   "name": "refusal_leading_bom",
+   "refusal": "the source does not parse under the port's reading",
+   "source": "﻿x = 1\n"
+  },
+  {
+   "family": "refusals",
+   "name": "refusal_parens_201",
+   "refusal": "the source does not parse under the port's reading",
+   "source": "x = (((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((1)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))\n"
+  },
+  {
+   "family": "refusals",
+   "name": "refusal_mixed_nesting_201",
+   "refusal": "the source does not parse under the port's reading",
+   "source": "x = ([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([([(1)])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])])\n"
+  },
+  {
+   "family": "refusals",
+   "name": "refusal_recursion_return_chain",
+   "refusal": "the source nests past the recursion standing of the port",
+   "source": "def f(x):\n    return x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x\n"
+  },
+  {
+   "family": "refusals",
+   "name": "refusal_recursion_assign_chain",
+   "refusal": "the source nests past the recursion standing of the port",
+   "source": "y = 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1\n"
+  },
+  {
+   "family": "refusals",
+   "name": "refusal_recursion_deep_module_with_site",
+   "refusal": "the source nests past the recursion standing of the port",
+   "source": "y = x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x\ndef f():\n    return 9\n"
+  },
+  {
+   "family": "shapes",
+   "mutants": [],
+   "name": "shape_deep_assign_names_empty",
+   "source": "y = x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x + x\n"
+  },
+  {
+   "family": "shapes",
+   "mutants": [
+    {
+     "detail": "return value f'{x:\\\\ud800}' + 2",
+     "kind": "return_none",
+     "line": 2,
+     "source": "def f(x):\n    return None",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 2 moved plus one",
+     "kind": "constant_shift",
+     "line": 2,
+     "source": "def f(x):\n    return f'{x:\\\\ud800}' + 3",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 2 moved minus one",
+     "kind": "constant_shift",
+     "line": 2,
+     "source": "def f(x):\n    return f'{x:\\\\ud800}' + 1",
+     "tree_equal": false
+    }
+   ],
+   "name": "shape_format_spec_surrogate",
+   "source": "def f(x):\n    return f'{x:\\ud800}' + 2\n",
+   "tree_check": false
+  },
+  {
+   "family": "corpus",
+   "mutants": [
+    {
+     "detail": "return value x + 1",
+     "kind": "return_none",
+     "line": 2,
+     "source": "def add_one(x):\n    return None\n\ndef is_adult(age):\n    return age >= 18\n\ndef enabled():\n    return True",
+     "tree_equal": false
+    },
+    {
+     "detail": "return value age >= 18",
+     "kind": "return_none",
+     "line": 6,
+     "source": "def add_one(x):\n    return x + 1\n\ndef is_adult(age):\n    return None\n\ndef enabled():\n    return True",
+     "tree_equal": false
+    },
+    {
+     "detail": "return value True",
+     "kind": "return_none",
+     "line": 10,
+     "source": "def add_one(x):\n    return x + 1\n\ndef is_adult(age):\n    return age >= 18\n\ndef enabled():\n    return None",
+     "tree_equal": false
+    },
+    {
+     "detail": "comparison age >= 18 operator 0",
+     "kind": "compare_invert",
+     "line": 6,
+     "source": "def add_one(x):\n    return x + 1\n\ndef is_adult(age):\n    return age < 18\n\ndef enabled():\n    return True",
+     "tree_equal": false
+    },
+    {
+     "detail": "boolean constant True",
+     "kind": "bool_negate",
+     "line": 10,
+     "source": "def add_one(x):\n    return x + 1\n\ndef is_adult(age):\n    return age >= 18\n\ndef enabled():\n    return False",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 1 moved plus one",
+     "kind": "constant_shift",
+     "line": 2,
+     "source": "def add_one(x):\n    return x + 2\n\ndef is_adult(age):\n    return age >= 18\n\ndef enabled():\n    return True",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 1 moved minus one",
+     "kind": "constant_shift",
+     "line": 2,
+     "source": "def add_one(x):\n    return x + 0\n\ndef is_adult(age):\n    return age >= 18\n\ndef enabled():\n    return True",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 18 moved plus one",
+     "kind": "constant_shift",
+     "line": 6,
+     "source": "def add_one(x):\n    return x + 1\n\ndef is_adult(age):\n    return age >= 19\n\ndef enabled():\n    return True",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 18 moved minus one",
+     "kind": "constant_shift",
+     "line": 6,
+     "source": "def add_one(x):\n    return x + 1\n\ndef is_adult(age):\n    return age >= 17\n\ndef enabled():\n    return True",
+     "tree_equal": false
+    }
+   ],
+   "name": "demo_calc",
+   "source": "def add_one(x):\n    return x + 1\n\n\ndef is_adult(age):\n    return age >= 18\n\n\ndef enabled():\n    return True\n"
+  },
+  {
+   "family": "corpus",
+   "mutants": [
+    {
+     "detail": "return value 'hello'",
+     "kind": "return_none",
+     "line": 2,
+     "source": "def greet():\n    return None",
+     "tree_equal": false
+    }
+   ],
+   "name": "demo_greeter",
+   "source": "def greet():\n    return 'hello'\n"
+  },
+  {
+   "family": "corpus",
+   "mutants": [
+    {
+     "detail": "return value parents",
+     "kind": "return_none",
+     "line": 56,
+     "source": "\"\"\"The fixed mutation panel for slice 1.\n\nThe panel has four kinds of mutation. Returning no value in place of\na return value. Inverting a comparison operator. Moving a numeric\nconstant by one, in both directions. Negating a boolean constant.\nThe panel is fixed on purpose so that two runs over the same project\napply the same mutants in the same order.\n\"\"\"\nfrom __future__ import annotations\nimport ast\nimport copy\nfrom dataclasses import dataclass\n\n@dataclass(frozen=True)\nclass Mutant:\n    \"\"\"One mutant of one source module.\"\"\"\n    kind: str\n    line: int\n    detail: str\n    source: str\n\n    def describe(self) -> str:\n        return f'{self.kind} at line {self.line}, {self.detail}'\n\n    def to_dict(self) -> dict:\n        return {'kind': self.kind, 'line': self.line, 'detail': self.detail}\n_INVERSIONS = {ast.Eq: ast.NotEq, ast.NotEq: ast.Eq, ast.Lt: ast.GtE, ast.GtE: ast.Lt, ast.Gt: ast.LtE, ast.LtE: ast.Gt, ast.In: ast.NotIn, ast.NotIn: ast.In, ast.Is: ast.IsNot, ast.IsNot: ast.Is}\n\ndef _parents(tree: ast.AST) -> dict[int, ast.AST]:\n    parents: dict[int, ast.AST] = {}\n    for node in ast.walk(tree):\n        for child in ast.iter_child_nodes(node):\n            parents[id(child)] = node\n    return None\n\ndef _sites(tree: ast.AST) -> list[tuple[str, ast.AST, str]]:\n    \"\"\"Collect mutation sites in deterministic walk order.\"\"\"\n    sites: list[tuple[str, ast.AST, str]] = []\n    for node in ast.walk(tree):\n        if isinstance(node, ast.Return) and node.value is not None:\n            if isinstance(node.value, ast.Constant) and node.value.value is None:\n                continue\n            sites.append(('return_none', node, f'return value {ast.unparse(node.value)}'))\n        elif isinstance(node, ast.Compare):\n            for index, op in enumerate(node.ops):\n                if type(op) in _INVERSIONS:\n                    sites.append(('compare_invert', node, f'comparison {ast.unparse(node)} operator {index}'))\n                    break\n        elif isinstance(node, ast.Constant):\n            if isinstance(node.value, bool):\n                sites.append(('bool_negate', node, f'boolean constant {node.value}'))\n            elif isinstance(node.value, (int, float)):\n                sites.append(('constant_shift', node, f'numeric constant {node.value}'))\n    return sites\n\ndef _apply(tree: ast.AST, kind: str, target: ast.AST) -> None:\n    parents = _parents(tree)\n    if kind == 'return_none':\n        assert isinstance(target, ast.Return)\n        target.value = ast.Constant(value=None)\n    elif kind == 'compare_invert':\n        assert isinstance(target, ast.Compare)\n        for index, op in enumerate(target.ops):\n            inverted = _INVERSIONS.get(type(op))\n            if inverted is not None:\n                target.ops[index] = inverted()\n                break\n    elif kind == 'bool_negate':\n        assert isinstance(target, ast.Constant)\n        target.value = not target.value\n    else:\n        raise ValueError(f'not an in place mutation kind, {kind}')\n\ndef generate_mutants(source: str) -> list[Mutant]:\n    \"\"\"Generate every mutant in the fixed panel for one module.\"\"\"\n    base = ast.parse(source)\n    mutants: list[Mutant] = []\n    sites = _sites(base)\n    for position, (kind, node, detail) in enumerate(sites):\n        if kind == 'constant_shift':\n            assert isinstance(node, ast.Constant)\n            for direction, label in ((1, 'plus one'), (-1, 'minus one')):\n                tree = ast.parse(source)\n                fresh_sites = _sites(tree)\n                _, fresh_node, _ = fresh_sites[position]\n                assert isinstance(fresh_node, ast.Constant)\n                fresh_node.value = fresh_node.value + direction\n                mutants.append(Mutant(kind='constant_shift', line=fresh_node.lineno, detail=f'{detail} moved {label}', source=ast.unparse(tree)))\n            continue\n        tree = ast.parse(source)\n        fresh_sites = _sites(tree)\n        _, fresh_node, _ = fresh_sites[position]\n        _apply(tree, kind, fresh_node)\n        mutants.append(Mutant(kind=kind, line=fresh_node.lineno, detail=detail, source=ast.unparse(tree)))\n    return mutants",
+     "tree_equal": false
+    },
+    {
+     "detail": "return value sites",
+     "kind": "return_none",
+     "line": 89,
+     "source": "\"\"\"The fixed mutation panel for slice 1.\n\nThe panel has four kinds of mutation. Returning no value in place of\na return value. Inverting a comparison operator. Moving a numeric\nconstant by one, in both directions. Negating a boolean constant.\nThe panel is fixed on purpose so that two runs over the same project\napply the same mutants in the same order.\n\"\"\"\nfrom __future__ import annotations\nimport ast\nimport copy\nfrom dataclasses import dataclass\n\n@dataclass(frozen=True)\nclass Mutant:\n    \"\"\"One mutant of one source module.\"\"\"\n    kind: str\n    line: int\n    detail: str\n    source: str\n\n    def describe(self) -> str:\n        return f'{self.kind} at line {self.line}, {self.detail}'\n\n    def to_dict(self) -> dict:\n        return {'kind': self.kind, 'line': self.line, 'detail': self.detail}\n_INVERSIONS = {ast.Eq: ast.NotEq, ast.NotEq: ast.Eq, ast.Lt: ast.GtE, ast.GtE: ast.Lt, ast.Gt: ast.LtE, ast.LtE: ast.Gt, ast.In: ast.NotIn, ast.NotIn: ast.In, ast.Is: ast.IsNot, ast.IsNot: ast.Is}\n\ndef _parents(tree: ast.AST) -> dict[int, ast.AST]:\n    parents: dict[int, ast.AST] = {}\n    for node in ast.walk(tree):\n        for child in ast.iter_child_nodes(node):\n            parents[id(child)] = node\n    return parents\n\ndef _sites(tree: ast.AST) -> list[tuple[str, ast.AST, str]]:\n    \"\"\"Collect mutation sites in deterministic walk order.\"\"\"\n    sites: list[tuple[str, ast.AST, str]] = []\n    for node in ast.walk(tree):\n        if isinstance(node, ast.Return) and node.value is not None:\n            if isinstance(node.value, ast.Constant) and node.value.value is None:\n                continue\n            sites.append(('return_none', node, f'return value {ast.unparse(node.value)}'))\n        elif isinstance(node, ast.Compare):\n            for index, op in enumerate(node.ops):\n                if type(op) in _INVERSIONS:\n                    sites.append(('compare_invert', node, f'comparison {ast.unparse(node)} operator {index}'))\n                    break\n        elif isinstance(node, ast.Constant):\n            if isinstance(node.value, bool):\n                sites.append(('bool_negate', node, f'boolean constant {node.value}'))\n            elif isinstance(node.value, (int, float)):\n                sites.append(('constant_shift', node, f'numeric constant {node.value}'))\n    return None\n\ndef _apply(tree: ast.AST, kind: str, target: ast.AST) -> None:\n    parents = _parents(tree)\n    if kind == 'return_none':\n        assert isinstance(target, ast.Return)\n        target.value = ast.Constant(value=None)\n    elif kind == 'compare_invert':\n        assert isinstance(target, ast.Compare)\n        for index, op in enumerate(target.ops):\n            inverted = _INVERSIONS.get(type(op))\n            if inverted is not None:\n                target.ops[index] = inverted()\n                break\n    elif kind == 'bool_negate':\n        assert isinstance(target, ast.Constant)\n        target.value = not target.value\n    else:\n        raise ValueError(f'not an in place mutation kind, {kind}')\n\ndef generate_mutants(source: str) -> list[Mutant]:\n    \"\"\"Generate every mutant in the fixed panel for one module.\"\"\"\n    base = ast.parse(source)\n    mutants: list[Mutant] = []\n    sites = _sites(base)\n    for position, (kind, node, detail) in enumerate(sites):\n        if kind == 'constant_shift':\n            assert isinstance(node, ast.Constant)\n            for direction, label in ((1, 'plus one'), (-1, 'minus one')):\n                tree = ast.parse(source)\n                fresh_sites = _sites(tree)\n                _, fresh_node, _ = fresh_sites[position]\n                assert isinstance(fresh_node, ast.Constant)\n                fresh_node.value = fresh_node.value + direction\n                mutants.append(Mutant(kind='constant_shift', line=fresh_node.lineno, detail=f'{detail} moved {label}', source=ast.unparse(tree)))\n            continue\n        tree = ast.parse(source)\n        fresh_sites = _sites(tree)\n        _, fresh_node, _ = fresh_sites[position]\n        _apply(tree, kind, fresh_node)\n        mutants.append(Mutant(kind=kind, line=fresh_node.lineno, detail=detail, source=ast.unparse(tree)))\n    return mutants",
+     "tree_equal": false
+    },
+    {
+     "detail": "return value mutants",
+     "kind": "return_none",
+     "line": 148,
+     "source": "\"\"\"The fixed mutation panel for slice 1.\n\nThe panel has four kinds of mutation. Returning no value in place of\na return value. Inverting a comparison operator. Moving a numeric\nconstant by one, in both directions. Negating a boolean constant.\nThe panel is fixed on purpose so that two runs over the same project\napply the same mutants in the same order.\n\"\"\"\nfrom __future__ import annotations\nimport ast\nimport copy\nfrom dataclasses import dataclass\n\n@dataclass(frozen=True)\nclass Mutant:\n    \"\"\"One mutant of one source module.\"\"\"\n    kind: str\n    line: int\n    detail: str\n    source: str\n\n    def describe(self) -> str:\n        return f'{self.kind} at line {self.line}, {self.detail}'\n\n    def to_dict(self) -> dict:\n        return {'kind': self.kind, 'line': self.line, 'detail': self.detail}\n_INVERSIONS = {ast.Eq: ast.NotEq, ast.NotEq: ast.Eq, ast.Lt: ast.GtE, ast.GtE: ast.Lt, ast.Gt: ast.LtE, ast.LtE: ast.Gt, ast.In: ast.NotIn, ast.NotIn: ast.In, ast.Is: ast.IsNot, ast.IsNot: ast.Is}\n\ndef _parents(tree: ast.AST) -> dict[int, ast.AST]:\n    parents: dict[int, ast.AST] = {}\n    for node in ast.walk(tree):\n        for child in ast.iter_child_nodes(node):\n            parents[id(child)] = node\n    return parents\n\ndef _sites(tree: ast.AST) -> list[tuple[str, ast.AST, str]]:\n    \"\"\"Collect mutation sites in deterministic walk order.\"\"\"\n    sites: list[tuple[str, ast.AST, str]] = []\n    for node in ast.walk(tree):\n        if isinstance(node, ast.Return) and node.value is not None:\n            if isinstance(node.value, ast.Constant) and node.value.value is None:\n                continue\n            sites.append(('return_none', node, f'return value {ast.unparse(node.value)}'))\n        elif isinstance(node, ast.Compare):\n            for index, op in enumerate(node.ops):\n                if type(op) in _INVERSIONS:\n                    sites.append(('compare_invert', node, f'comparison {ast.unparse(node)} operator {index}'))\n                    break\n        elif isinstance(node, ast.Constant):\n            if isinstance(node.value, bool):\n                sites.append(('bool_negate', node, f'boolean constant {node.value}'))\n            elif isinstance(node.value, (int, float)):\n                sites.append(('constant_shift', node, f'numeric constant {node.value}'))\n    return sites\n\ndef _apply(tree: ast.AST, kind: str, target: ast.AST) -> None:\n    parents = _parents(tree)\n    if kind == 'return_none':\n        assert isinstance(target, ast.Return)\n        target.value = ast.Constant(value=None)\n    elif kind == 'compare_invert':\n        assert isinstance(target, ast.Compare)\n        for index, op in enumerate(target.ops):\n            inverted = _INVERSIONS.get(type(op))\n            if inverted is not None:\n                target.ops[index] = inverted()\n                break\n    elif kind == 'bool_negate':\n        assert isinstance(target, ast.Constant)\n        target.value = not target.value\n    else:\n        raise ValueError(f'not an in place mutation kind, {kind}')\n\ndef generate_mutants(source: str) -> list[Mutant]:\n    \"\"\"Generate every mutant in the fixed panel for one module.\"\"\"\n    base = ast.parse(source)\n    mutants: list[Mutant] = []\n    sites = _sites(base)\n    for position, (kind, node, detail) in enumerate(sites):\n        if kind == 'constant_shift':\n            assert isinstance(node, ast.Constant)\n            for direction, label in ((1, 'plus one'), (-1, 'minus one')):\n                tree = ast.parse(source)\n                fresh_sites = _sites(tree)\n                _, fresh_node, _ = fresh_sites[position]\n                assert isinstance(fresh_node, ast.Constant)\n                fresh_node.value = fresh_node.value + direction\n                mutants.append(Mutant(kind='constant_shift', line=fresh_node.lineno, detail=f'{detail} moved {label}', source=ast.unparse(tree)))\n            continue\n        tree = ast.parse(source)\n        fresh_sites = _sites(tree)\n        _, fresh_node, _ = fresh_sites[position]\n        _apply(tree, kind, fresh_node)\n        mutants.append(Mutant(kind=kind, line=fresh_node.lineno, detail=detail, source=ast.unparse(tree)))\n    return None",
+     "tree_equal": false
+    },
+    {
+     "detail": "return value f'{self.kind} at line {self.line}, {self.detail}'",
+     "kind": "return_none",
+     "line": 27,
+     "source": "\"\"\"The fixed mutation panel for slice 1.\n\nThe panel has four kinds of mutation. Returning no value in place of\na return value. Inverting a comparison operator. Moving a numeric\nconstant by one, in both directions. Negating a boolean constant.\nThe panel is fixed on purpose so that two runs over the same project\napply the same mutants in the same order.\n\"\"\"\nfrom __future__ import annotations\nimport ast\nimport copy\nfrom dataclasses import dataclass\n\n@dataclass(frozen=True)\nclass Mutant:\n    \"\"\"One mutant of one source module.\"\"\"\n    kind: str\n    line: int\n    detail: str\n    source: str\n\n    def describe(self) -> str:\n        return None\n\n    def to_dict(self) -> dict:\n        return {'kind': self.kind, 'line': self.line, 'detail': self.detail}\n_INVERSIONS = {ast.Eq: ast.NotEq, ast.NotEq: ast.Eq, ast.Lt: ast.GtE, ast.GtE: ast.Lt, ast.Gt: ast.LtE, ast.LtE: ast.Gt, ast.In: ast.NotIn, ast.NotIn: ast.In, ast.Is: ast.IsNot, ast.IsNot: ast.Is}\n\ndef _parents(tree: ast.AST) -> dict[int, ast.AST]:\n    parents: dict[int, ast.AST] = {}\n    for node in ast.walk(tree):\n        for child in ast.iter_child_nodes(node):\n            parents[id(child)] = node\n    return parents\n\ndef _sites(tree: ast.AST) -> list[tuple[str, ast.AST, str]]:\n    \"\"\"Collect mutation sites in deterministic walk order.\"\"\"\n    sites: list[tuple[str, ast.AST, str]] = []\n    for node in ast.walk(tree):\n        if isinstance(node, ast.Return) and node.value is not None:\n            if isinstance(node.value, ast.Constant) and node.value.value is None:\n                continue\n            sites.append(('return_none', node, f'return value {ast.unparse(node.value)}'))\n        elif isinstance(node, ast.Compare):\n            for index, op in enumerate(node.ops):\n                if type(op) in _INVERSIONS:\n                    sites.append(('compare_invert', node, f'comparison {ast.unparse(node)} operator {index}'))\n                    break\n        elif isinstance(node, ast.Constant):\n            if isinstance(node.value, bool):\n                sites.append(('bool_negate', node, f'boolean constant {node.value}'))\n            elif isinstance(node.value, (int, float)):\n                sites.append(('constant_shift', node, f'numeric constant {node.value}'))\n    return sites\n\ndef _apply(tree: ast.AST, kind: str, target: ast.AST) -> None:\n    parents = _parents(tree)\n    if kind == 'return_none':\n        assert isinstance(target, ast.Return)\n        target.value = ast.Constant(value=None)\n    elif kind == 'compare_invert':\n        assert isinstance(target, ast.Compare)\n        for index, op in enumerate(target.ops):\n            inverted = _INVERSIONS.get(type(op))\n            if inverted is not None:\n                target.ops[index] = inverted()\n                break\n    elif kind == 'bool_negate':\n        assert isinstance(target, ast.Constant)\n        target.value = not target.value\n    else:\n        raise ValueError(f'not an in place mutation kind, {kind}')\n\ndef generate_mutants(source: str) -> list[Mutant]:\n    \"\"\"Generate every mutant in the fixed panel for one module.\"\"\"\n    base = ast.parse(source)\n    mutants: list[Mutant] = []\n    sites = _sites(base)\n    for position, (kind, node, detail) in enumerate(sites):\n        if kind == 'constant_shift':\n            assert isinstance(node, ast.Constant)\n            for direction, label in ((1, 'plus one'), (-1, 'minus one')):\n                tree = ast.parse(source)\n                fresh_sites = _sites(tree)\n                _, fresh_node, _ = fresh_sites[position]\n                assert isinstance(fresh_node, ast.Constant)\n                fresh_node.value = fresh_node.value + direction\n                mutants.append(Mutant(kind='constant_shift', line=fresh_node.lineno, detail=f'{detail} moved {label}', source=ast.unparse(tree)))\n            continue\n        tree = ast.parse(source)\n        fresh_sites = _sites(tree)\n        _, fresh_node, _ = fresh_sites[position]\n        _apply(tree, kind, fresh_node)\n        mutants.append(Mutant(kind=kind, line=fresh_node.lineno, detail=detail, source=ast.unparse(tree)))\n    return mutants",
+     "tree_equal": false
+    },
+    {
+     "detail": "return value {'kind': self.kind, 'line': self.line, 'detail': self.detail}",
+     "kind": "return_none",
+     "line": 30,
+     "source": "\"\"\"The fixed mutation panel for slice 1.\n\nThe panel has four kinds of mutation. Returning no value in place of\na return value. Inverting a comparison operator. Moving a numeric\nconstant by one, in both directions. Negating a boolean constant.\nThe panel is fixed on purpose so that two runs over the same project\napply the same mutants in the same order.\n\"\"\"\nfrom __future__ import annotations\nimport ast\nimport copy\nfrom dataclasses import dataclass\n\n@dataclass(frozen=True)\nclass Mutant:\n    \"\"\"One mutant of one source module.\"\"\"\n    kind: str\n    line: int\n    detail: str\n    source: str\n\n    def describe(self) -> str:\n        return f'{self.kind} at line {self.line}, {self.detail}'\n\n    def to_dict(self) -> dict:\n        return None\n_INVERSIONS = {ast.Eq: ast.NotEq, ast.NotEq: ast.Eq, ast.Lt: ast.GtE, ast.GtE: ast.Lt, ast.Gt: ast.LtE, ast.LtE: ast.Gt, ast.In: ast.NotIn, ast.NotIn: ast.In, ast.Is: ast.IsNot, ast.IsNot: ast.Is}\n\ndef _parents(tree: ast.AST) -> dict[int, ast.AST]:\n    parents: dict[int, ast.AST] = {}\n    for node in ast.walk(tree):\n        for child in ast.iter_child_nodes(node):\n            parents[id(child)] = node\n    return parents\n\ndef _sites(tree: ast.AST) -> list[tuple[str, ast.AST, str]]:\n    \"\"\"Collect mutation sites in deterministic walk order.\"\"\"\n    sites: list[tuple[str, ast.AST, str]] = []\n    for node in ast.walk(tree):\n        if isinstance(node, ast.Return) and node.value is not None:\n            if isinstance(node.value, ast.Constant) and node.value.value is None:\n                continue\n            sites.append(('return_none', node, f'return value {ast.unparse(node.value)}'))\n        elif isinstance(node, ast.Compare):\n            for index, op in enumerate(node.ops):\n                if type(op) in _INVERSIONS:\n                    sites.append(('compare_invert', node, f'comparison {ast.unparse(node)} operator {index}'))\n                    break\n        elif isinstance(node, ast.Constant):\n            if isinstance(node.value, bool):\n                sites.append(('bool_negate', node, f'boolean constant {node.value}'))\n            elif isinstance(node.value, (int, float)):\n                sites.append(('constant_shift', node, f'numeric constant {node.value}'))\n    return sites\n\ndef _apply(tree: ast.AST, kind: str, target: ast.AST) -> None:\n    parents = _parents(tree)\n    if kind == 'return_none':\n        assert isinstance(target, ast.Return)\n        target.value = ast.Constant(value=None)\n    elif kind == 'compare_invert':\n        assert isinstance(target, ast.Compare)\n        for index, op in enumerate(target.ops):\n            inverted = _INVERSIONS.get(type(op))\n            if inverted is not None:\n                target.ops[index] = inverted()\n                break\n    elif kind == 'bool_negate':\n        assert isinstance(target, ast.Constant)\n        target.value = not target.value\n    else:\n        raise ValueError(f'not an in place mutation kind, {kind}')\n\ndef generate_mutants(source: str) -> list[Mutant]:\n    \"\"\"Generate every mutant in the fixed panel for one module.\"\"\"\n    base = ast.parse(source)\n    mutants: list[Mutant] = []\n    sites = _sites(base)\n    for position, (kind, node, detail) in enumerate(sites):\n        if kind == 'constant_shift':\n            assert isinstance(node, ast.Constant)\n            for direction, label in ((1, 'plus one'), (-1, 'minus one')):\n                tree = ast.parse(source)\n                fresh_sites = _sites(tree)\n                _, fresh_node, _ = fresh_sites[position]\n                assert isinstance(fresh_node, ast.Constant)\n                fresh_node.value = fresh_node.value + direction\n                mutants.append(Mutant(kind='constant_shift', line=fresh_node.lineno, detail=f'{detail} moved {label}', source=ast.unparse(tree)))\n            continue\n        tree = ast.parse(source)\n        fresh_sites = _sites(tree)\n        _, fresh_node, _ = fresh_sites[position]\n        _apply(tree, kind, fresh_node)\n        mutants.append(Mutant(kind=kind, line=fresh_node.lineno, detail=detail, source=ast.unparse(tree)))\n    return mutants",
+     "tree_equal": false
+    },
+    {
+     "detail": "comparison kind == 'return_none' operator 0",
+     "kind": "compare_invert",
+     "line": 94,
+     "source": "\"\"\"The fixed mutation panel for slice 1.\n\nThe panel has four kinds of mutation. Returning no value in place of\na return value. Inverting a comparison operator. Moving a numeric\nconstant by one, in both directions. Negating a boolean constant.\nThe panel is fixed on purpose so that two runs over the same project\napply the same mutants in the same order.\n\"\"\"\nfrom __future__ import annotations\nimport ast\nimport copy\nfrom dataclasses import dataclass\n\n@dataclass(frozen=True)\nclass Mutant:\n    \"\"\"One mutant of one source module.\"\"\"\n    kind: str\n    line: int\n    detail: str\n    source: str\n\n    def describe(self) -> str:\n        return f'{self.kind} at line {self.line}, {self.detail}'\n\n    def to_dict(self) -> dict:\n        return {'kind': self.kind, 'line': self.line, 'detail': self.detail}\n_INVERSIONS = {ast.Eq: ast.NotEq, ast.NotEq: ast.Eq, ast.Lt: ast.GtE, ast.GtE: ast.Lt, ast.Gt: ast.LtE, ast.LtE: ast.Gt, ast.In: ast.NotIn, ast.NotIn: ast.In, ast.Is: ast.IsNot, ast.IsNot: ast.Is}\n\ndef _parents(tree: ast.AST) -> dict[int, ast.AST]:\n    parents: dict[int, ast.AST] = {}\n    for node in ast.walk(tree):\n        for child in ast.iter_child_nodes(node):\n            parents[id(child)] = node\n    return parents\n\ndef _sites(tree: ast.AST) -> list[tuple[str, ast.AST, str]]:\n    \"\"\"Collect mutation sites in deterministic walk order.\"\"\"\n    sites: list[tuple[str, ast.AST, str]] = []\n    for node in ast.walk(tree):\n        if isinstance(node, ast.Return) and node.value is not None:\n            if isinstance(node.value, ast.Constant) and node.value.value is None:\n                continue\n            sites.append(('return_none', node, f'return value {ast.unparse(node.value)}'))\n        elif isinstance(node, ast.Compare):\n            for index, op in enumerate(node.ops):\n                if type(op) in _INVERSIONS:\n                    sites.append(('compare_invert', node, f'comparison {ast.unparse(node)} operator {index}'))\n                    break\n        elif isinstance(node, ast.Constant):\n            if isinstance(node.value, bool):\n                sites.append(('bool_negate', node, f'boolean constant {node.value}'))\n            elif isinstance(node.value, (int, float)):\n                sites.append(('constant_shift', node, f'numeric constant {node.value}'))\n    return sites\n\ndef _apply(tree: ast.AST, kind: str, target: ast.AST) -> None:\n    parents = _parents(tree)\n    if kind != 'return_none':\n        assert isinstance(target, ast.Return)\n        target.value = ast.Constant(value=None)\n    elif kind == 'compare_invert':\n        assert isinstance(target, ast.Compare)\n        for index, op in enumerate(target.ops):\n            inverted = _INVERSIONS.get(type(op))\n            if inverted is not None:\n                target.ops[index] = inverted()\n                break\n    elif kind == 'bool_negate':\n        assert isinstance(target, ast.Constant)\n        target.value = not target.value\n    else:\n        raise ValueError(f'not an in place mutation kind, {kind}')\n\ndef generate_mutants(source: str) -> list[Mutant]:\n    \"\"\"Generate every mutant in the fixed panel for one module.\"\"\"\n    base = ast.parse(source)\n    mutants: list[Mutant] = []\n    sites = _sites(base)\n    for position, (kind, node, detail) in enumerate(sites):\n        if kind == 'constant_shift':\n            assert isinstance(node, ast.Constant)\n            for direction, label in ((1, 'plus one'), (-1, 'minus one')):\n                tree = ast.parse(source)\n                fresh_sites = _sites(tree)\n                _, fresh_node, _ = fresh_sites[position]\n                assert isinstance(fresh_node, ast.Constant)\n                fresh_node.value = fresh_node.value + direction\n                mutants.append(Mutant(kind='constant_shift', line=fresh_node.lineno, detail=f'{detail} moved {label}', source=ast.unparse(tree)))\n            continue\n        tree = ast.parse(source)\n        fresh_sites = _sites(tree)\n        _, fresh_node, _ = fresh_sites[position]\n        _apply(tree, kind, fresh_node)\n        mutants.append(Mutant(kind=kind, line=fresh_node.lineno, detail=detail, source=ast.unparse(tree)))\n    return mutants",
+     "tree_equal": false
+    },
+    {
+     "detail": "boolean constant True",
+     "kind": "bool_negate",
+     "line": 17,
+     "source": "\"\"\"The fixed mutation panel for slice 1.\n\nThe panel has four kinds of mutation. Returning no value in place of\na return value. Inverting a comparison operator. Moving a numeric\nconstant by one, in both directions. Negating a boolean constant.\nThe panel is fixed on purpose so that two runs over the same project\napply the same mutants in the same order.\n\"\"\"\nfrom __future__ import annotations\nimport ast\nimport copy\nfrom dataclasses import dataclass\n\n@dataclass(frozen=False)\nclass Mutant:\n    \"\"\"One mutant of one source module.\"\"\"\n    kind: str\n    line: int\n    detail: str\n    source: str\n\n    def describe(self) -> str:\n        return f'{self.kind} at line {self.line}, {self.detail}'\n\n    def to_dict(self) -> dict:\n        return {'kind': self.kind, 'line': self.line, 'detail': self.detail}\n_INVERSIONS = {ast.Eq: ast.NotEq, ast.NotEq: ast.Eq, ast.Lt: ast.GtE, ast.GtE: ast.Lt, ast.Gt: ast.LtE, ast.LtE: ast.Gt, ast.In: ast.NotIn, ast.NotIn: ast.In, ast.Is: ast.IsNot, ast.IsNot: ast.Is}\n\ndef _parents(tree: ast.AST) -> dict[int, ast.AST]:\n    parents: dict[int, ast.AST] = {}\n    for node in ast.walk(tree):\n        for child in ast.iter_child_nodes(node):\n            parents[id(child)] = node\n    return parents\n\ndef _sites(tree: ast.AST) -> list[tuple[str, ast.AST, str]]:\n    \"\"\"Collect mutation sites in deterministic walk order.\"\"\"\n    sites: list[tuple[str, ast.AST, str]] = []\n    for node in ast.walk(tree):\n        if isinstance(node, ast.Return) and node.value is not None:\n            if isinstance(node.value, ast.Constant) and node.value.value is None:\n                continue\n            sites.append(('return_none', node, f'return value {ast.unparse(node.value)}'))\n        elif isinstance(node, ast.Compare):\n            for index, op in enumerate(node.ops):\n                if type(op) in _INVERSIONS:\n                    sites.append(('compare_invert', node, f'comparison {ast.unparse(node)} operator {index}'))\n                    break\n        elif isinstance(node, ast.Constant):\n            if isinstance(node.value, bool):\n                sites.append(('bool_negate', node, f'boolean constant {node.value}'))\n            elif isinstance(node.value, (int, float)):\n                sites.append(('constant_shift', node, f'numeric constant {node.value}'))\n    return sites\n\ndef _apply(tree: ast.AST, kind: str, target: ast.AST) -> None:\n    parents = _parents(tree)\n    if kind == 'return_none':\n        assert isinstance(target, ast.Return)\n        target.value = ast.Constant(value=None)\n    elif kind == 'compare_invert':\n        assert isinstance(target, ast.Compare)\n        for index, op in enumerate(target.ops):\n            inverted = _INVERSIONS.get(type(op))\n            if inverted is not None:\n                target.ops[index] = inverted()\n                break\n    elif kind == 'bool_negate':\n        assert isinstance(target, ast.Constant)\n        target.value = not target.value\n    else:\n        raise ValueError(f'not an in place mutation kind, {kind}')\n\ndef generate_mutants(source: str) -> list[Mutant]:\n    \"\"\"Generate every mutant in the fixed panel for one module.\"\"\"\n    base = ast.parse(source)\n    mutants: list[Mutant] = []\n    sites = _sites(base)\n    for position, (kind, node, detail) in enumerate(sites):\n        if kind == 'constant_shift':\n            assert isinstance(node, ast.Constant)\n            for direction, label in ((1, 'plus one'), (-1, 'minus one')):\n                tree = ast.parse(source)\n                fresh_sites = _sites(tree)\n                _, fresh_node, _ = fresh_sites[position]\n                assert isinstance(fresh_node, ast.Constant)\n                fresh_node.value = fresh_node.value + direction\n                mutants.append(Mutant(kind='constant_shift', line=fresh_node.lineno, detail=f'{detail} moved {label}', source=ast.unparse(tree)))\n            continue\n        tree = ast.parse(source)\n        fresh_sites = _sites(tree)\n        _, fresh_node, _ = fresh_sites[position]\n        _apply(tree, kind, fresh_node)\n        mutants.append(Mutant(kind=kind, line=fresh_node.lineno, detail=detail, source=ast.unparse(tree)))\n    return mutants",
+     "tree_equal": false
+    },
+    {
+     "detail": "comparison kind == 'compare_invert' operator 0",
+     "kind": "compare_invert",
+     "line": 97,
+     "source": "\"\"\"The fixed mutation panel for slice 1.\n\nThe panel has four kinds of mutation. Returning no value in place of\na return value. Inverting a comparison operator. Moving a numeric\nconstant by one, in both directions. Negating a boolean constant.\nThe panel is fixed on purpose so that two runs over the same project\napply the same mutants in the same order.\n\"\"\"\nfrom __future__ import annotations\nimport ast\nimport copy\nfrom dataclasses import dataclass\n\n@dataclass(frozen=True)\nclass Mutant:\n    \"\"\"One mutant of one source module.\"\"\"\n    kind: str\n    line: int\n    detail: str\n    source: str\n\n    def describe(self) -> str:\n        return f'{self.kind} at line {self.line}, {self.detail}'\n\n    def to_dict(self) -> dict:\n        return {'kind': self.kind, 'line': self.line, 'detail': self.detail}\n_INVERSIONS = {ast.Eq: ast.NotEq, ast.NotEq: ast.Eq, ast.Lt: ast.GtE, ast.GtE: ast.Lt, ast.Gt: ast.LtE, ast.LtE: ast.Gt, ast.In: ast.NotIn, ast.NotIn: ast.In, ast.Is: ast.IsNot, ast.IsNot: ast.Is}\n\ndef _parents(tree: ast.AST) -> dict[int, ast.AST]:\n    parents: dict[int, ast.AST] = {}\n    for node in ast.walk(tree):\n        for child in ast.iter_child_nodes(node):\n            parents[id(child)] = node\n    return parents\n\ndef _sites(tree: ast.AST) -> list[tuple[str, ast.AST, str]]:\n    \"\"\"Collect mutation sites in deterministic walk order.\"\"\"\n    sites: list[tuple[str, ast.AST, str]] = []\n    for node in ast.walk(tree):\n        if isinstance(node, ast.Return) and node.value is not None:\n            if isinstance(node.value, ast.Constant) and node.value.value is None:\n                continue\n            sites.append(('return_none', node, f'return value {ast.unparse(node.value)}'))\n        elif isinstance(node, ast.Compare):\n            for index, op in enumerate(node.ops):\n                if type(op) in _INVERSIONS:\n                    sites.append(('compare_invert', node, f'comparison {ast.unparse(node)} operator {index}'))\n                    break\n        elif isinstance(node, ast.Constant):\n            if isinstance(node.value, bool):\n                sites.append(('bool_negate', node, f'boolean constant {node.value}'))\n            elif isinstance(node.value, (int, float)):\n                sites.append(('constant_shift', node, f'numeric constant {node.value}'))\n    return sites\n\ndef _apply(tree: ast.AST, kind: str, target: ast.AST) -> None:\n    parents = _parents(tree)\n    if kind == 'return_none':\n        assert isinstance(target, ast.Return)\n        target.value = ast.Constant(value=None)\n    elif kind != 'compare_invert':\n        assert isinstance(target, ast.Compare)\n        for index, op in enumerate(target.ops):\n            inverted = _INVERSIONS.get(type(op))\n            if inverted is not None:\n                target.ops[index] = inverted()\n                break\n    elif kind == 'bool_negate':\n        assert isinstance(target, ast.Constant)\n        target.value = not target.value\n    else:\n        raise ValueError(f'not an in place mutation kind, {kind}')\n\ndef generate_mutants(source: str) -> list[Mutant]:\n    \"\"\"Generate every mutant in the fixed panel for one module.\"\"\"\n    base = ast.parse(source)\n    mutants: list[Mutant] = []\n    sites = _sites(base)\n    for position, (kind, node, detail) in enumerate(sites):\n        if kind == 'constant_shift':\n            assert isinstance(node, ast.Constant)\n            for direction, label in ((1, 'plus one'), (-1, 'minus one')):\n                tree = ast.parse(source)\n                fresh_sites = _sites(tree)\n                _, fresh_node, _ = fresh_sites[position]\n                assert isinstance(fresh_node, ast.Constant)\n                fresh_node.value = fresh_node.value + direction\n                mutants.append(Mutant(kind='constant_shift', line=fresh_node.lineno, detail=f'{detail} moved {label}', source=ast.unparse(tree)))\n            continue\n        tree = ast.parse(source)\n        fresh_sites = _sites(tree)\n        _, fresh_node, _ = fresh_sites[position]\n        _apply(tree, kind, fresh_node)\n        mutants.append(Mutant(kind=kind, line=fresh_node.lineno, detail=detail, source=ast.unparse(tree)))\n    return mutants",
+     "tree_equal": false
+    },
+    {
+     "detail": "comparison kind == 'constant_shift' operator 0",
+     "kind": "compare_invert",
+     "line": 119,
+     "source": "\"\"\"The fixed mutation panel for slice 1.\n\nThe panel has four kinds of mutation. Returning no value in place of\na return value. Inverting a comparison operator. Moving a numeric\nconstant by one, in both directions. Negating a boolean constant.\nThe panel is fixed on purpose so that two runs over the same project\napply the same mutants in the same order.\n\"\"\"\nfrom __future__ import annotations\nimport ast\nimport copy\nfrom dataclasses import dataclass\n\n@dataclass(frozen=True)\nclass Mutant:\n    \"\"\"One mutant of one source module.\"\"\"\n    kind: str\n    line: int\n    detail: str\n    source: str\n\n    def describe(self) -> str:\n        return f'{self.kind} at line {self.line}, {self.detail}'\n\n    def to_dict(self) -> dict:\n        return {'kind': self.kind, 'line': self.line, 'detail': self.detail}\n_INVERSIONS = {ast.Eq: ast.NotEq, ast.NotEq: ast.Eq, ast.Lt: ast.GtE, ast.GtE: ast.Lt, ast.Gt: ast.LtE, ast.LtE: ast.Gt, ast.In: ast.NotIn, ast.NotIn: ast.In, ast.Is: ast.IsNot, ast.IsNot: ast.Is}\n\ndef _parents(tree: ast.AST) -> dict[int, ast.AST]:\n    parents: dict[int, ast.AST] = {}\n    for node in ast.walk(tree):\n        for child in ast.iter_child_nodes(node):\n            parents[id(child)] = node\n    return parents\n\ndef _sites(tree: ast.AST) -> list[tuple[str, ast.AST, str]]:\n    \"\"\"Collect mutation sites in deterministic walk order.\"\"\"\n    sites: list[tuple[str, ast.AST, str]] = []\n    for node in ast.walk(tree):\n        if isinstance(node, ast.Return) and node.value is not None:\n            if isinstance(node.value, ast.Constant) and node.value.value is None:\n                continue\n            sites.append(('return_none', node, f'return value {ast.unparse(node.value)}'))\n        elif isinstance(node, ast.Compare):\n            for index, op in enumerate(node.ops):\n                if type(op) in _INVERSIONS:\n                    sites.append(('compare_invert', node, f'comparison {ast.unparse(node)} operator {index}'))\n                    break\n        elif isinstance(node, ast.Constant):\n            if isinstance(node.value, bool):\n                sites.append(('bool_negate', node, f'boolean constant {node.value}'))\n            elif isinstance(node.value, (int, float)):\n                sites.append(('constant_shift', node, f'numeric constant {node.value}'))\n    return sites\n\ndef _apply(tree: ast.AST, kind: str, target: ast.AST) -> None:\n    parents = _parents(tree)\n    if kind == 'return_none':\n        assert isinstance(target, ast.Return)\n        target.value = ast.Constant(value=None)\n    elif kind == 'compare_invert':\n        assert isinstance(target, ast.Compare)\n        for index, op in enumerate(target.ops):\n            inverted = _INVERSIONS.get(type(op))\n            if inverted is not None:\n                target.ops[index] = inverted()\n                break\n    elif kind == 'bool_negate':\n        assert isinstance(target, ast.Constant)\n        target.value = not target.value\n    else:\n        raise ValueError(f'not an in place mutation kind, {kind}')\n\ndef generate_mutants(source: str) -> list[Mutant]:\n    \"\"\"Generate every mutant in the fixed panel for one module.\"\"\"\n    base = ast.parse(source)\n    mutants: list[Mutant] = []\n    sites = _sites(base)\n    for position, (kind, node, detail) in enumerate(sites):\n        if kind != 'constant_shift':\n            assert isinstance(node, ast.Constant)\n            for direction, label in ((1, 'plus one'), (-1, 'minus one')):\n                tree = ast.parse(source)\n                fresh_sites = _sites(tree)\n                _, fresh_node, _ = fresh_sites[position]\n                assert isinstance(fresh_node, ast.Constant)\n                fresh_node.value = fresh_node.value + direction\n                mutants.append(Mutant(kind='constant_shift', line=fresh_node.lineno, detail=f'{detail} moved {label}', source=ast.unparse(tree)))\n            continue\n        tree = ast.parse(source)\n        fresh_sites = _sites(tree)\n        _, fresh_node, _ = fresh_sites[position]\n        _apply(tree, kind, fresh_node)\n        mutants.append(Mutant(kind=kind, line=fresh_node.lineno, detail=detail, source=ast.unparse(tree)))\n    return mutants",
+     "tree_equal": false
+    },
+    {
+     "detail": "comparison node.value is not None operator 0",
+     "kind": "compare_invert",
+     "line": 63,
+     "source": "\"\"\"The fixed mutation panel for slice 1.\n\nThe panel has four kinds of mutation. Returning no value in place of\na return value. Inverting a comparison operator. Moving a numeric\nconstant by one, in both directions. Negating a boolean constant.\nThe panel is fixed on purpose so that two runs over the same project\napply the same mutants in the same order.\n\"\"\"\nfrom __future__ import annotations\nimport ast\nimport copy\nfrom dataclasses import dataclass\n\n@dataclass(frozen=True)\nclass Mutant:\n    \"\"\"One mutant of one source module.\"\"\"\n    kind: str\n    line: int\n    detail: str\n    source: str\n\n    def describe(self) -> str:\n        return f'{self.kind} at line {self.line}, {self.detail}'\n\n    def to_dict(self) -> dict:\n        return {'kind': self.kind, 'line': self.line, 'detail': self.detail}\n_INVERSIONS = {ast.Eq: ast.NotEq, ast.NotEq: ast.Eq, ast.Lt: ast.GtE, ast.GtE: ast.Lt, ast.Gt: ast.LtE, ast.LtE: ast.Gt, ast.In: ast.NotIn, ast.NotIn: ast.In, ast.Is: ast.IsNot, ast.IsNot: ast.Is}\n\ndef _parents(tree: ast.AST) -> dict[int, ast.AST]:\n    parents: dict[int, ast.AST] = {}\n    for node in ast.walk(tree):\n        for child in ast.iter_child_nodes(node):\n            parents[id(child)] = node\n    return parents\n\ndef _sites(tree: ast.AST) -> list[tuple[str, ast.AST, str]]:\n    \"\"\"Collect mutation sites in deterministic walk order.\"\"\"\n    sites: list[tuple[str, ast.AST, str]] = []\n    for node in ast.walk(tree):\n        if isinstance(node, ast.Return) and node.value is None:\n            if isinstance(node.value, ast.Constant) and node.value.value is None:\n                continue\n            sites.append(('return_none', node, f'return value {ast.unparse(node.value)}'))\n        elif isinstance(node, ast.Compare):\n            for index, op in enumerate(node.ops):\n                if type(op) in _INVERSIONS:\n                    sites.append(('compare_invert', node, f'comparison {ast.unparse(node)} operator {index}'))\n                    break\n        elif isinstance(node, ast.Constant):\n            if isinstance(node.value, bool):\n                sites.append(('bool_negate', node, f'boolean constant {node.value}'))\n            elif isinstance(node.value, (int, float)):\n                sites.append(('constant_shift', node, f'numeric constant {node.value}'))\n    return sites\n\ndef _apply(tree: ast.AST, kind: str, target: ast.AST) -> None:\n    parents = _parents(tree)\n    if kind == 'return_none':\n        assert isinstance(target, ast.Return)\n        target.value = ast.Constant(value=None)\n    elif kind == 'compare_invert':\n        assert isinstance(target, ast.Compare)\n        for index, op in enumerate(target.ops):\n            inverted = _INVERSIONS.get(type(op))\n            if inverted is not None:\n                target.ops[index] = inverted()\n                break\n    elif kind == 'bool_negate':\n        assert isinstance(target, ast.Constant)\n        target.value = not target.value\n    else:\n        raise ValueError(f'not an in place mutation kind, {kind}')\n\ndef generate_mutants(source: str) -> list[Mutant]:\n    \"\"\"Generate every mutant in the fixed panel for one module.\"\"\"\n    base = ast.parse(source)\n    mutants: list[Mutant] = []\n    sites = _sites(base)\n    for position, (kind, node, detail) in enumerate(sites):\n        if kind == 'constant_shift':\n            assert isinstance(node, ast.Constant)\n            for direction, label in ((1, 'plus one'), (-1, 'minus one')):\n                tree = ast.parse(source)\n                fresh_sites = _sites(tree)\n                _, fresh_node, _ = fresh_sites[position]\n                assert isinstance(fresh_node, ast.Constant)\n                fresh_node.value = fresh_node.value + direction\n                mutants.append(Mutant(kind='constant_shift', line=fresh_node.lineno, detail=f'{detail} moved {label}', source=ast.unparse(tree)))\n            continue\n        tree = ast.parse(source)\n        fresh_sites = _sites(tree)\n        _, fresh_node, _ = fresh_sites[position]\n        _apply(tree, kind, fresh_node)\n        mutants.append(Mutant(kind=kind, line=fresh_node.lineno, detail=detail, source=ast.unparse(tree)))\n    return mutants",
+     "tree_equal": false
+    },
+    {
+     "detail": "comparison kind == 'bool_negate' operator 0",
+     "kind": "compare_invert",
+     "line": 104,
+     "source": "\"\"\"The fixed mutation panel for slice 1.\n\nThe panel has four kinds of mutation. Returning no value in place of\na return value. Inverting a comparison operator. Moving a numeric\nconstant by one, in both directions. Negating a boolean constant.\nThe panel is fixed on purpose so that two runs over the same project\napply the same mutants in the same order.\n\"\"\"\nfrom __future__ import annotations\nimport ast\nimport copy\nfrom dataclasses import dataclass\n\n@dataclass(frozen=True)\nclass Mutant:\n    \"\"\"One mutant of one source module.\"\"\"\n    kind: str\n    line: int\n    detail: str\n    source: str\n\n    def describe(self) -> str:\n        return f'{self.kind} at line {self.line}, {self.detail}'\n\n    def to_dict(self) -> dict:\n        return {'kind': self.kind, 'line': self.line, 'detail': self.detail}\n_INVERSIONS = {ast.Eq: ast.NotEq, ast.NotEq: ast.Eq, ast.Lt: ast.GtE, ast.GtE: ast.Lt, ast.Gt: ast.LtE, ast.LtE: ast.Gt, ast.In: ast.NotIn, ast.NotIn: ast.In, ast.Is: ast.IsNot, ast.IsNot: ast.Is}\n\ndef _parents(tree: ast.AST) -> dict[int, ast.AST]:\n    parents: dict[int, ast.AST] = {}\n    for node in ast.walk(tree):\n        for child in ast.iter_child_nodes(node):\n            parents[id(child)] = node\n    return parents\n\ndef _sites(tree: ast.AST) -> list[tuple[str, ast.AST, str]]:\n    \"\"\"Collect mutation sites in deterministic walk order.\"\"\"\n    sites: list[tuple[str, ast.AST, str]] = []\n    for node in ast.walk(tree):\n        if isinstance(node, ast.Return) and node.value is not None:\n            if isinstance(node.value, ast.Constant) and node.value.value is None:\n                continue\n            sites.append(('return_none', node, f'return value {ast.unparse(node.value)}'))\n        elif isinstance(node, ast.Compare):\n            for index, op in enumerate(node.ops):\n                if type(op) in _INVERSIONS:\n                    sites.append(('compare_invert', node, f'comparison {ast.unparse(node)} operator {index}'))\n                    break\n        elif isinstance(node, ast.Constant):\n            if isinstance(node.value, bool):\n                sites.append(('bool_negate', node, f'boolean constant {node.value}'))\n            elif isinstance(node.value, (int, float)):\n                sites.append(('constant_shift', node, f'numeric constant {node.value}'))\n    return sites\n\ndef _apply(tree: ast.AST, kind: str, target: ast.AST) -> None:\n    parents = _parents(tree)\n    if kind == 'return_none':\n        assert isinstance(target, ast.Return)\n        target.value = ast.Constant(value=None)\n    elif kind == 'compare_invert':\n        assert isinstance(target, ast.Compare)\n        for index, op in enumerate(target.ops):\n            inverted = _INVERSIONS.get(type(op))\n            if inverted is not None:\n                target.ops[index] = inverted()\n                break\n    elif kind != 'bool_negate':\n        assert isinstance(target, ast.Constant)\n        target.value = not target.value\n    else:\n        raise ValueError(f'not an in place mutation kind, {kind}')\n\ndef generate_mutants(source: str) -> list[Mutant]:\n    \"\"\"Generate every mutant in the fixed panel for one module.\"\"\"\n    base = ast.parse(source)\n    mutants: list[Mutant] = []\n    sites = _sites(base)\n    for position, (kind, node, detail) in enumerate(sites):\n        if kind == 'constant_shift':\n            assert isinstance(node, ast.Constant)\n            for direction, label in ((1, 'plus one'), (-1, 'minus one')):\n                tree = ast.parse(source)\n                fresh_sites = _sites(tree)\n                _, fresh_node, _ = fresh_sites[position]\n                assert isinstance(fresh_node, ast.Constant)\n                fresh_node.value = fresh_node.value + direction\n                mutants.append(Mutant(kind='constant_shift', line=fresh_node.lineno, detail=f'{detail} moved {label}', source=ast.unparse(tree)))\n            continue\n        tree = ast.parse(source)\n        fresh_sites = _sites(tree)\n        _, fresh_node, _ = fresh_sites[position]\n        _apply(tree, kind, fresh_node)\n        mutants.append(Mutant(kind=kind, line=fresh_node.lineno, detail=detail, source=ast.unparse(tree)))\n    return mutants",
+     "tree_equal": false
+    },
+    {
+     "detail": "comparison node.value.value is None operator 0",
+     "kind": "compare_invert",
+     "line": 64,
+     "source": "\"\"\"The fixed mutation panel for slice 1.\n\nThe panel has four kinds of mutation. Returning no value in place of\na return value. Inverting a comparison operator. Moving a numeric\nconstant by one, in both directions. Negating a boolean constant.\nThe panel is fixed on purpose so that two runs over the same project\napply the same mutants in the same order.\n\"\"\"\nfrom __future__ import annotations\nimport ast\nimport copy\nfrom dataclasses import dataclass\n\n@dataclass(frozen=True)\nclass Mutant:\n    \"\"\"One mutant of one source module.\"\"\"\n    kind: str\n    line: int\n    detail: str\n    source: str\n\n    def describe(self) -> str:\n        return f'{self.kind} at line {self.line}, {self.detail}'\n\n    def to_dict(self) -> dict:\n        return {'kind': self.kind, 'line': self.line, 'detail': self.detail}\n_INVERSIONS = {ast.Eq: ast.NotEq, ast.NotEq: ast.Eq, ast.Lt: ast.GtE, ast.GtE: ast.Lt, ast.Gt: ast.LtE, ast.LtE: ast.Gt, ast.In: ast.NotIn, ast.NotIn: ast.In, ast.Is: ast.IsNot, ast.IsNot: ast.Is}\n\ndef _parents(tree: ast.AST) -> dict[int, ast.AST]:\n    parents: dict[int, ast.AST] = {}\n    for node in ast.walk(tree):\n        for child in ast.iter_child_nodes(node):\n            parents[id(child)] = node\n    return parents\n\ndef _sites(tree: ast.AST) -> list[tuple[str, ast.AST, str]]:\n    \"\"\"Collect mutation sites in deterministic walk order.\"\"\"\n    sites: list[tuple[str, ast.AST, str]] = []\n    for node in ast.walk(tree):\n        if isinstance(node, ast.Return) and node.value is not None:\n            if isinstance(node.value, ast.Constant) and node.value.value is not None:\n                continue\n            sites.append(('return_none', node, f'return value {ast.unparse(node.value)}'))\n        elif isinstance(node, ast.Compare):\n            for index, op in enumerate(node.ops):\n                if type(op) in _INVERSIONS:\n                    sites.append(('compare_invert', node, f'comparison {ast.unparse(node)} operator {index}'))\n                    break\n        elif isinstance(node, ast.Constant):\n            if isinstance(node.value, bool):\n                sites.append(('bool_negate', node, f'boolean constant {node.value}'))\n            elif isinstance(node.value, (int, float)):\n                sites.append(('constant_shift', node, f'numeric constant {node.value}'))\n    return sites\n\ndef _apply(tree: ast.AST, kind: str, target: ast.AST) -> None:\n    parents = _parents(tree)\n    if kind == 'return_none':\n        assert isinstance(target, ast.Return)\n        target.value = ast.Constant(value=None)\n    elif kind == 'compare_invert':\n        assert isinstance(target, ast.Compare)\n        for index, op in enumerate(target.ops):\n            inverted = _INVERSIONS.get(type(op))\n            if inverted is not None:\n                target.ops[index] = inverted()\n                break\n    elif kind == 'bool_negate':\n        assert isinstance(target, ast.Constant)\n        target.value = not target.value\n    else:\n        raise ValueError(f'not an in place mutation kind, {kind}')\n\ndef generate_mutants(source: str) -> list[Mutant]:\n    \"\"\"Generate every mutant in the fixed panel for one module.\"\"\"\n    base = ast.parse(source)\n    mutants: list[Mutant] = []\n    sites = _sites(base)\n    for position, (kind, node, detail) in enumerate(sites):\n        if kind == 'constant_shift':\n            assert isinstance(node, ast.Constant)\n            for direction, label in ((1, 'plus one'), (-1, 'minus one')):\n                tree = ast.parse(source)\n                fresh_sites = _sites(tree)\n                _, fresh_node, _ = fresh_sites[position]\n                assert isinstance(fresh_node, ast.Constant)\n                fresh_node.value = fresh_node.value + direction\n                mutants.append(Mutant(kind='constant_shift', line=fresh_node.lineno, detail=f'{detail} moved {label}', source=ast.unparse(tree)))\n            continue\n        tree = ast.parse(source)\n        fresh_sites = _sites(tree)\n        _, fresh_node, _ = fresh_sites[position]\n        _apply(tree, kind, fresh_node)\n        mutants.append(Mutant(kind=kind, line=fresh_node.lineno, detail=detail, source=ast.unparse(tree)))\n    return mutants",
+     "tree_equal": false
+    },
+    {
+     "detail": "comparison inverted is not None operator 0",
+     "kind": "compare_invert",
+     "line": 101,
+     "source": "\"\"\"The fixed mutation panel for slice 1.\n\nThe panel has four kinds of mutation. Returning no value in place of\na return value. Inverting a comparison operator. Moving a numeric\nconstant by one, in both directions. Negating a boolean constant.\nThe panel is fixed on purpose so that two runs over the same project\napply the same mutants in the same order.\n\"\"\"\nfrom __future__ import annotations\nimport ast\nimport copy\nfrom dataclasses import dataclass\n\n@dataclass(frozen=True)\nclass Mutant:\n    \"\"\"One mutant of one source module.\"\"\"\n    kind: str\n    line: int\n    detail: str\n    source: str\n\n    def describe(self) -> str:\n        return f'{self.kind} at line {self.line}, {self.detail}'\n\n    def to_dict(self) -> dict:\n        return {'kind': self.kind, 'line': self.line, 'detail': self.detail}\n_INVERSIONS = {ast.Eq: ast.NotEq, ast.NotEq: ast.Eq, ast.Lt: ast.GtE, ast.GtE: ast.Lt, ast.Gt: ast.LtE, ast.LtE: ast.Gt, ast.In: ast.NotIn, ast.NotIn: ast.In, ast.Is: ast.IsNot, ast.IsNot: ast.Is}\n\ndef _parents(tree: ast.AST) -> dict[int, ast.AST]:\n    parents: dict[int, ast.AST] = {}\n    for node in ast.walk(tree):\n        for child in ast.iter_child_nodes(node):\n            parents[id(child)] = node\n    return parents\n\ndef _sites(tree: ast.AST) -> list[tuple[str, ast.AST, str]]:\n    \"\"\"Collect mutation sites in deterministic walk order.\"\"\"\n    sites: list[tuple[str, ast.AST, str]] = []\n    for node in ast.walk(tree):\n        if isinstance(node, ast.Return) and node.value is not None:\n            if isinstance(node.value, ast.Constant) and node.value.value is None:\n                continue\n            sites.append(('return_none', node, f'return value {ast.unparse(node.value)}'))\n        elif isinstance(node, ast.Compare):\n            for index, op in enumerate(node.ops):\n                if type(op) in _INVERSIONS:\n                    sites.append(('compare_invert', node, f'comparison {ast.unparse(node)} operator {index}'))\n                    break\n        elif isinstance(node, ast.Constant):\n            if isinstance(node.value, bool):\n                sites.append(('bool_negate', node, f'boolean constant {node.value}'))\n            elif isinstance(node.value, (int, float)):\n                sites.append(('constant_shift', node, f'numeric constant {node.value}'))\n    return sites\n\ndef _apply(tree: ast.AST, kind: str, target: ast.AST) -> None:\n    parents = _parents(tree)\n    if kind == 'return_none':\n        assert isinstance(target, ast.Return)\n        target.value = ast.Constant(value=None)\n    elif kind == 'compare_invert':\n        assert isinstance(target, ast.Compare)\n        for index, op in enumerate(target.ops):\n            inverted = _INVERSIONS.get(type(op))\n            if inverted is None:\n                target.ops[index] = inverted()\n                break\n    elif kind == 'bool_negate':\n        assert isinstance(target, ast.Constant)\n        target.value = not target.value\n    else:\n        raise ValueError(f'not an in place mutation kind, {kind}')\n\ndef generate_mutants(source: str) -> list[Mutant]:\n    \"\"\"Generate every mutant in the fixed panel for one module.\"\"\"\n    base = ast.parse(source)\n    mutants: list[Mutant] = []\n    sites = _sites(base)\n    for position, (kind, node, detail) in enumerate(sites):\n        if kind == 'constant_shift':\n            assert isinstance(node, ast.Constant)\n            for direction, label in ((1, 'plus one'), (-1, 'minus one')):\n                tree = ast.parse(source)\n                fresh_sites = _sites(tree)\n                _, fresh_node, _ = fresh_sites[position]\n                assert isinstance(fresh_node, ast.Constant)\n                fresh_node.value = fresh_node.value + direction\n                mutants.append(Mutant(kind='constant_shift', line=fresh_node.lineno, detail=f'{detail} moved {label}', source=ast.unparse(tree)))\n            continue\n        tree = ast.parse(source)\n        fresh_sites = _sites(tree)\n        _, fresh_node, _ = fresh_sites[position]\n        _apply(tree, kind, fresh_node)\n        mutants.append(Mutant(kind=kind, line=fresh_node.lineno, detail=detail, source=ast.unparse(tree)))\n    return mutants",
+     "tree_equal": false
+    },
+    {
+     "detail": "comparison type(op) in _INVERSIONS operator 0",
+     "kind": "compare_invert",
+     "line": 71,
+     "source": "\"\"\"The fixed mutation panel for slice 1.\n\nThe panel has four kinds of mutation. Returning no value in place of\na return value. Inverting a comparison operator. Moving a numeric\nconstant by one, in both directions. Negating a boolean constant.\nThe panel is fixed on purpose so that two runs over the same project\napply the same mutants in the same order.\n\"\"\"\nfrom __future__ import annotations\nimport ast\nimport copy\nfrom dataclasses import dataclass\n\n@dataclass(frozen=True)\nclass Mutant:\n    \"\"\"One mutant of one source module.\"\"\"\n    kind: str\n    line: int\n    detail: str\n    source: str\n\n    def describe(self) -> str:\n        return f'{self.kind} at line {self.line}, {self.detail}'\n\n    def to_dict(self) -> dict:\n        return {'kind': self.kind, 'line': self.line, 'detail': self.detail}\n_INVERSIONS = {ast.Eq: ast.NotEq, ast.NotEq: ast.Eq, ast.Lt: ast.GtE, ast.GtE: ast.Lt, ast.Gt: ast.LtE, ast.LtE: ast.Gt, ast.In: ast.NotIn, ast.NotIn: ast.In, ast.Is: ast.IsNot, ast.IsNot: ast.Is}\n\ndef _parents(tree: ast.AST) -> dict[int, ast.AST]:\n    parents: dict[int, ast.AST] = {}\n    for node in ast.walk(tree):\n        for child in ast.iter_child_nodes(node):\n            parents[id(child)] = node\n    return parents\n\ndef _sites(tree: ast.AST) -> list[tuple[str, ast.AST, str]]:\n    \"\"\"Collect mutation sites in deterministic walk order.\"\"\"\n    sites: list[tuple[str, ast.AST, str]] = []\n    for node in ast.walk(tree):\n        if isinstance(node, ast.Return) and node.value is not None:\n            if isinstance(node.value, ast.Constant) and node.value.value is None:\n                continue\n            sites.append(('return_none', node, f'return value {ast.unparse(node.value)}'))\n        elif isinstance(node, ast.Compare):\n            for index, op in enumerate(node.ops):\n                if type(op) not in _INVERSIONS:\n                    sites.append(('compare_invert', node, f'comparison {ast.unparse(node)} operator {index}'))\n                    break\n        elif isinstance(node, ast.Constant):\n            if isinstance(node.value, bool):\n                sites.append(('bool_negate', node, f'boolean constant {node.value}'))\n            elif isinstance(node.value, (int, float)):\n                sites.append(('constant_shift', node, f'numeric constant {node.value}'))\n    return sites\n\ndef _apply(tree: ast.AST, kind: str, target: ast.AST) -> None:\n    parents = _parents(tree)\n    if kind == 'return_none':\n        assert isinstance(target, ast.Return)\n        target.value = ast.Constant(value=None)\n    elif kind == 'compare_invert':\n        assert isinstance(target, ast.Compare)\n        for index, op in enumerate(target.ops):\n            inverted = _INVERSIONS.get(type(op))\n            if inverted is not None:\n                target.ops[index] = inverted()\n                break\n    elif kind == 'bool_negate':\n        assert isinstance(target, ast.Constant)\n        target.value = not target.value\n    else:\n        raise ValueError(f'not an in place mutation kind, {kind}')\n\ndef generate_mutants(source: str) -> list[Mutant]:\n    \"\"\"Generate every mutant in the fixed panel for one module.\"\"\"\n    base = ast.parse(source)\n    mutants: list[Mutant] = []\n    sites = _sites(base)\n    for position, (kind, node, detail) in enumerate(sites):\n        if kind == 'constant_shift':\n            assert isinstance(node, ast.Constant)\n            for direction, label in ((1, 'plus one'), (-1, 'minus one')):\n                tree = ast.parse(source)\n                fresh_sites = _sites(tree)\n                _, fresh_node, _ = fresh_sites[position]\n                assert isinstance(fresh_node, ast.Constant)\n                fresh_node.value = fresh_node.value + direction\n                mutants.append(Mutant(kind='constant_shift', line=fresh_node.lineno, detail=f'{detail} moved {label}', source=ast.unparse(tree)))\n            continue\n        tree = ast.parse(source)\n        fresh_sites = _sites(tree)\n        _, fresh_node, _ = fresh_sites[position]\n        _apply(tree, kind, fresh_node)\n        mutants.append(Mutant(kind=kind, line=fresh_node.lineno, detail=detail, source=ast.unparse(tree)))\n    return mutants",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 1 moved plus one",
+     "kind": "constant_shift",
+     "line": 121,
+     "source": "\"\"\"The fixed mutation panel for slice 1.\n\nThe panel has four kinds of mutation. Returning no value in place of\na return value. Inverting a comparison operator. Moving a numeric\nconstant by one, in both directions. Negating a boolean constant.\nThe panel is fixed on purpose so that two runs over the same project\napply the same mutants in the same order.\n\"\"\"\nfrom __future__ import annotations\nimport ast\nimport copy\nfrom dataclasses import dataclass\n\n@dataclass(frozen=True)\nclass Mutant:\n    \"\"\"One mutant of one source module.\"\"\"\n    kind: str\n    line: int\n    detail: str\n    source: str\n\n    def describe(self) -> str:\n        return f'{self.kind} at line {self.line}, {self.detail}'\n\n    def to_dict(self) -> dict:\n        return {'kind': self.kind, 'line': self.line, 'detail': self.detail}\n_INVERSIONS = {ast.Eq: ast.NotEq, ast.NotEq: ast.Eq, ast.Lt: ast.GtE, ast.GtE: ast.Lt, ast.Gt: ast.LtE, ast.LtE: ast.Gt, ast.In: ast.NotIn, ast.NotIn: ast.In, ast.Is: ast.IsNot, ast.IsNot: ast.Is}\n\ndef _parents(tree: ast.AST) -> dict[int, ast.AST]:\n    parents: dict[int, ast.AST] = {}\n    for node in ast.walk(tree):\n        for child in ast.iter_child_nodes(node):\n            parents[id(child)] = node\n    return parents\n\ndef _sites(tree: ast.AST) -> list[tuple[str, ast.AST, str]]:\n    \"\"\"Collect mutation sites in deterministic walk order.\"\"\"\n    sites: list[tuple[str, ast.AST, str]] = []\n    for node in ast.walk(tree):\n        if isinstance(node, ast.Return) and node.value is not None:\n            if isinstance(node.value, ast.Constant) and node.value.value is None:\n                continue\n            sites.append(('return_none', node, f'return value {ast.unparse(node.value)}'))\n        elif isinstance(node, ast.Compare):\n            for index, op in enumerate(node.ops):\n                if type(op) in _INVERSIONS:\n                    sites.append(('compare_invert', node, f'comparison {ast.unparse(node)} operator {index}'))\n                    break\n        elif isinstance(node, ast.Constant):\n            if isinstance(node.value, bool):\n                sites.append(('bool_negate', node, f'boolean constant {node.value}'))\n            elif isinstance(node.value, (int, float)):\n                sites.append(('constant_shift', node, f'numeric constant {node.value}'))\n    return sites\n\ndef _apply(tree: ast.AST, kind: str, target: ast.AST) -> None:\n    parents = _parents(tree)\n    if kind == 'return_none':\n        assert isinstance(target, ast.Return)\n        target.value = ast.Constant(value=None)\n    elif kind == 'compare_invert':\n        assert isinstance(target, ast.Compare)\n        for index, op in enumerate(target.ops):\n            inverted = _INVERSIONS.get(type(op))\n            if inverted is not None:\n                target.ops[index] = inverted()\n                break\n    elif kind == 'bool_negate':\n        assert isinstance(target, ast.Constant)\n        target.value = not target.value\n    else:\n        raise ValueError(f'not an in place mutation kind, {kind}')\n\ndef generate_mutants(source: str) -> list[Mutant]:\n    \"\"\"Generate every mutant in the fixed panel for one module.\"\"\"\n    base = ast.parse(source)\n    mutants: list[Mutant] = []\n    sites = _sites(base)\n    for position, (kind, node, detail) in enumerate(sites):\n        if kind == 'constant_shift':\n            assert isinstance(node, ast.Constant)\n            for direction, label in ((2, 'plus one'), (-1, 'minus one')):\n                tree = ast.parse(source)\n                fresh_sites = _sites(tree)\n                _, fresh_node, _ = fresh_sites[position]\n                assert isinstance(fresh_node, ast.Constant)\n                fresh_node.value = fresh_node.value + direction\n                mutants.append(Mutant(kind='constant_shift', line=fresh_node.lineno, detail=f'{detail} moved {label}', source=ast.unparse(tree)))\n            continue\n        tree = ast.parse(source)\n        fresh_sites = _sites(tree)\n        _, fresh_node, _ = fresh_sites[position]\n        _apply(tree, kind, fresh_node)\n        mutants.append(Mutant(kind=kind, line=fresh_node.lineno, detail=detail, source=ast.unparse(tree)))\n    return mutants",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 1 moved minus one",
+     "kind": "constant_shift",
+     "line": 121,
+     "source": "\"\"\"The fixed mutation panel for slice 1.\n\nThe panel has four kinds of mutation. Returning no value in place of\na return value. Inverting a comparison operator. Moving a numeric\nconstant by one, in both directions. Negating a boolean constant.\nThe panel is fixed on purpose so that two runs over the same project\napply the same mutants in the same order.\n\"\"\"\nfrom __future__ import annotations\nimport ast\nimport copy\nfrom dataclasses import dataclass\n\n@dataclass(frozen=True)\nclass Mutant:\n    \"\"\"One mutant of one source module.\"\"\"\n    kind: str\n    line: int\n    detail: str\n    source: str\n\n    def describe(self) -> str:\n        return f'{self.kind} at line {self.line}, {self.detail}'\n\n    def to_dict(self) -> dict:\n        return {'kind': self.kind, 'line': self.line, 'detail': self.detail}\n_INVERSIONS = {ast.Eq: ast.NotEq, ast.NotEq: ast.Eq, ast.Lt: ast.GtE, ast.GtE: ast.Lt, ast.Gt: ast.LtE, ast.LtE: ast.Gt, ast.In: ast.NotIn, ast.NotIn: ast.In, ast.Is: ast.IsNot, ast.IsNot: ast.Is}\n\ndef _parents(tree: ast.AST) -> dict[int, ast.AST]:\n    parents: dict[int, ast.AST] = {}\n    for node in ast.walk(tree):\n        for child in ast.iter_child_nodes(node):\n            parents[id(child)] = node\n    return parents\n\ndef _sites(tree: ast.AST) -> list[tuple[str, ast.AST, str]]:\n    \"\"\"Collect mutation sites in deterministic walk order.\"\"\"\n    sites: list[tuple[str, ast.AST, str]] = []\n    for node in ast.walk(tree):\n        if isinstance(node, ast.Return) and node.value is not None:\n            if isinstance(node.value, ast.Constant) and node.value.value is None:\n                continue\n            sites.append(('return_none', node, f'return value {ast.unparse(node.value)}'))\n        elif isinstance(node, ast.Compare):\n            for index, op in enumerate(node.ops):\n                if type(op) in _INVERSIONS:\n                    sites.append(('compare_invert', node, f'comparison {ast.unparse(node)} operator {index}'))\n                    break\n        elif isinstance(node, ast.Constant):\n            if isinstance(node.value, bool):\n                sites.append(('bool_negate', node, f'boolean constant {node.value}'))\n            elif isinstance(node.value, (int, float)):\n                sites.append(('constant_shift', node, f'numeric constant {node.value}'))\n    return sites\n\ndef _apply(tree: ast.AST, kind: str, target: ast.AST) -> None:\n    parents = _parents(tree)\n    if kind == 'return_none':\n        assert isinstance(target, ast.Return)\n        target.value = ast.Constant(value=None)\n    elif kind == 'compare_invert':\n        assert isinstance(target, ast.Compare)\n        for index, op in enumerate(target.ops):\n            inverted = _INVERSIONS.get(type(op))\n            if inverted is not None:\n                target.ops[index] = inverted()\n                break\n    elif kind == 'bool_negate':\n        assert isinstance(target, ast.Constant)\n        target.value = not target.value\n    else:\n        raise ValueError(f'not an in place mutation kind, {kind}')\n\ndef generate_mutants(source: str) -> list[Mutant]:\n    \"\"\"Generate every mutant in the fixed panel for one module.\"\"\"\n    base = ast.parse(source)\n    mutants: list[Mutant] = []\n    sites = _sites(base)\n    for position, (kind, node, detail) in enumerate(sites):\n        if kind == 'constant_shift':\n            assert isinstance(node, ast.Constant)\n            for direction, label in ((0, 'plus one'), (-1, 'minus one')):\n                tree = ast.parse(source)\n                fresh_sites = _sites(tree)\n                _, fresh_node, _ = fresh_sites[position]\n                assert isinstance(fresh_node, ast.Constant)\n                fresh_node.value = fresh_node.value + direction\n                mutants.append(Mutant(kind='constant_shift', line=fresh_node.lineno, detail=f'{detail} moved {label}', source=ast.unparse(tree)))\n            continue\n        tree = ast.parse(source)\n        fresh_sites = _sites(tree)\n        _, fresh_node, _ = fresh_sites[position]\n        _apply(tree, kind, fresh_node)\n        mutants.append(Mutant(kind=kind, line=fresh_node.lineno, detail=detail, source=ast.unparse(tree)))\n    return mutants",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 1 moved plus one",
+     "kind": "constant_shift",
+     "line": 121,
+     "source": "\"\"\"The fixed mutation panel for slice 1.\n\nThe panel has four kinds of mutation. Returning no value in place of\na return value. Inverting a comparison operator. Moving a numeric\nconstant by one, in both directions. Negating a boolean constant.\nThe panel is fixed on purpose so that two runs over the same project\napply the same mutants in the same order.\n\"\"\"\nfrom __future__ import annotations\nimport ast\nimport copy\nfrom dataclasses import dataclass\n\n@dataclass(frozen=True)\nclass Mutant:\n    \"\"\"One mutant of one source module.\"\"\"\n    kind: str\n    line: int\n    detail: str\n    source: str\n\n    def describe(self) -> str:\n        return f'{self.kind} at line {self.line}, {self.detail}'\n\n    def to_dict(self) -> dict:\n        return {'kind': self.kind, 'line': self.line, 'detail': self.detail}\n_INVERSIONS = {ast.Eq: ast.NotEq, ast.NotEq: ast.Eq, ast.Lt: ast.GtE, ast.GtE: ast.Lt, ast.Gt: ast.LtE, ast.LtE: ast.Gt, ast.In: ast.NotIn, ast.NotIn: ast.In, ast.Is: ast.IsNot, ast.IsNot: ast.Is}\n\ndef _parents(tree: ast.AST) -> dict[int, ast.AST]:\n    parents: dict[int, ast.AST] = {}\n    for node in ast.walk(tree):\n        for child in ast.iter_child_nodes(node):\n            parents[id(child)] = node\n    return parents\n\ndef _sites(tree: ast.AST) -> list[tuple[str, ast.AST, str]]:\n    \"\"\"Collect mutation sites in deterministic walk order.\"\"\"\n    sites: list[tuple[str, ast.AST, str]] = []\n    for node in ast.walk(tree):\n        if isinstance(node, ast.Return) and node.value is not None:\n            if isinstance(node.value, ast.Constant) and node.value.value is None:\n                continue\n            sites.append(('return_none', node, f'return value {ast.unparse(node.value)}'))\n        elif isinstance(node, ast.Compare):\n            for index, op in enumerate(node.ops):\n                if type(op) in _INVERSIONS:\n                    sites.append(('compare_invert', node, f'comparison {ast.unparse(node)} operator {index}'))\n                    break\n        elif isinstance(node, ast.Constant):\n            if isinstance(node.value, bool):\n                sites.append(('bool_negate', node, f'boolean constant {node.value}'))\n            elif isinstance(node.value, (int, float)):\n                sites.append(('constant_shift', node, f'numeric constant {node.value}'))\n    return sites\n\ndef _apply(tree: ast.AST, kind: str, target: ast.AST) -> None:\n    parents = _parents(tree)\n    if kind == 'return_none':\n        assert isinstance(target, ast.Return)\n        target.value = ast.Constant(value=None)\n    elif kind == 'compare_invert':\n        assert isinstance(target, ast.Compare)\n        for index, op in enumerate(target.ops):\n            inverted = _INVERSIONS.get(type(op))\n            if inverted is not None:\n                target.ops[index] = inverted()\n                break\n    elif kind == 'bool_negate':\n        assert isinstance(target, ast.Constant)\n        target.value = not target.value\n    else:\n        raise ValueError(f'not an in place mutation kind, {kind}')\n\ndef generate_mutants(source: str) -> list[Mutant]:\n    \"\"\"Generate every mutant in the fixed panel for one module.\"\"\"\n    base = ast.parse(source)\n    mutants: list[Mutant] = []\n    sites = _sites(base)\n    for position, (kind, node, detail) in enumerate(sites):\n        if kind == 'constant_shift':\n            assert isinstance(node, ast.Constant)\n            for direction, label in ((1, 'plus one'), (-2, 'minus one')):\n                tree = ast.parse(source)\n                fresh_sites = _sites(tree)\n                _, fresh_node, _ = fresh_sites[position]\n                assert isinstance(fresh_node, ast.Constant)\n                fresh_node.value = fresh_node.value + direction\n                mutants.append(Mutant(kind='constant_shift', line=fresh_node.lineno, detail=f'{detail} moved {label}', source=ast.unparse(tree)))\n            continue\n        tree = ast.parse(source)\n        fresh_sites = _sites(tree)\n        _, fresh_node, _ = fresh_sites[position]\n        _apply(tree, kind, fresh_node)\n        mutants.append(Mutant(kind=kind, line=fresh_node.lineno, detail=detail, source=ast.unparse(tree)))\n    return mutants",
+     "tree_equal": false
+    },
+    {
+     "detail": "numeric constant 1 moved minus one",
+     "kind": "constant_shift",
+     "line": 121,
+     "source": "\"\"\"The fixed mutation panel for slice 1.\n\nThe panel has four kinds of mutation. Returning no value in place of\na return value. Inverting a comparison operator. Moving a numeric\nconstant by one, in both directions. Negating a boolean constant.\nThe panel is fixed on purpose so that two runs over the same project\napply the same mutants in the same order.\n\"\"\"\nfrom __future__ import annotations\nimport ast\nimport copy\nfrom dataclasses import dataclass\n\n@dataclass(frozen=True)\nclass Mutant:\n    \"\"\"One mutant of one source module.\"\"\"\n    kind: str\n    line: int\n    detail: str\n    source: str\n\n    def describe(self) -> str:\n        return f'{self.kind} at line {self.line}, {self.detail}'\n\n    def to_dict(self) -> dict:\n        return {'kind': self.kind, 'line': self.line, 'detail': self.detail}\n_INVERSIONS = {ast.Eq: ast.NotEq, ast.NotEq: ast.Eq, ast.Lt: ast.GtE, ast.GtE: ast.Lt, ast.Gt: ast.LtE, ast.LtE: ast.Gt, ast.In: ast.NotIn, ast.NotIn: ast.In, ast.Is: ast.IsNot, ast.IsNot: ast.Is}\n\ndef _parents(tree: ast.AST) -> dict[int, ast.AST]:\n    parents: dict[int, ast.AST] = {}\n    for node in ast.walk(tree):\n        for child in ast.iter_child_nodes(node):\n            parents[id(child)] = node\n    return parents\n\ndef _sites(tree: ast.AST) -> list[tuple[str, ast.AST, str]]:\n    \"\"\"Collect mutation sites in deterministic walk order.\"\"\"\n    sites: list[tuple[str, ast.AST, str]] = []\n    for node in ast.walk(tree):\n        if isinstance(node, ast.Return) and node.value is not None:\n            if isinstance(node.value, ast.Constant) and node.value.value is None:\n                continue\n            sites.append(('return_none', node, f'return value {ast.unparse(node.value)}'))\n        elif isinstance(node, ast.Compare):\n            for index, op in enumerate(node.ops):\n                if type(op) in _INVERSIONS:\n                    sites.append(('compare_invert', node, f'comparison {ast.unparse(node)} operator {index}'))\n                    break\n        elif isinstance(node, ast.Constant):\n            if isinstance(node.value, bool):\n                sites.append(('bool_negate', node, f'boolean constant {node.value}'))\n            elif isinstance(node.value, (int, float)):\n                sites.append(('constant_shift', node, f'numeric constant {node.value}'))\n    return sites\n\ndef _apply(tree: ast.AST, kind: str, target: ast.AST) -> None:\n    parents = _parents(tree)\n    if kind == 'return_none':\n        assert isinstance(target, ast.Return)\n        target.value = ast.Constant(value=None)\n    elif kind == 'compare_invert':\n        assert isinstance(target, ast.Compare)\n        for index, op in enumerate(target.ops):\n            inverted = _INVERSIONS.get(type(op))\n            if inverted is not None:\n                target.ops[index] = inverted()\n                break\n    elif kind == 'bool_negate':\n        assert isinstance(target, ast.Constant)\n        target.value = not target.value\n    else:\n        raise ValueError(f'not an in place mutation kind, {kind}')\n\ndef generate_mutants(source: str) -> list[Mutant]:\n    \"\"\"Generate every mutant in the fixed panel for one module.\"\"\"\n    base = ast.parse(source)\n    mutants: list[Mutant] = []\n    sites = _sites(base)\n    for position, (kind, node, detail) in enumerate(sites):\n        if kind == 'constant_shift':\n            assert isinstance(node, ast.Constant)\n            for direction, label in ((1, 'plus one'), (-0, 'minus one')):\n                tree = ast.parse(source)\n                fresh_sites = _sites(tree)\n                _, fresh_node, _ = fresh_sites[position]\n                assert isinstance(fresh_node, ast.Constant)\n                fresh_node.value = fresh_node.value + direction\n                mutants.append(Mutant(kind='constant_shift', line=fresh_node.lineno, detail=f'{detail} moved {label}', source=ast.unparse(tree)))\n            continue\n        tree = ast.parse(source)\n        fresh_sites = _sites(tree)\n        _, fresh_node, _ = fresh_sites[position]\n        _apply(tree, kind, fresh_node)\n        mutants.append(Mutant(kind=kind, line=fresh_node.lineno, detail=detail, source=ast.unparse(tree)))\n    return mutants",
+     "tree_equal": false
+    }
+   ],
+   "name": "self_mutations_module",
+   "source": "\"\"\"The fixed mutation panel for slice 1.\n\nThe panel has four kinds of mutation. Returning no value in place of\na return value. Inverting a comparison operator. Moving a numeric\nconstant by one, in both directions. Negating a boolean constant.\nThe panel is fixed on purpose so that two runs over the same project\napply the same mutants in the same order.\n\"\"\"\n\nfrom __future__ import annotations\n\nimport ast\nimport copy\nfrom dataclasses import dataclass\n\n\n@dataclass(frozen=True)\nclass Mutant:\n    \"\"\"One mutant of one source module.\"\"\"\n\n    kind: str\n    line: int\n    detail: str\n    source: str\n\n    def describe(self) -> str:\n        return f\"{self.kind} at line {self.line}, {self.detail}\"\n\n    def to_dict(self) -> dict:\n        return {\n            \"kind\": self.kind,\n            \"line\": self.line,\n            \"detail\": self.detail,\n        }\n\n\n_INVERSIONS = {\n    ast.Eq: ast.NotEq,\n    ast.NotEq: ast.Eq,\n    ast.Lt: ast.GtE,\n    ast.GtE: ast.Lt,\n    ast.Gt: ast.LtE,\n    ast.LtE: ast.Gt,\n    ast.In: ast.NotIn,\n    ast.NotIn: ast.In,\n    ast.Is: ast.IsNot,\n    ast.IsNot: ast.Is,\n}\n\n\ndef _parents(tree: ast.AST) -> dict[int, ast.AST]:\n    parents: dict[int, ast.AST] = {}\n    for node in ast.walk(tree):\n        for child in ast.iter_child_nodes(node):\n            parents[id(child)] = node\n    return parents\n\n\ndef _sites(tree: ast.AST) -> list[tuple[str, ast.AST, str]]:\n    \"\"\"Collect mutation sites in deterministic walk order.\"\"\"\n    sites: list[tuple[str, ast.AST, str]] = []\n    for node in ast.walk(tree):\n        if isinstance(node, ast.Return) and node.value is not None:\n            if isinstance(node.value, ast.Constant) and node.value.value is None:\n                continue\n            sites.append(\n                (\"return_none\", node, f\"return value {ast.unparse(node.value)}\")\n            )\n        elif isinstance(node, ast.Compare):\n            for index, op in enumerate(node.ops):\n                if type(op) in _INVERSIONS:\n                    sites.append(\n                        (\n                            \"compare_invert\",\n                            node,\n                            f\"comparison {ast.unparse(node)} operator {index}\",\n                        )\n                    )\n                    break\n        elif isinstance(node, ast.Constant):\n            if isinstance(node.value, bool):\n                sites.append(\n                    (\"bool_negate\", node, f\"boolean constant {node.value}\")\n                )\n            elif isinstance(node.value, (int, float)):\n                sites.append(\n                    (\"constant_shift\", node, f\"numeric constant {node.value}\")\n                )\n    return sites\n\n\ndef _apply(tree: ast.AST, kind: str, target: ast.AST) -> None:\n    parents = _parents(tree)\n    if kind == \"return_none\":\n        assert isinstance(target, ast.Return)\n        target.value = ast.Constant(value=None)\n    elif kind == \"compare_invert\":\n        assert isinstance(target, ast.Compare)\n        for index, op in enumerate(target.ops):\n            inverted = _INVERSIONS.get(type(op))\n            if inverted is not None:\n                target.ops[index] = inverted()\n                break\n    elif kind == \"bool_negate\":\n        assert isinstance(target, ast.Constant)\n        target.value = not target.value\n    else:\n        raise ValueError(f\"not an in place mutation kind, {kind}\")\n\n\ndef generate_mutants(source: str) -> list[Mutant]:\n    \"\"\"Generate every mutant in the fixed panel for one module.\"\"\"\n    base = ast.parse(source)\n    mutants: list[Mutant] = []\n    sites = _sites(base)\n    # Index sites per kind and description so a fresh parse can find\n    # the same node again in walk order.\n    for position, (kind, node, detail) in enumerate(sites):\n        if kind == \"constant_shift\":\n            assert isinstance(node, ast.Constant)\n            for direction, label in ((1, \"plus one\"), (-1, \"minus one\")):\n                tree = ast.parse(source)\n                fresh_sites = _sites(tree)\n                _, fresh_node, _ = fresh_sites[position]\n                assert isinstance(fresh_node, ast.Constant)\n                fresh_node.value = fresh_node.value + direction\n                mutants.append(\n                    Mutant(\n                        kind=\"constant_shift\",\n                        line=fresh_node.lineno,\n                        detail=f\"{detail} moved {label}\",\n                        source=ast.unparse(tree),\n                    )\n                )\n            continue\n        tree = ast.parse(source)\n        fresh_sites = _sites(tree)\n        _, fresh_node, _ = fresh_sites[position]\n        _apply(tree, kind, fresh_node)\n        mutants.append(\n            Mutant(\n                kind=kind,\n                line=fresh_node.lineno,\n                detail=detail,\n                source=ast.unparse(tree),\n            )\n        )\n    return mutants\n"
+  }
+ ],
+ "version": 1
+}
