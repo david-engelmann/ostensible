@@ -14,10 +14,23 @@ use std::path::Path;
 /// joins the ASCII whitespace and the file and group separators
 /// to the Unicode whitespace set.
 pub fn py_isspace(ch: char) -> bool {
-    matches!(ch,
-        '\t' | '\n' | '\u{b}' | '\u{c}' | '\r' | '\u{1c}' | '\u{1d}' | '\u{1e}' | '\u{1f}'
-        | ' ' | '\u{85}' | '\u{a0}' | '\u{1680}' | '\u{2000}'..='\u{200a}' | '\u{2028}'
-        | '\u{2029}' | '\u{202f}' | '\u{205f}' | '\u{3000}')
+    matches!(
+        ch,
+        '\t' | '\n'
+            | '\u{b}'
+            | '\u{c}'
+            | '\r'
+            | '\u{1c}'
+            | '\u{1d}'
+            | '\u{1e}'
+            | '\u{1f}'
+            | ' '
+            | '\u{85}'
+            | '\u{a0}'
+            | '\u{1680}'
+            | '\u{2000}'
+            ..='\u{200a}' | '\u{2028}' | '\u{2029}' | '\u{202f}' | '\u{205f}' | '\u{3000}'
+    )
 }
 
 /// The Python strip of a string, at both ends or at the end.
@@ -62,8 +75,7 @@ impl IniFile {
         match self.sections.iter().find(|(name, _)| name == section) {
             None => false,
             Some((_, pairs)) => {
-                Self::lookup(pairs, key).is_some()
-                    || Self::lookup(&self.defaults, key).is_some()
+                Self::lookup(pairs, key).is_some() || Self::lookup(&self.defaults, key).is_some()
             }
         }
     }
@@ -190,10 +202,7 @@ pub fn parse_ini(text: &str) -> IniLoad {
             continue;
         }
         let chars: Vec<char> = line.chars().collect();
-        let cur_indent = chars
-            .iter()
-            .position(|ch| !py_isspace(*ch))
-            .unwrap_or(0);
+        let cur_indent = chars.iter().position(|ch| !py_isspace(*ch)).unwrap_or(0);
         let is_continuation = match (&current, &optname) {
             (Some(_), Some(key)) => !key.is_empty() && cur_indent > indent_level,
             _ => false,
@@ -202,13 +211,7 @@ pub fn parse_ini(text: &str) -> IniLoad {
             let section = current.as_ref().unwrap();
             let key = optname.as_ref().unwrap();
             if current_has_value(&defaults, &sections, section, key) {
-                append_part(
-                    &mut defaults,
-                    &mut sections,
-                    section,
-                    key,
-                    value.clone(),
-                );
+                append_part(&mut defaults, &mut sections, section, key, value.clone());
             }
             continue;
         }
@@ -232,9 +235,7 @@ pub fn parse_ini(text: &str) -> IniLoad {
             if header == "DEFAULT" {
                 current = Some(SectionRef::Defaults);
                 current_name = header;
-            } else if let Some(index) =
-                sections.iter().position(|(name, _)| *name == header)
-            {
+            } else if let Some(index) = sections.iter().position(|(name, _)| *name == header) {
                 if added_sections.contains(&header) {
                     return IniLoad::Refused;
                 }
@@ -256,9 +257,7 @@ pub fn parse_ini(text: &str) -> IniLoad {
         // An option line. The option is the text before the first
         // delimiter on the line, with its trailing whitespace
         // taken away and its case folded down.
-        let delimiter = value_chars
-            .iter()
-            .position(|ch| *ch == '=' || *ch == ':');
+        let delimiter = value_chars.iter().position(|ch| *ch == '=' || *ch == ':');
         let delimiter = match delimiter {
             Some(pos) => pos,
             None => return IniLoad::Refused,
@@ -275,13 +274,7 @@ pub fn parse_ini(text: &str) -> IniLoad {
         let raw_value: String = value_chars[delimiter + 1..].iter().collect();
         let optval = py_trim(&raw_value);
         let section = current.as_ref().unwrap();
-        store(
-            &mut defaults,
-            &mut sections,
-            section,
-            &option,
-            vec![optval],
-        );
+        store(&mut defaults, &mut sections, section, &option, vec![optval]);
         optname = Some(option);
     }
 
