@@ -51,26 +51,26 @@ imports it except the test suite (section 5).
 Public surface, complete:
 
 - generate_mutants(source: str) -> list[Mutant], at
-  mutations.py:112. The one generation entry.
+  mutations.py:111. The one generation entry.
 - Mutant, a frozen dataclass at mutations.py:18, with fields
   kind: str, line: int, detail: str, source: str, in that order.
-  Its two methods are describe() at mutations.py:27, returning
+  Its two methods are describe() at mutations.py:26, returning
   f"{kind} at line {line}, {detail}", and to_dict() at
-  mutations.py:30, returning a dict of kind, line, detail in that
+  mutations.py:29, returning a dict of kind, line, detail in that
   key order. The source field is not in the dict.
 - The package front door does not re-export either name.
   ostensible/__init__.py carries only a docstring and
   __version__.
 
 Private machinery, complete: the inversion table _INVERSIONS at
-mutations.py:37, _parents at mutations.py:50, _sites at
-mutations.py:57, and _apply at mutations.py:93.
+mutations.py:37, _parents at mutations.py:51, _sites at
+mutations.py:59, and _apply at mutations.py:92.
 
 Dead machinery the port must not invent a need for, each item
 verified by reading and by grep over the tree:
 
-- The module imports copy (mutations.py:12) and never uses it.
-- _apply computes parents = _parents(tree) at mutations.py:94
+- The module imports copy (mutations.py:13) and never uses it.
+- _apply computes parents = _parents(tree) at mutations.py:93
   and never reads it. No parent map is needed to apply any
   mutation in the panel.
 - _apply raises ValueError(f"not an in place mutation kind,
@@ -87,7 +87,7 @@ over the same project apply the same mutants in the same order"
 _sites over ast.walk(tree), which is breadth first order, and
 the mutant list stands in site order, with one adjacency rule
 below. The site rules, per node, first match wins in the order
-Return, Compare, Constant (mutations.py:57-90):
+Return, Compare, Constant (mutations.py:59-89):
 
 - return_none. A Return node whose value is not None and is not
   the constant None. The mutant sets the value to the constant
@@ -234,8 +234,8 @@ The output crosses four boundaries, each with its exact shape:
 
 - Into the run: for each mutant the runner writes
   mutant.source + "\n" as the whole replacement text of the
-  source file in a scratch copy (runner.py:544 and
-  runner.py:652) and runs pytest there. So source is consumed
+  source file in a scratch copy (runner.py:539 and
+  runner.py:650) and runs pytest there. So source is consumed
   as a complete module text, and the trailing newline is the
   runner's, not the generator's: the recorded mutant sources
   carry no trailing newline (ast.unparse never emits one).
@@ -246,7 +246,7 @@ The output crosses four boundaries, each with its exact shape:
 - Into the report, JSON side: Mutant.to_dict() gives
   {kind, line, detail} and MutantOutcome.to_dict() adds the
   keys source (the source PATH, not the mutant's source text)
-  and result (runner.py:92-100). This reading is already
+  and result (runner.py:91). This reading is already
   ported: model.rs MutantOutcome::to_dict reproduces it.
 - Into the report, text side: report.py:16-24 renders each
   surviving outcome as "mutant that walked through -
@@ -400,3 +400,236 @@ What the port must re-express, on the PORT7-10 pattern:
   the runner's tests. But its keyword construction is the
   standing proof that the record's four field names are
   load-bearing beyond generation itself.
+
+## 6. Refusals and standings, measured
+
+generate_mutants catches nothing. Every failure of the parse
+or of the per mutant unparse propagates uncaught out of the
+public entry, and under the standing ruling (PORT7-7 is the
+template) each becomes a refusal of the port in its own
+wording, at exactly the place the Python fails, never an
+answer the Python cannot produce. The family, each member
+probed (family F):
+
+- Syntax error in the source: SyntaxError propagates from
+  the first ast.parse (probe F1, "def f(:" raises SyntaxError
+  "invalid syntax"). This is the common member: the runner
+  feeds generate_mutants whatever source files the analysed
+  project holds, and a source the grammar refuses is a source
+  generation refuses whole.
+- A null byte in the source text: SyntaxError, "source code
+  string cannot contain null bytes" (probe F2; the probe's
+  first run expected ValueError and failed, which is how the
+  record comes to state the true type).
+- A leading byte order mark: SyntaxError, "invalid
+  non-printable character U+FEFF" (probe F8), the same
+  standing PORT7-7 records for the scan entries.
+- A raw lone surrogate standing in the source TEXT (not
+  spelled as an escape inside a string): UnicodeEncodeError,
+  "'utf-8' codec can't encode character ... surrogates not
+  allowed" (probe F7), raised because the interpreter encodes
+  the text to UTF-8 on its way into the parser. At the port's
+  boundary this input cannot be presented at all, since the
+  crate's source text is a Rust String; the contract should
+  state that as the port's form of this refusal rather than
+  inventing an error for it. The escape-spelled form is a
+  different shape entirely and is NOT a refusal: the constant
+  '\ud800' spelled as an escape in the source generates
+  normally, and its return detail spells the value with the
+  escape, "return value '\\ud800'" (probe F7), through the
+  unparse reading the string constant amendment of Round 15
+  already pins.
+- Nesting past the grammar's own parenthesis limit:
+  SyntaxError "too many nested parentheses", standing at 200
+  nested parentheses and refusing at 201 (probe F5, boundary
+  found by bisection), far inside the crate's 4,000 nesting
+  bound of PORT7-2. The port's parser already refuses this
+  shape as a grammar refusal of its own family, so the
+  generation refusal inherits it unchanged.
+- Recursion in the per mutant unparse: the interpreter's
+  unparse is recursive, and over a left leaning chain of
+  "a + a + ... + 1" the generation stands at 327 terms and
+  dies of uncaught RecursionError at 328 terms (probe F6,
+  boundary by bisection), measured in a fresh interpreter at
+  the default recursion limit of 1,000 with the probe's own
+  shallow stack. The standing is stack dependent in the
+  Python: the same source generates or dies according to the
+  caller's depth, which in the runner is the analysis stack.
+  This is the one member the contract cannot copy as a
+  number. On the PORT7-7 amendment's own precedent, where the
+  scan's recursion standings were measured and named as
+  members of its refusal family, the generation contract
+  should measure and name the crate's standing for the
+  generate path's unparse (the crate's unparse runs on the
+  spawned large stack pattern of pyscan.rs:171 wherever the
+  scan calls it, and the generate entry should state whether
+  it takes the same pattern), refuse past it in the port's
+  wording, and never abort the process. What the contract
+  must not do is promise the interpreter's 327: that number
+  is an accident of this probe's stack, stated here as
+  evidence of the shape, not as a boundary to reproduce.
+
+Two input shapes that are NOT refusals, recorded so the
+contract does not refuse them by mistake: CRLF sources parse
+and generate normally, with lines counted as the grammar
+counts them and every mutant source spelled with \n endings
+only (probe F8), and a coding cookie line is read as the
+comment it is, leaving the following code at its true line
+(probe F9). Empty, comment-only, and site-free sources return
+the empty list, which is an answer, not a refusal (probe F3).
+
+## 7. Slicing judgement
+
+One round. The generation surface is one module of 128 code
+lines with one public function and one public record, and
+every piece of machinery the port needs already stands in the
+crate, built and proven by Round 15: the parser
+(pyparse::parse_module, src/pyparse.rs:35), the tree with its
+constant taxonomy (pyast::ConstVal at src/pyast.rs:82, holding
+Bool apart from Int(String) with integers as canonical decimal
+text computed exactly at any size, which is precisely the
+distinction the panel's bool-before-numeric rule and the exact
+big int shift stand on), the breadth first walk and the node
+registry (pywalk::walk at src/pywalk.rs:499 and
+pywalk::node_registry at src/pywalk.rs:527, reproducing
+ast.walk and standing in for the re-parse relocation), the ten
+operator kinds (pyast::CmpKind, src/pyast.rs:297), the unparse
+reading (pyunparse::unparse_module and unparse_expr), and the
+float spelling the numeric details need (pyast::float_repr,
+src/pyast.rs:237). The genuinely new machinery is small and
+enumerable: the site collection over the walk, the four
+applications on a cloned tree (the tree types are owned and
+Clone, so clone-and-apply stands where Python re-parses), an
+exact increment and decrement on canonical decimal text for
+the int shift, the widening of the model record below, the
+recordings battery and its generator, and the refusal family
+of section 6. Nothing in the boundary forces a split: the
+sole consumer's shape is already pinned by the ported model,
+and the execution machinery and the command line keep their
+own later slices under PORT-5 as narrowed. Splitting
+generation across two rounds would leave a half panel standing
+as a public surface with no consumer able to run, which is
+the only outcome worse than the dead runner the repo already
+carries honestly.
+
+The exact boundary the slice should cut:
+
+- IN: a generate_mutants entry in the crate taking a source
+  text and returning the mutant list or the refusal of
+  section 6; the site collection, the four applications, and
+  the detail and source spellings of section 2; the Mutant
+  record widened as below; the recordings battery and its
+  generator under the PORT7-10 pattern; the retirement of
+  ostensible/mutations.py and tests/test_mutations.py at the
+  slice's close, with PORT-5 narrowed by amendment in the
+  same commit, on the PORT7-9 precedent; the PORT7-11
+  closing count, restated at the final head.
+- The record: model.rs Mutant (src/model.rs:33) today carries
+  kind, line, detail only, its own comment stating "Only the
+  record is ported in this slice. Mutant generation stays
+  Python only." Generation needs the fourth field, so the
+  slice widens the Rust Mutant with source: String. The
+  widening moves no reading that exists: the Python
+  Mutant.to_dict() excludes source, the Rust to_dict at
+  model.rs:39 already matches it, and aggregate_outcomes
+  (model.rs:164) reads kind, line, detail only. Every Rust
+  construction site of Mutant gains the field, which the
+  census counts as the slice's model cost. describe() should
+  port with the record, as a method spelling "{kind} at line
+  {line}, {detail}" (probe M): it has no caller, but it is
+  the record's one public reading the Python states, the
+  legacy helpers of PORT7-1 ported on exactly that ground,
+  and leaving it behind would make the Rust record a
+  narrowing of the Python one by silence.
+- OUT: runner.py, cli.py, report.py, settings.py,
+  __main__.py, and __init__.py are untouched. No binary door
+  is added: src/main.rs keeps the settings reading it carries
+  today, on the PORT7 precedent that a slice adds library
+  entries and the shell gains its behaviours with the command
+  line slice. The Python that remains after this slice is the
+  execution machinery and the command line with the package
+  front doors, each named in PORT-5 as narrowed, and the
+  closing entry owes that justification again under
+  PORT7-11.
+
+## 8. The three carried debts, dispositioned
+
+B-1, the two repr copies. The copies stand at: (A)
+pyvalue::py_str_repr (src/pyvalue.rs:209), taking a &str, with
+its private pyvalue::is_printable (src/pyvalue.rs:256) driven
+by a NON_PRINTABLE_RANGES table compiled into pyvalue.rs,
+serving the PyValue world of the settings and report readings;
+and (B) pyunparse::str_repr (src/pyunparse.rs:1455), taking
+&[u32] codepoints, with is_printable_cp (src/pyunparse.rs:
+1389) delegating to pydata::is_printable (src/pydata.rs:35)
+driven by the generated positive table in
+src/printable_ranges.txt (711 ranges). Whether the mutations
+slice touches repr: yes, one copy of the two, as a consumer.
+Every mutant source and every return and comparison detail is
+an unparse spelling, and unparse spells its string constants
+through copy B (probes G1 and F7 record copy B's behaviour on
+the generate path: the quote choice, the escape spellings,
+the surrogate spelled as its escape). Copy A never stands on
+the generate path; nothing in mutations.py or its details
+reads a PyValue. Disposition: the unification does not ride
+Round 16 and must not gate it. The contract should pin copy B
+as the generate path's one repr, which costs the slice
+nothing because pyunparse is already its spelling engine, and
+should name the hazard the pin prevents: a builder wiring the
+details through pyvalue::py_repr for convenience would fork a
+third behaviour, because copy A takes a &str and cannot carry
+a lone surrogate codepoint at all, where the generate surface
+can meet one in any string constant a return or comparison
+unparses. The unification itself, one printable table and one
+repr with pyvalue delegating to the codepoint reading,
+belongs to a standalone standards fix or to the next slice
+that opens pyvalue.rs, because it changes copy A's signature
+and every caller in the settings and report world, a second
+review surface that has nothing to do with mutant fidelity.
+
+B-2, the D5 walk's arguments. The walk is the nested visit
+function inside d5_findings_in_function at src/pyscan.rs:854.
+At this head it already takes five parameters, because the
+bundling the review asked for stands partly done inside
+Round 15 itself: D5Context (src/pyscan.rs:825) carries
+helpers and fixtures as one value and D5Scope
+(src/pyscan.rs:833) carries env and origin as one value, and
+both structs' own doc comments say they exist so the walk
+takes the clump as one argument. What still travels unbundled
+beside them is statements, path, and findings. Whether the
+mutations slice touches it: no. Generation never enters
+pyscan.rs; its walk is pywalk::walk, a different walk over a
+different surface, and no file this slice opens contains the
+D5 walk. Disposition: B-2 does not ride Round 16. Its
+remainder is a pyscan-internal style fix with no behavioural
+surface, owed to the next slice that opens pyscan.rs or to a
+standalone standards commit, and it must not be charged
+against a behavioural port's gate.
+
+The workflow shaping debt. Verified at this head:
+.github/workflows/ci.yml of ostensible carries one rust job
+whose steps are checkout and cargo test alone. The line's
+shaped standard, verified the same day against deadgate's
+ci.yml at its head (same workflow shape, same push,
+pull_request, and merge_group triggers), is three steps after
+checkout. The exact delta that closes the debt is two steps
+added after the test step:
+
+      - name: Check the formatting
+        run: cargo fmt --check
+      - name: Run the linter
+        run: cargo clippy --offline --all-targets
+
+Disposition: a separate shaping PR, never a rider on the
+behavioural branch, on the line's standing precedent
+(deadgate Round 3's shaping followed as its own PR while its
+branch was mid landing, and Round 15's own CI repair, the
+missed Python job removal in 9065cc1, landed as a discrete
+commit). Two notes for the owner: the push needs the
+Workflows grant on the token, per the connector doc, and
+fmt --check should first be run over the crate locally,
+because a formatting debt anywhere in the 12,490 lines turns
+the new step red on its first run; Round 15's closure record
+already notes fmt flagging pre-existing debt files on this
+repo, so the shaping PR may carry a fmt pass of its own and
+should say so in its body rather than discover it in CI.
