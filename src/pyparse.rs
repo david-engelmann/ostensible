@@ -49,7 +49,7 @@ pub fn parse_module(source: &str) -> Result<Module, ParseError> {
 }
 
 fn parse_module_inner(source: &str) -> Result<Module, ParseError> {
-    let tokens = tokenize(source, 1, 0)?;
+    let tokens = tokenize(source, 1, 0, 0, 0)?;
     let mut parser = Parser::new(tokens);
     parser.parse_module()
 }
@@ -86,10 +86,17 @@ fn parse_fragment(
             break;
         }
     }
+    // The fragment counts its brackets and its nested
+    // f-strings from the depths the field stands at, the
+    // stamps the tokenizer left on the field, so the two
+    // nesting accounts run over the whole source and not
+    // over the fragment alone.
     let tokens = tokenize(
         &field.expr[lead..],
         field.expr_line,
         field.expr_col + lead as u32,
+        field.bracket_depth,
+        field.fstring_depth,
     )?;
     let mut parser = Parser::new(tokens);
     parser.next_id = outer.next_id;

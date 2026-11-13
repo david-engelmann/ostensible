@@ -58,6 +58,15 @@ pub struct FieldData {
     pub debug: Option<String>,
     /// The position of the opening brace.
     pub pos: Pos,
+    /// The bracket depth standing at this field's opening
+    /// brace, the enclosing code brackets and the braces of
+    /// the strings around it counted in, the base the
+    /// fragment's own reading counts its brackets from.
+    pub bracket_depth: usize,
+    /// The number of f-strings enclosing the string this
+    /// field stands in, this string itself counted, the
+    /// depth the fragment's nested f-strings count from.
+    pub fstring_depth: usize,
 }
 
 #[derive(Debug, Clone)]
@@ -85,6 +94,18 @@ struct Scanner {
     /// Byte offset of the start of each line, by line index.
     line_starts: Vec<usize>,
     index: usize,
+    /// The number of f-strings enclosing the text this
+    /// scanner reads, handed in as the tokenize base and
+    /// raised by scan_string while one string's parts are
+    /// scanned, then restored.
+    fstring_depth: usize,
+    /// The bracket depth standing where the string now
+    /// being scanned opened, set by scan_string.
+    bracket_floor: usize,
+    /// The net structural braces the string now being
+    /// scanned has opened inside itself, field braces of
+    /// its parts and of its format specs counted.
+    string_braces: usize,
 }
 
 impl Scanner {
@@ -117,6 +138,9 @@ impl Scanner {
             bytes,
             line_starts,
             index: 0,
+            fstring_depth: 0,
+            bracket_floor: 0,
+            string_braces: 0,
         }
     }
 
@@ -174,8 +198,20 @@ const OPERATORS: &[&str] = &[
 /// Tokenize a whole source. The base line and the base column
 /// of the first line let a fragment, the expression of an
 /// f-string field, carry the positions of the source it was
-/// cut from.
-pub fn tokenize(source: &str, base_line: u32, base_col: u32) -> Result<Vec<Token>, TokenError> {
+/// cut from. The bracket base and the f-string base do the
+/// same for the interpreter's two nesting accounts, which run
+/// continuously over the whole source: the bracket ceiling
+/// counts the code brackets around the fragment with the
+/// fragment's own, and an f-string standing inside another
+/// counts toward the nested f-string cap however many
+/// fragments stand between them.
+pub fn tokenize(
+    source: &str,
+    base_line: u32,
+    base_col: u32,
+    base_brackets: usize,
+    base_fstrings: usize,
+) -> Result<Vec<Token>, TokenError> {
     if source.contains('\0') {
         return Err(err("source code string cannot contain null bytes"));
     }
@@ -183,6 +219,7 @@ pub fn tokenize(source: &str, base_line: u32, base_col: u32) -> Result<Vec<Token
         return Err(err("invalid non-printable character U+FEFF"));
     }
     let mut scanner = Scanner::new(source);
+    scanner.fstring_depth = base_fstrings;
     let mut tokens: Vec<Token> = Vec::new();
     let mut indents: Vec<(u32, u32)> = vec![(0, 0)];
     let mut depth: usize = 0;
@@ -336,7 +373,7 @@ pub fn tokenize(source: &str, base_line: u32, base_col: u32) -> Result<Vec<Token
             }
             '(' | '[' | '{' => {
                 depth += 1;
-                if depth > 200 {
+                if base_brackets + depth > 200 {
                     return Err(err("too many nested parentheses"));
                 }
                 tokens.push(Token {
@@ -357,7 +394,7 @@ pub fn tokenize(source: &str, base_line: u32, base_col: u32) -> Result<Vec<Token
                 scanner.bump();
             }
             '"' | '\'' => {
-                let token = scan_string(&mut scanner, None)?;
+                let token = scan_string(&mut scanner, None, base_brackets + depth)?;
                 tokens.push(Token {
                     kind: Tok::Str(token),
                     pos,
@@ -375,7 +412,7 @@ pub fn tokenize(source: &str, base_line: u32, base_col: u32) -> Result<Vec<Token
                 }
                 let word: String = scanner.chars[start..scanner.index].iter().collect();
                 if matches!(scanner.peek(), Some('"') | Some('\'')) && is_string_prefix(&word) {
-                    let token = scan_string(&mut scanner, Some(&word))?;
+                    let token = scan_string(&mut scanner, Some(&word), base_brackets + depth)?;
                     tokens.push(Token {
                         kind: Tok::Str(token),
                         pos,
@@ -444,13 +481,44 @@ pub fn tokenize(source: &str, base_line: u32, base_col: u32) -> Result<Vec<Token
         kind: Tok::End,
         pos: scanner.pos_at(scanner.index),
     });
-    // Apply the fragment base to every position.
+    // Apply the fragment base to every position, the
+    // positions inside string parts as well as the token
+    // positions themselves: a field's expression base and
+    // brace position are stamped in the scanner's own
+    // coordinates while the string is scanned, and a
+    // nested field read from them without the base would
+    // lose the line the string stands on.
     if base_line != 1 || base_col != 0 {
         for token in tokens.iter_mut() {
             token.pos = adjusted(token.pos, base_line, base_col);
+            if let Tok::Str(StrTok::FString(parts)) = &mut token.kind {
+                for part in parts.iter_mut() {
+                    adjust_part(part, base_line, base_col);
+                }
+            }
         }
     }
     Ok(tokens)
+}
+
+/// Carry one string part's stamped positions onto the
+/// fragment base the token positions move by.
+fn adjust_part(part: &mut FPart, base_line: u32, base_col: u32) {
+    if let FPart::Field(field) = part {
+        let expr = adjusted(
+            Pos::new(field.expr_line, field.expr_col),
+            base_line,
+            base_col,
+        );
+        field.expr_line = expr.line;
+        field.expr_col = expr.col;
+        field.pos = adjusted(field.pos, base_line, base_col);
+        if let Some(spec) = &mut field.spec {
+            for part in spec.iter_mut() {
+                adjust_part(part, base_line, base_col);
+            }
+        }
+    }
 }
 
 fn adjusted(pos: Pos, base_line: u32, base_col: u32) -> Pos {
@@ -539,7 +607,13 @@ struct StrSpec {
 /// Scan one string literal starting at the quote, the prefix
 /// already read when one stands. Adjacent literals are the
 /// parser's to join, so this scans exactly one literal.
-fn scan_string(scanner: &mut Scanner, prefix: Option<&str>) -> Result<StrTok, TokenError> {
+fn scan_string(
+    scanner: &mut Scanner,
+    prefix: Option<&str>,
+    bracket_floor: usize,
+) -> Result<StrTok, TokenError> {
+    scanner.bracket_floor = bracket_floor;
+    scanner.string_braces = 0;
     let lower = prefix.unwrap_or("").to_lowercase();
     let spec = StrSpec {
         raw: lower.contains('r'),
@@ -553,8 +627,19 @@ fn scan_string(scanner: &mut Scanner, prefix: Option<&str>) -> Result<StrTok, To
         scanner.bump();
     }
     if spec.fstring {
-        let parts = scan_fstring_parts(scanner, quote, triple, spec.raw)?;
-        return Ok(StrTok::FString(parts));
+        // The interpreter's cap on nested f-strings: a chain
+        // of one hundred and fifty refuses at the tokenizer,
+        // however the nesting is reached, through replacement
+        // fields or through format specs.
+        let level = scanner.fstring_depth + 1;
+        if level > 149 {
+            return Err(err("too many nested f-strings"));
+        }
+        let saved = scanner.fstring_depth;
+        scanner.fstring_depth = level;
+        let parts = scan_fstring_parts(scanner, quote, triple, spec.raw);
+        scanner.fstring_depth = saved;
+        return Ok(StrTok::FString(parts?));
     }
     let mut text: Vec<u32> = Vec::new();
     let mut bytes: Vec<u8> = Vec::new();
@@ -583,7 +668,15 @@ fn scan_string(scanner: &mut Scanner, prefix: Option<&str>) -> Result<StrTok, To
             if !triple {
                 return Err(err("unterminated string literal"));
             }
+            // A line end inside a literal stands in the
+            // value as one line feed, a carriage return and
+            // its line feed together as much as either alone,
+            // the interpreter's normalization of the source's
+            // line ends inside a literal.
             scanner.bump();
+            if ch == '\r' && scanner.peek() == Some('\n') {
+                scanner.bump();
+            }
             push_char(&spec, &mut text, &mut bytes, '\n')?;
             continue;
         }
@@ -595,12 +688,25 @@ fn scan_string(scanner: &mut Scanner, prefix: Option<&str>) -> Result<StrTok, To
         if ch == '\\' && spec.raw {
             // A backslash in a raw string still keeps the
             // quote from ending the string, and both
-            // characters stand in the value.
+            // characters stand in the value. A line end
+            // standing after the backslash normalizes the
+            // way any line end in the literal does, to the
+            // one line feed.
             scanner.bump();
             push_char(&spec, &mut text, &mut bytes, '\\')?;
-            if let Some(next) = scanner.peek() {
-                scanner.bump();
-                push_char(&spec, &mut text, &mut bytes, next)?;
+            match scanner.peek() {
+                Some('\r') => {
+                    scanner.bump();
+                    if scanner.peek() == Some('\n') {
+                        scanner.bump();
+                    }
+                    push_char(&spec, &mut text, &mut bytes, '\n')?;
+                }
+                Some(next) => {
+                    scanner.bump();
+                    push_char(&spec, &mut text, &mut bytes, next)?;
+                }
+                None => {}
             }
             continue;
         }
@@ -804,6 +910,16 @@ fn scan_fstring_parts(
             return Err(err("unterminated f-string"));
         }
         match ch {
+            '\r' | '\n' => {
+                // The literal text of an f-string carries
+                // the interpreter's line end normalization,
+                // in raw strings as in plain ones.
+                scanner.bump();
+                if ch == '\r' && scanner.peek() == Some('\n') {
+                    scanner.bump();
+                }
+                literal.push('\n' as u32);
+            }
             '{' => {
                 if scanner.peek_at(1) == Some('{') {
                     scanner.bump();
@@ -814,8 +930,15 @@ fn scan_fstring_parts(
                 if !literal.is_empty() {
                     parts.push(FPart::Lit(std::mem::take(&mut literal)));
                 }
-                let field = scan_field(scanner, raw)?;
-                parts.push(FPart::Field(field));
+                // A field's brace counts on the one bracket
+                // account with the code around the string.
+                scanner.string_braces += 1;
+                if scanner.bracket_floor + scanner.string_braces > 200 {
+                    return Err(err("too many nested parentheses"));
+                }
+                let field = scan_field(scanner, raw, 1);
+                scanner.string_braces -= 1;
+                parts.push(FPart::Field(field?));
             }
             '}' => {
                 if scanner.peek_at(1) == Some('}') {
@@ -916,7 +1039,11 @@ fn skip_string(scanner: &mut Scanner) -> Result<(), TokenError> {
 /// Scan one replacement field, the opening brace standing at
 /// the scanner. The expression text is captured raw, with its
 /// start position, for the parser to read as a fragment.
-fn scan_field(scanner: &mut Scanner, raw: bool) -> Result<FieldData, TokenError> {
+fn scan_field(
+    scanner: &mut Scanner,
+    raw: bool,
+    field_depth: usize,
+) -> Result<FieldData, TokenError> {
     let brace_pos = scanner.pos_at(scanner.index);
     scanner.bump(); // the opening brace
     let mut expr = String::new();
@@ -978,7 +1105,7 @@ fn scan_field(scanner: &mut Scanner, raw: bool) -> Result<FieldData, TokenError>
             }
             ':' if depth == 0 && lambda_colons == 0 => {
                 scanner.bump();
-                spec = Some(scan_spec(scanner, raw)?);
+                spec = Some(scan_spec(scanner, raw, field_depth)?);
                 break;
             }
             ':' if depth == 0 => {
@@ -997,7 +1124,7 @@ fn scan_field(scanner: &mut Scanner, raw: bool) -> Result<FieldData, TokenError>
                     scanner.bump();
                     if after == Some(':') {
                         scanner.bump();
-                        spec = Some(scan_spec(scanner, raw)?);
+                        spec = Some(scan_spec(scanner, raw, field_depth)?);
                     } else {
                         scanner.bump();
                     }
@@ -1041,7 +1168,7 @@ fn scan_field(scanner: &mut Scanner, raw: bool) -> Result<FieldData, TokenError>
                             scanner.bump();
                             if after == Some(':') {
                                 scanner.bump();
-                                spec = Some(scan_spec(scanner, raw)?);
+                                spec = Some(scan_spec(scanner, raw, field_depth)?);
                             } else {
                                 scanner.bump();
                             }
@@ -1052,7 +1179,7 @@ fn scan_field(scanner: &mut Scanner, raw: bool) -> Result<FieldData, TokenError>
                     }
                     if scanner.peek() == Some(':') {
                         scanner.bump();
-                        spec = Some(scan_spec(scanner, raw)?);
+                        spec = Some(scan_spec(scanner, raw, field_depth)?);
                     } else if scanner.peek() == Some('}') {
                         scanner.bump();
                     } else {
@@ -1104,6 +1231,8 @@ fn finish_field(
         spec,
         debug,
         pos: brace_pos,
+        bracket_depth: scanner.bracket_floor + scanner.string_braces,
+        fstring_depth: scanner.fstring_depth,
     })
 }
 
@@ -1122,7 +1251,11 @@ fn finish_field(
 /// stands apart, measured against the interpreter. In a
 /// raw string the name escape of a spec fails to decode
 /// there, and the scan refuses it in the port's wording.
-fn scan_spec(scanner: &mut Scanner, raw: bool) -> Result<Vec<FPart>, TokenError> {
+fn scan_spec(
+    scanner: &mut Scanner,
+    raw: bool,
+    field_depth: usize,
+) -> Result<Vec<FPart>, TokenError> {
     let mut parts: Vec<FPart> = Vec::new();
     let mut literal: Vec<u32> = Vec::new();
     loop {
@@ -1131,12 +1264,37 @@ fn scan_spec(scanner: &mut Scanner, raw: bool) -> Result<Vec<FPart>, TokenError>
             None => return Err(err("unterminated f-string spec")),
         };
         match ch {
+            '\r' | '\n' => {
+                // Spec text is literal text of the string
+                // and normalizes its line ends the same way.
+                scanner.bump();
+                if ch == '\r' && scanner.peek() == Some('\n') {
+                    scanner.bump();
+                }
+                literal.push('\n' as u32);
+            }
             '{' => {
                 if !literal.is_empty() {
                     parts.push(FPart::Lit(std::mem::take(&mut literal)));
                 }
-                let field = scan_field(scanner, raw)?;
-                parts.push(FPart::Field(field));
+                // Fields nested through format specs chain
+                // three deep inside one string, the
+                // interpreter's own bound on the shape; a
+                // fourth refuses at the tokenizer. A nested
+                // string begins the count again, as the
+                // field expressions it stands in are read as
+                // their own fragments.
+                let next_depth = field_depth + 1;
+                if next_depth > 3 {
+                    return Err(err("f-string: expressions nested too deeply"));
+                }
+                scanner.string_braces += 1;
+                if scanner.bracket_floor + scanner.string_braces > 200 {
+                    return Err(err("too many nested parentheses"));
+                }
+                let field = scan_field(scanner, raw, next_depth);
+                scanner.string_braces -= 1;
+                parts.push(FPart::Field(field?));
             }
             '}' => {
                 scanner.bump();

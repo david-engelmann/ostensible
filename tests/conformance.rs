@@ -274,6 +274,7 @@ fn build_outcome(spec: &JVal) -> MutantOutcome {
             kind: spec.get("kind").as_str().to_string(),
             line: spec.get("line").as_int(),
             detail: spec.get("detail").as_str().to_string(),
+            source: String::new(),
         },
         killed: spec.get("killed").as_bool(),
         timed_out: spec.get("timed_out").as_bool(),

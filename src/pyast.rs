@@ -308,7 +308,7 @@ pub enum CmpKind {
 }
 
 /// One function argument, with its annotation when stated.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Arg {
     pub id: usize,
     pub pos: Pos,
@@ -318,7 +318,7 @@ pub struct Arg {
 
 /// The argument list of a definition or a lambda, in the field
 /// order CPython states for the arguments node.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Arguments {
     pub id: usize,
     pub posonlyargs: Vec<Arg>,
@@ -332,7 +332,7 @@ pub struct Arguments {
 
 /// A keyword argument of a call or a class definition. A None
 /// name is the double star form.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Keyword {
     pub id: usize,
     pub pos: Pos,
@@ -341,7 +341,7 @@ pub struct Keyword {
 }
 
 /// One comprehension clause.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Comprehension {
     pub id: usize,
     pub pos: Pos,
@@ -352,14 +352,14 @@ pub struct Comprehension {
 }
 
 /// A type parameter of a definition, class, or alias.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct TypeParam {
     pub id: usize,
     pub pos: Pos,
     pub kind: TypeParamKind,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum TypeParamKind {
     TypeVar {
         name: String,
@@ -376,14 +376,14 @@ pub enum TypeParamKind {
 /// An expression node. The id is unique inside one parsed
 /// module and stands in for the node identity the Python
 /// readings take from the object itself.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Expr {
     pub id: usize,
     pub pos: Pos,
     pub kind: ExprKind,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum ExprKind {
     Constant(ConstVal),
     Name(String),
@@ -489,7 +489,7 @@ pub enum ExprKind {
 }
 
 /// One with item, the context expression and its binding.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct WithItem {
     pub id: usize,
     pub pos: Pos,
@@ -498,7 +498,7 @@ pub struct WithItem {
 }
 
 /// One import alias.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Alias {
     pub id: usize,
     pub pos: Pos,
@@ -507,7 +507,7 @@ pub struct Alias {
 }
 
 /// One exception handler of a try statement.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct ExceptHandler {
     pub id: usize,
     pub pos: Pos,
@@ -517,7 +517,7 @@ pub struct ExceptHandler {
 }
 
 /// One case of a match statement.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct MatchCase {
     pub id: usize,
     pub pos: Pos,
@@ -527,14 +527,14 @@ pub struct MatchCase {
 }
 
 /// One match pattern.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Pattern {
     pub id: usize,
     pub pos: Pos,
     pub kind: PatternKind,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum PatternKind {
     MatchValue(Expr),
     MatchSingleton(ConstVal),
@@ -559,14 +559,14 @@ pub enum PatternKind {
 }
 
 /// A statement node.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Stmt {
     pub id: usize,
     pub pos: Pos,
     pub kind: StmtKind,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum StmtKind {
     FuncDef {
         name: String,
@@ -675,7 +675,7 @@ pub enum StmtKind {
 }
 
 /// A parsed module, the root of one tree.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Module {
     pub id: usize,
     pub body: Vec<Stmt>,
