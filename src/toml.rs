@@ -137,10 +137,9 @@ fn apply_header(root: &mut Tab, parts: &[String], array: bool) -> TomlResult<()>
     let parent = descend(root, parents)?;
     if array {
         if !parent.contains(last) {
-            parent.entries.push((
-                last.clone(),
-                Node::AoT(vec![Tab::new(Origin::Header)]),
-            ));
+            parent
+                .entries
+                .push((last.clone(), Node::AoT(vec![Tab::new(Origin::Header)])));
             return Ok(());
         }
         match parent.get_mut(last).unwrap() {
@@ -152,7 +151,8 @@ fn apply_header(root: &mut Tab, parts: &[String], array: bool) -> TomlResult<()>
         }
     } else {
         if !parent.contains(last) {
-            parent.entries
+            parent
+                .entries
                 .push((last.clone(), Node::Table(Tab::new(Origin::Header))));
             return Ok(());
         }
@@ -262,9 +262,7 @@ fn node_to_value(node: &Node) -> PyValue {
                 .map(|(key, child)| (key.clone(), node_to_value(child)))
                 .collect(),
         ),
-        Node::StaticArray(items) => {
-            PyValue::List(items.iter().map(node_to_value).collect())
-        }
+        Node::StaticArray(items) => PyValue::List(items.iter().map(node_to_value).collect()),
         Node::AoT(elements) => PyValue::List(
             elements
                 .iter()
@@ -406,10 +404,7 @@ impl Parser {
 
     fn parse_basic_string(&mut self, multiline_ok: bool) -> TomlResult<String> {
         // The opening quote stands at the cursor.
-        if multiline_ok
-            && self.peek_at(1) == Some('"')
-            && self.peek_at(2) == Some('"')
-        {
+        if multiline_ok && self.peek_at(1) == Some('"') && self.peek_at(2) == Some('"') {
             self.pos += 3;
             return self.parse_multiline_basic();
         }
@@ -503,10 +498,7 @@ impl Parser {
                 }
                 if self.chars.get(probe) == Some(&'\n') {
                     probe += 1;
-                    while matches!(
-                        self.chars.get(probe),
-                        Some(' ') | Some('\t') | Some('\n')
-                    ) {
+                    while matches!(self.chars.get(probe), Some(' ') | Some('\t') | Some('\n')) {
                         probe += 1;
                     }
                     self.pos = probe;
@@ -529,10 +521,7 @@ impl Parser {
     }
 
     fn parse_literal_string(&mut self, multiline_ok: bool) -> TomlResult<String> {
-        if multiline_ok
-            && self.peek_at(1) == Some('\'')
-            && self.peek_at(2) == Some('\'')
-        {
+        if multiline_ok && self.peek_at(1) == Some('\'') && self.peek_at(2) == Some('\'') {
             self.pos += 3;
             return self.parse_multiline_literal();
         }
@@ -699,11 +688,7 @@ impl Parser {
         let year = fold(&year_digits);
         let month = fold(&month_digits) as u32;
         let day = fold(&day_digits) as u32;
-        if year < 1
-            || !(1..=12).contains(&month)
-            || day < 1
-            || day > days_in_month(year, month)
-        {
+        if year < 1 || !(1..=12).contains(&month) || day < 1 || day > days_in_month(year, month) {
             return Err(TomlError);
         }
         Ok(DateParts { year, month, day })
@@ -788,8 +773,7 @@ impl Parser {
                     self.expect(':')?;
                     let minutes = self.take_digits(2)?;
                     let hours = hours.iter().fold(0i64, |acc, d| acc * 10 + *d as i64);
-                    let minutes =
-                        minutes.iter().fold(0i64, |acc, d| acc * 10 + *d as i64);
+                    let minutes = minutes.iter().fold(0i64, |acc, d| acc * 10 + *d as i64);
                     if hours > 23 || minutes > 59 {
                         return Err(TomlError);
                     }
@@ -905,12 +889,8 @@ impl Parser {
 
     fn parse_value(&mut self) -> TomlResult<Node> {
         match self.peek() {
-            Some('"') => Ok(Node::Scalar(PyValue::Str(
-                self.parse_basic_string(true)?,
-            ))),
-            Some('\'') => Ok(Node::Scalar(PyValue::Str(
-                self.parse_literal_string(true)?,
-            ))),
+            Some('"') => Ok(Node::Scalar(PyValue::Str(self.parse_basic_string(true)?))),
+            Some('\'') => Ok(Node::Scalar(PyValue::Str(self.parse_literal_string(true)?))),
             Some('[') => self.parse_array(),
             Some('{') => self.parse_inline_table(),
             Some('t') => {
@@ -922,9 +902,7 @@ impl Parser {
                 }
             }
             Some('f') => {
-                if self.chars[self.pos..]
-                    .starts_with(&['f', 'a', 'l', 's', 'e'])
-                {
+                if self.chars[self.pos..].starts_with(&['f', 'a', 'l', 's', 'e']) {
                     self.pos += 5;
                     Ok(Node::Scalar(PyValue::Bool(false)))
                 } else {
@@ -978,11 +956,7 @@ fn number_from_token(token: &str) -> TomlResult<PyValue> {
         if token != body {
             return Err(TomlError);
         }
-        if !digit_run_ok(hex)
-            || !hex
-                .chars()
-                .all(|ch| ch.is_ascii_hexdigit() || ch == '_')
-        {
+        if !digit_run_ok(hex) || !hex.chars().all(|ch| ch.is_ascii_hexdigit() || ch == '_') {
             return Err(TomlError);
         }
         return Ok(PyValue::Int(radix_digits_to_decimal(hex, 16)));
@@ -991,9 +965,7 @@ fn number_from_token(token: &str) -> TomlResult<PyValue> {
         if token != body {
             return Err(TomlError);
         }
-        if !digit_run_ok(oct)
-            || !oct.chars().all(|ch| matches!(ch, '0'..='7' | '_'))
-        {
+        if !digit_run_ok(oct) || !oct.chars().all(|ch| matches!(ch, '0'..='7' | '_')) {
             return Err(TomlError);
         }
         return Ok(PyValue::Int(radix_digits_to_decimal(oct, 8)));
@@ -1002,9 +974,7 @@ fn number_from_token(token: &str) -> TomlResult<PyValue> {
         if token != body {
             return Err(TomlError);
         }
-        if !digit_run_ok(bin)
-            || !bin.chars().all(|ch| matches!(ch, '0' | '1' | '_'))
-        {
+        if !digit_run_ok(bin) || !bin.chars().all(|ch| matches!(ch, '0' | '1' | '_')) {
             return Err(TomlError);
         }
         return Ok(PyValue::Int(radix_digits_to_decimal(bin, 2)));

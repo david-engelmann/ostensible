@@ -278,7 +278,11 @@ impl FileVerdict {
             {
                 return "decorative_candidate";
             }
-            if self.functions.iter().any(|item| item.status() == "can_fail") {
+            if self
+                .functions
+                .iter()
+                .any(|item| item.status() == "can_fail")
+            {
                 return "can_fail";
             }
             if has_baseline_failed {
@@ -364,10 +368,7 @@ impl Analysis {
                 "schema".to_string(),
                 JsonValue::Str("cantfail-report/3".to_string()),
             ),
-            (
-                "project".to_string(),
-                JsonValue::Str(self.project.clone()),
-            ),
+            ("project".to_string(), JsonValue::Str(self.project.clone())),
             (
                 "static_findings".to_string(),
                 JsonValue::List(

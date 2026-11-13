@@ -20,7 +20,10 @@ enum ClassItem {
 enum Atom {
     Ch(char),
     Any,
-    Class { negated: bool, items: Vec<ClassItem> },
+    Class {
+        negated: bool,
+        items: Vec<ClassItem>,
+    },
     Never,
 }
 
@@ -125,7 +128,11 @@ fn translate_class(pat: &[char], i: usize) -> Option<(Atom, usize)> {
     } else {
         let mut chunks: Vec<Vec<char>> = Vec::new();
         let mut start = i;
-        let mut k: i64 = if pat[i] == '!' { i as i64 + 2 } else { i as i64 + 1 };
+        let mut k: i64 = if pat[i] == '!' {
+            i as i64 + 2
+        } else {
+            i as i64 + 1
+        };
         loop {
             let mut found: i64 = -1;
             let mut probe = k;
@@ -154,8 +161,7 @@ fn translate_class(pat: &[char], i: usize) -> Option<(Atom, usize)> {
             let prev_last = *chunks[idx - 1].last().unwrap();
             let this_first = chunks[idx][0];
             if prev_last > this_first {
-                let mut merged: Vec<char> =
-                    chunks[idx - 1][..chunks[idx - 1].len() - 1].to_vec();
+                let mut merged: Vec<char> = chunks[idx - 1][..chunks[idx - 1].len() - 1].to_vec();
                 merged.extend_from_slice(&chunks[idx][1..]);
                 chunks[idx - 1] = merged;
                 chunks.remove(idx);

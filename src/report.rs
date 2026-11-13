@@ -34,9 +34,7 @@ fn function_lines(function: &FunctionVerdict, lines: &mut Vec<String>) {
             );
         }
         "no_applicable_mutants" => {
-            lines.push(
-                "    no mutant in the fixed panel applied to this function".to_string(),
-            );
+            lines.push("    no mutant in the fixed panel applied to this function".to_string());
         }
         "decorative_candidate" => {
             lines.push(
