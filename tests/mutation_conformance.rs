@@ -248,15 +248,18 @@ fn load_battery() -> JVal {
         env!("CARGO_MANIFEST_DIR"),
         "/tests/conformance/mutation_cases.json"
     );
-    let text = std::fs::read_to_string(path)
-        .unwrap_or_else(|_| panic!("recording missing: {}", path));
+    let text =
+        std::fs::read_to_string(path).unwrap_or_else(|_| panic!("recording missing: {}", path));
     JsonParser::parse(&text)
 }
 
 #[test]
 fn mutation_battery_replays() {
     let battery = load_battery();
-    let cases = battery.get("cases").expect("battery carries cases").as_list();
+    let cases = battery
+        .get("cases")
+        .expect("battery carries cases")
+        .as_list();
     let mut replayed = 0usize;
     for case in cases {
         let name = case.get("name").expect("case carries a name").as_str();
@@ -277,7 +280,10 @@ fn mutation_battery_replays() {
             continue;
         }
         let mutants = outcome.unwrap_or_else(|error| {
-            panic!("{}: the crate refuses where the recording answers: {}", name, error.message)
+            panic!(
+                "{}: the crate refuses where the recording answers: {}",
+                name, error.message
+            )
         });
         let recorded = case.get("mutants").expect("case carries mutants").as_list();
         assert_eq!(
@@ -296,13 +302,38 @@ fn mutation_battery_replays() {
             None
         };
         for (index, (mine, expected)) in mutants.iter().zip(recorded.iter()).enumerate() {
-            assert_eq!(mine.kind, expected.get("kind").unwrap().as_str(), "{} mutant {}: kind", name, index);
-            assert_eq!(mine.line, expected.get("line").unwrap().as_int(), "{} mutant {}: line", name, index);
-            assert_eq!(mine.detail, expected.get("detail").unwrap().as_str(), "{} mutant {}: detail", name, index);
-            assert_eq!(mine.source, expected.get("source").unwrap().as_str(), "{} mutant {}: source", name, index);
+            assert_eq!(
+                mine.kind,
+                expected.get("kind").unwrap().as_str(),
+                "{} mutant {}: kind",
+                name,
+                index
+            );
+            assert_eq!(
+                mine.line,
+                expected.get("line").unwrap().as_int(),
+                "{} mutant {}: line",
+                name,
+                index
+            );
+            assert_eq!(
+                mine.detail,
+                expected.get("detail").unwrap().as_str(),
+                "{} mutant {}: detail",
+                name,
+                index
+            );
+            assert_eq!(
+                mine.source,
+                expected.get("source").unwrap().as_str(),
+                "{} mutant {}: source",
+                name,
+                index
+            );
             if let Some(original) = &original {
-                let mutant_tree = parse_module(&mine.source)
-                    .unwrap_or_else(|_| panic!("{} mutant {}: the mutant source parses", name, index));
+                let mutant_tree = parse_module(&mine.source).unwrap_or_else(|_| {
+                    panic!("{} mutant {}: the mutant source parses", name, index)
+                });
                 assert_eq!(
                     mutant_tree == *original,
                     expected.get("tree_equal").unwrap().as_bool(),

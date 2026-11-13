@@ -229,7 +229,10 @@ fn collect_sites(module: &Module) -> Result<Vec<Site>, GenerateRefusal> {
                         kind: SiteKind::BoolNegate,
                         node_id: expr.id,
                         line: expr.pos.line as i64,
-                        detail: format!("boolean constant {}", if *flag { "True" } else { "False" }),
+                        detail: format!(
+                            "boolean constant {}",
+                            if *flag { "True" } else { "False" }
+                        ),
                     });
                 }
                 ExprKind::Constant(ConstVal::Int(text)) => {
@@ -370,9 +373,7 @@ fn find_in_pattern(pattern: &mut Pattern, id: usize) -> Option<FoundMut<'_>> {
             }
             None
         }
-        PatternKind::MatchMapping {
-            keys, patterns, ..
-        } => {
+        PatternKind::MatchMapping { keys, patterns, .. } => {
             if let found @ Some(_) = find_in_exprs(keys, id) {
                 return found;
             }
@@ -709,11 +710,9 @@ fn find_in_expr(expr: &mut Expr, id: usize) -> Option<FoundMut<'_>> {
             find_in_expr(slice, id)
         }
         ExprKind::Slice { lower, upper, step } => {
-            for part in [lower, upper, step] {
-                if let Some(part) = part {
-                    if let found @ Some(_) = find_in_expr(part, id) {
-                        return found;
-                    }
+            for part in [lower, upper, step].into_iter().flatten() {
+                if let found @ Some(_) = find_in_expr(part, id) {
+                    return found;
                 }
             }
             None
@@ -804,7 +803,11 @@ fn find_node_mut(module: &mut Module, id: usize) -> Option<FoundMut<'_>> {
 fn apply(tree: &mut Module, site: &Site, direction: i32) {
     match find_node_mut(tree, site.node_id) {
         Some(FoundMut::Stmt(stmt)) => {
-            assert_eq!(site.kind, SiteKind::ReturnNone, "a statement site is a return");
+            assert_eq!(
+                site.kind,
+                SiteKind::ReturnNone,
+                "a statement site is a return"
+            );
             if let StmtKind::Return { value: Some(value) } = &mut stmt.kind {
                 value.kind = ExprKind::Constant(ConstVal::NoneVal);
             } else {

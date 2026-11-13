@@ -50,20 +50,6 @@ impl JVal {
             _ => panic!("expected a list in the recording, found {:?}", self),
         }
     }
-
-    fn as_bool(&self) -> bool {
-        match self {
-            JVal::Bool(flag) => *flag,
-            _ => panic!("expected a bool in the recording, found {:?}", self),
-        }
-    }
-
-    fn as_int(&self) -> i64 {
-        match self {
-            JVal::Int(value) => *value,
-            _ => panic!("expected an int in the recording, found {:?}", self),
-        }
-    }
 }
 
 struct JsonParser {
@@ -238,7 +224,6 @@ impl JsonParser {
     }
 }
 
-
 use ostensible::jsonvalue::JsonValue;
 use ostensible::model::Mutant;
 use ostensible::mutations::generate_mutants;
@@ -246,8 +231,7 @@ use ostensible::pyast::{CmpKind, ConstVal, ExprKind, StmtKind};
 use ostensible::pyparse::parse_module;
 use ostensible::pywalk::{walk, NRef};
 
-const PANEL_SOURCE: &str =
-    "def check(x):\n    if x > 3:\n        return True\n    return x + 2\n";
+const PANEL_SOURCE: &str = "def check(x):\n    if x > 3:\n        return True\n    return x + 2\n";
 
 fn recorded_mutant_source(case_name: &str, kind: &str) -> String {
     let path = concat!(
@@ -256,12 +240,19 @@ fn recorded_mutant_source(case_name: &str, kind: &str) -> String {
     );
     let text = std::fs::read_to_string(path).expect("the battery stands recorded");
     let battery = JsonParser::parse(&text);
-    let cases = battery.get("cases").expect("battery carries cases").as_list();
+    let cases = battery
+        .get("cases")
+        .expect("battery carries cases")
+        .as_list();
     for case in cases {
         if case.get("name").map(|name| name.as_str()) == Some(case_name) {
             for mutant in case.get("mutants").expect("case carries mutants").as_list() {
                 if mutant.get("kind").map(|held| held.as_str()) == Some(kind) {
-                    return mutant.get("source").expect("mutant carries a source").as_str().to_string();
+                    return mutant
+                        .get("source")
+                        .expect("mutant carries a source")
+                        .as_str()
+                        .to_string();
                 }
             }
             panic!("case {} records a {} mutant", case_name, kind);
@@ -332,7 +323,10 @@ fn to_dict_pin_excludes_the_source() {
     assert_eq!(
         mutant.to_dict(),
         JsonValue::Object(vec![
-            ("kind".to_string(), JsonValue::Str("constant_shift".to_string())),
+            (
+                "kind".to_string(),
+                JsonValue::Str("constant_shift".to_string())
+            ),
             ("line".to_string(), JsonValue::Int(3)),
             (
                 "detail".to_string(),
@@ -350,7 +344,12 @@ fn panel_pin_applies_every_kind() {
     kinds.dedup();
     assert_eq!(
         kinds,
-        ["bool_negate", "compare_invert", "constant_shift", "return_none"]
+        [
+            "bool_negate",
+            "compare_invert",
+            "constant_shift",
+            "return_none"
+        ]
     );
 }
 
