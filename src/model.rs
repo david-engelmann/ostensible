@@ -27,16 +27,25 @@ impl StaticFinding {
     }
 }
 
-/// One mutant of one source module. Only the record is ported in
-/// this slice. Mutant generation stays Python only.
+/// One mutant of one source module. The record stands as
+/// the Python states it, kind, line, detail, and source in
+/// that field order, and the generation that fills it stands
+/// ported under PORT8 in the mutations module.
 #[derive(Debug, Clone, PartialEq)]
 pub struct Mutant {
     pub kind: String,
     pub line: i64,
     pub detail: String,
+    pub source: String,
 }
 
 impl Mutant {
+    /// The record's one public reading the Python states,
+    /// spelling the kind, the line, and the detail.
+    pub fn describe(&self) -> String {
+        format!("{} at line {}, {}", self.kind, self.line, self.detail)
+    }
+
     pub fn to_dict(&self) -> JsonValue {
         JsonValue::Object(vec![
             ("kind".to_string(), JsonValue::Str(self.kind.clone())),
