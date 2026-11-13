@@ -47,30 +47,62 @@ fn recursion_refusal() -> GenerateRefusal {
 /// The crate's own standings for the generate path's
 /// unparses, measured against the landed Python at the
 /// default recursion limit and stated in the closing entry
-/// of PORT8-9. A detail unparse in site collection stands
+/// of PORT8-9. The measure is a path priced in thousandths
+/// of a node. A detail unparse in site collection stands
 /// to a path of 326 nodes and refuses at 327, the standing
 /// the interpreter's own collection deaths measure for the
-/// return and comparison shapes. A whole module unparse in
-/// the mutant loop stands to a module path of 329 nodes
-/// and refuses at 330. The interpreter's boundary wobbles
-/// by a term either way with the caller's stack and the
-/// shape's statement nesting; these are the port's figures,
-/// stated as PORT8-5 directs, not the interpreter's copied.
-const DETAIL_UNPARSE_STANDING: usize = 327;
-const MODULE_UNPARSE_STANDING: usize = 330;
+/// return and comparison shapes, and a whole module
+/// unparse in the mutant loop stands to a module path of
+/// 329 nodes and refuses at 330. A path holding no f-string
+/// prices at its node count, so those chain figures stand
+/// exactly. An f-string level prices above its two nodes,
+/// at the cost the interpreter's unparse pays for it,
+/// measured in the recordings generator's own process,
+/// where the interpreter answers a return value's nesting
+/// to 139 levels and refuses at 140, a comparison's to 138
+/// and refuses at 139, and a module's to 140 and refuses
+/// at 141: each f-string node carries 171 thousandths
+/// above its node in the detail measure and 165 in the
+/// module measure, the prices those boundaries solve to
+/// against the standings above. The interpreter's boundary
+/// wobbles by a term either way with the caller's stack
+/// and the shape's statement nesting; these are the port's
+/// figures, stated as PORT8-5 directs, not the
+/// interpreter's copied.
+const DETAIL_UNPARSE_STANDING: usize = 327_000;
+const MODULE_UNPARSE_STANDING: usize = 330_000;
+const DETAIL_FSTRING_EXTRA: usize = 171;
+const MODULE_FSTRING_EXTRA: usize = 165;
 
-/// The number of nodes on the deepest root to leaf path of
-/// a subtree, counted iteratively, on the pattern of the
-/// scan's own measure.
-fn path_nodes(root: NRef) -> usize {
+/// The priced depth of a subtree: the deepest root to leaf
+/// path, counted iteratively on the pattern of the scan's
+/// own measure, each node standing at one thousand
+/// thousandths and each f-string node (a joined string or
+/// a formatted value) at that plus the measure's f-string
+/// extra.
+fn priced_path(root: NRef, fstring_extra: usize) -> usize {
+    fn weight(node: NRef, fstring_extra: usize) -> usize {
+        match node {
+            NRef::Expr(expr)
+                if matches!(
+                    expr.kind,
+                    ExprKind::JoinedStr { .. } | ExprKind::FormattedValue { .. }
+                ) =>
+            {
+                1_000 + fstring_extra
+            }
+            _ => 1_000,
+        }
+    }
     let mut deepest = 0usize;
-    let mut stack: Vec<(NRef, usize)> = vec![(root, 1)];
-    while let Some((node, depth)) = stack.pop() {
-        if depth > deepest {
-            deepest = depth;
+    let mut stack: Vec<(NRef, usize)> = vec![(root, 0)];
+    while let Some((node, ancestors)) = stack.pop() {
+        let total = ancestors + weight(node, fstring_extra);
+        if total > deepest {
+            deepest = total;
         }
         for child in node.children() {
-            stack.push((child, depth + 1));
+            stack.push((child, total));
         }
     }
     deepest
@@ -79,7 +111,7 @@ fn path_nodes(root: NRef) -> usize {
 /// Refuse when the unparse reading of one expression in
 /// site collection would pass the detail standing.
 fn detail_guard(expr: &Expr) -> Result<(), GenerateRefusal> {
-    if path_nodes(NRef::Expr(expr)) >= DETAIL_UNPARSE_STANDING {
+    if priced_path(NRef::Expr(expr), DETAIL_FSTRING_EXTRA) >= DETAIL_UNPARSE_STANDING {
         Err(recursion_refusal())
     } else {
         Ok(())
@@ -840,7 +872,9 @@ fn apply(tree: &mut Module, site: &Site, direction: i32) {
 pub fn generate_mutants(source: &str) -> Result<Vec<Mutant>, GenerateRefusal> {
     let base = parse_module(source)?;
     let sites = collect_sites(&base)?;
-    if !sites.is_empty() && path_nodes(NRef::Module(&base)) >= MODULE_UNPARSE_STANDING {
+    if !sites.is_empty()
+        && priced_path(NRef::Module(&base), MODULE_FSTRING_EXTRA) >= MODULE_UNPARSE_STANDING
+    {
         // The per mutant unparse reads the whole module, so a
         // module past the standing refuses before the first
         // mutant is built, where the Python's first per mutant
