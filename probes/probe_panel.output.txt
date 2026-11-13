@@ -1,0 +1,132 @@
+== A1: every comparison operator, in a return ==
+    '==': detail='comparison a == b operator 0' mutant='return a != b'
+    '!=': detail='comparison a != b operator 0' mutant='return a == b'
+    '<': detail='comparison a < b operator 0' mutant='return a >= b'
+    '<=': detail='comparison a <= b operator 0' mutant='return a > b'
+    '>': detail='comparison a > b operator 0' mutant='return a <= b'
+    '>=': detail='comparison a >= b operator 0' mutant='return a < b'
+    'in': detail='comparison a in b operator 0' mutant='return a not in b'
+    'not in': detail='comparison a not in b operator 0' mutant='return a in b'
+    'is': detail='comparison a is b operator 0' mutant='return a is not b'
+    'is not': detail='comparison a is not b operator 0' mutant='return a is b'
+== A2: chained comparison ==
+A2 'a < b < c': 2 mutants
+    return_none | line 2 | return value a < b < c | 'def f(a, b, c):\n    return None'
+    compare_invert | line 2 | comparison a < b < c operator 0 | 'def f(a, b, c):\n    return a >= b < c'
+== A3: compare inside a return value ==
+A3: 4 mutants
+    return_none | line 2 | return value x > 3 | 'def f(x):\n    return None'
+    compare_invert | line 2 | comparison x > 3 operator 0 | 'def f(x):\n    return x <= 3'
+    constant_shift | line 2 | numeric constant 3 moved plus one | 'def f(x):\n    return x > 4'
+    constant_shift | line 2 | numeric constant 3 moved minus one | 'def f(x):\n    return x > 2'
+== A4: not / unary / boolop contexts ==
+A4a 'return not True': 2 mutants
+    return_none | line 2 | return value not True | 'def f():\n    return None'
+    bool_negate | line 2 | boolean constant True | 'def f():\n    return not False'
+A4b 'return -5': 3 mutants
+    return_none | line 2 | return value -5 | 'def f():\n    return None'
+    constant_shift | line 2 | numeric constant 5 moved plus one | 'def f():\n    return -6'
+    constant_shift | line 2 | numeric constant 5 moved minus one | 'def f():\n    return -4'
+A4c 'x = True and False': 2 mutants
+    bool_negate | line 1 | boolean constant True | 'x = False and False'
+    bool_negate | line 1 | boolean constant False | 'x = True and True'
+== C1: int spellings ==
+    0: [('constant_shift', 1, 'numeric constant 0 moved plus one'), ('constant_shift', 1, 'numeric constant 0 moved minus one')] sources=['x = 1', 'x = -1']
+    7: [('constant_shift', 1, 'numeric constant 7 moved plus one'), ('constant_shift', 1, 'numeric constant 7 moved minus one')] sources=['x = 8', 'x = 6']
+    1_000: [('constant_shift', 1, 'numeric constant 1000 moved plus one'), ('constant_shift', 1, 'numeric constant 1000 moved minus one')] sources=['x = 1001', 'x = 999']
+    0x10: [('constant_shift', 1, 'numeric constant 16 moved plus one'), ('constant_shift', 1, 'numeric constant 16 moved minus one')] sources=['x = 17', 'x = 15']
+    0o17: [('constant_shift', 1, 'numeric constant 15 moved plus one'), ('constant_shift', 1, 'numeric constant 15 moved minus one')] sources=['x = 16', 'x = 14']
+    0b101: [('constant_shift', 1, 'numeric constant 5 moved plus one'), ('constant_shift', 1, 'numeric constant 5 moved minus one')] sources=['x = 6', 'x = 4']
+    123456789012345678901234567890: [('constant_shift', 1, 'numeric constant 123456789012345678901234567890 moved plus one'), ('constant_shift', 1, 'numeric constant 123456789012345678901234567890 moved minus one')] sources=['x = 123456789012345678901234567891', 'x = 123456789012345678901234567889']
+== C2: float shapes ==
+    1.5: [('constant_shift', 1, 'numeric constant 1.5 moved plus one'), ('constant_shift', 1, 'numeric constant 1.5 moved minus one')] sources=['x = 2.5', 'x = 0.5']
+    1.0: [('constant_shift', 1, 'numeric constant 1.0 moved plus one'), ('constant_shift', 1, 'numeric constant 1.0 moved minus one')] sources=['x = 2.0', 'x = 0.0']
+    0.1: [('constant_shift', 1, 'numeric constant 0.1 moved plus one'), ('constant_shift', 1, 'numeric constant 0.1 moved minus one')] sources=['x = 1.1', 'x = -0.9']
+    1e308: [('constant_shift', 1, 'numeric constant 1e+308 moved plus one'), ('constant_shift', 1, 'numeric constant 1e+308 moved minus one')] sources=['x = 1e+308', 'x = 1e+308']
+    1e999: [('constant_shift', 1, 'numeric constant inf moved plus one'), ('constant_shift', 1, 'numeric constant inf moved minus one')] sources=['x = 1e309', 'x = 1e309']
+    5e-324: [('constant_shift', 1, 'numeric constant 5e-324 moved plus one'), ('constant_shift', 1, 'numeric constant 5e-324 moved minus one')] sources=['x = 1.0', 'x = -1.0']
+== C3: complex constants ==
+C3a 'x = 1j': 0 mutants
+C3b 'x = 1 + 2j': 2 mutants
+    constant_shift | line 1 | numeric constant 1 moved plus one | 'x = 2 + 2j'
+    constant_shift | line 1 | numeric constant 1 moved minus one | 'x = 0 + 2j'
+== C4: constants that earn no site ==
+    "x = 'abc'\n": []
+    "x = b'ab'\n": []
+    'x = None\n': []
+    'x = ...\n': []
+    'def f():\n    return None\n': []
+    'def f():\n    return\n': []
+    'def f():\n    pass\n': []
+== C5: constants in less obvious positions ==
+C5a default arg: 2 mutants
+    constant_shift | line 1 | numeric constant 5 moved plus one | 'def f(x=6):\n    pass'
+    constant_shift | line 1 | numeric constant 5 moved minus one | 'def f(x=4):\n    pass'
+C5b subscript index: 2 mutants
+    constant_shift | line 1 | numeric constant 0 moved plus one | 'x = items[1]'
+    constant_shift | line 1 | numeric constant 0 moved minus one | 'x = items[-1]'
+C5c nested function: 4 mutants
+    return_none | line 4 | return value g | 'def f():\n\n    def g():\n        return 1\n    return None'
+    return_none | line 3 | return value 1 | 'def f():\n\n    def g():\n        return None\n    return g'
+    constant_shift | line 3 | numeric constant 1 moved plus one | 'def f():\n\n    def g():\n        return 2\n    return g'
+    constant_shift | line 3 | numeric constant 1 moved minus one | 'def f():\n\n    def g():\n        return 0\n    return g'
+C5d lambda body: 2 mutants
+    constant_shift | line 1 | numeric constant 42 moved plus one | 'f = lambda: 43'
+    constant_shift | line 1 | numeric constant 42 moved minus one | 'f = lambda: 41'
+C5e class body: 2 mutants
+    constant_shift | line 2 | numeric constant 10 moved plus one | 'class C:\n    limit = 11'
+    constant_shift | line 2 | numeric constant 10 moved minus one | 'class C:\n    limit = 9'
+C5f f-string value: 2 mutants
+    constant_shift | line 1 | numeric constant 1 moved plus one | "x = f'{2}'"
+    constant_shift | line 1 | numeric constant 1 moved minus one | "x = f'{0}'"
+C5g match literal pattern: 2 mutants
+    constant_shift | line 2 | numeric constant 1 moved plus one | "match cmd:\n    case 2:\n        pass\n    case 'go':\n        pass"
+    constant_shift | line 2 | numeric constant 1 moved minus one | "match cmd:\n    case 0:\n        pass\n    case 'go':\n        pass"
+C5h comprehension: 2 mutants
+    constant_shift | line 1 | numeric constant 3 moved plus one | 'x = [i for i in range(4)]'
+    constant_shift | line 1 | numeric constant 3 moved minus one | 'x = [i for i in range(2)]'
+== D1: return shapes ==
+D1a tuple: 5 mutants
+    return_none | line 2 | return value (1, 2) | 'def f():\n    return None'
+    constant_shift | line 2 | numeric constant 1 moved plus one | 'def f():\n    return (2, 2)'
+    constant_shift | line 2 | numeric constant 1 moved minus one | 'def f():\n    return (0, 2)'
+    constant_shift | line 2 | numeric constant 2 moved plus one | 'def f():\n    return (1, 3)'
+    constant_shift | line 2 | numeric constant 2 moved minus one | 'def f():\n    return (1, 1)'
+D1b two returns: 6 mutants
+    return_none | line 4 | return value 2 | 'def f(x):\n    if x:\n        return 1\n    return None'
+    return_none | line 3 | return value 1 | 'def f(x):\n    if x:\n        return None\n    return 2'
+    constant_shift | line 4 | numeric constant 2 moved plus one | 'def f(x):\n    if x:\n        return 1\n    return 3'
+    constant_shift | line 4 | numeric constant 2 moved minus one | 'def f(x):\n    if x:\n        return 1\n    return 1'
+    constant_shift | line 3 | numeric constant 1 moved plus one | 'def f(x):\n    if x:\n        return 2\n    return 2'
+    constant_shift | line 3 | numeric constant 1 moved minus one | 'def f(x):\n    if x:\n        return 0\n    return 2'
+D1c yield is not a return: 2 mutants
+    constant_shift | line 2 | numeric constant 1 moved plus one | 'def f():\n    yield 2'
+    constant_shift | line 2 | numeric constant 1 moved minus one | 'def f():\n    yield 0'
+== D2/G4: return detail normalization ==
+    return 1_000: detail='return value 1000'
+    return 0x10: detail='return value 16'
+    return 'abc': detail="return value 'abc'"
+    return (1, 2): detail='return value (1, 2)'
+== G1: string detail spellings through unparse ==
+    return 'it\'s': detail='return value "it\'s"' source='def f():\n    return None'
+    return "say \"hi\"": detail='return value \'say "hi"\'' source='def f():\n    return None'
+    return 'café': detail="return value 'café'" source='def f():\n    return None'
+    return 'a\nb': detail="return value 'a\\nb'" source='def f():\n    return None'
+    return '\U0001F600': detail="return value '😀'" source='def f():\n    return None'
+== G2: numeric detail spellings ==
+    1.0: details=['numeric constant 1.0 moved plus one', 'numeric constant 1.0 moved minus one']
+    0.25: details=['numeric constant 0.25 moved plus one', 'numeric constant 0.25 moved minus one']
+    100000000000000000000: details=['numeric constant 100000000000000000000 moved plus one', 'numeric constant 100000000000000000000 moved minus one']
+== H1: demo project corpus ==
+    examples/demo_project/calc.py: 9 mutants, kinds={'return_none': 3, 'compare_invert': 1, 'bool_negate': 1, 'constant_shift': 4}
+        ('return_none', 2, 'return value x + 1')
+        ('return_none', 6, 'return value age >= 18')
+        ('return_none', 10, 'return value True')
+        ('compare_invert', 6, 'comparison age >= 18 operator 0')
+        ('bool_negate', 10, 'boolean constant True')
+        ('constant_shift', 2, 'numeric constant 1 moved plus one')
+        ('constant_shift', 2, 'numeric constant 1 moved minus one')
+        ('constant_shift', 6, 'numeric constant 18 moved plus one')
+        ('constant_shift', 6, 'numeric constant 18 moved minus one')
+    examples/demo_project/greeter.py: 1 mutants, kinds={'return_none': 1}
+        ('return_none', 2, "return value 'hello'")

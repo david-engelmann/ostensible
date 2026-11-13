@@ -207,3 +207,196 @@ five-source corpus is identical under PYTHONHASHSEED 1, 42,
 and the default (probe_limits digest, 7e217cc98fb979adf2aab
 73cc5f7a3f1405aec24d7b60d9b592350fc3ddfcf96 in all three
 runs), so no hash order reaches the output.
+
+## 3. The boundary: who consumes generation, and in what shape
+
+One consumer exists in the package: ostensible/runner.py,
+importing Mutant and generate_mutants at runner.py:67. It calls
+generate_mutants in exactly two places, and the two places take
+the same shape:
+
+- The per item path, analyse_project at runner.py:639-648,
+  builds a list of (relative_source_path, mutant) pairs for the
+  paired source files of one test file.
+- The whole file path, _whole_file_outcomes at runner.py:533,
+  iterates the same call for files with no selectable items.
+
+At both call sites the input is source_file.read_text(
+encoding="utf-8") (runner.py:534 and the read inside the loop
+at runner.py:643): a str decoded as UTF-8 from a .py file of the
+analysed project. No caller passes bytes, though the entry
+accepts them (probe F4: ast.parse accepts bytes and mutants
+come back normally). The port's input contract is therefore a
+decoded source text, the same shape scan_source already takes
+under PORT7-1.
+
+The output crosses four boundaries, each with its exact shape:
+
+- Into the run: for each mutant the runner writes
+  mutant.source + "\n" as the whole replacement text of the
+  source file in a scratch copy (runner.py:544 and
+  runner.py:652) and runs pytest there. So source is consumed
+  as a complete module text, and the trailing newline is the
+  runner's, not the generator's: the recorded mutant sources
+  carry no trailing newline (ast.unparse never emits one).
+- Into the outcome record: MutantOutcome(source_path=
+  str(relative_source), mutant=mutant, killed=..., timed_out=
+  ...) at runner.py:548 and runner.py:661. The mutant travels
+  whole, by reference, into every outcome it earns.
+- Into the report, JSON side: Mutant.to_dict() gives
+  {kind, line, detail} and MutantOutcome.to_dict() adds the
+  keys source (the source PATH, not the mutant's source text)
+  and result (runner.py:92-100). This reading is already
+  ported: model.rs MutantOutcome::to_dict reproduces it.
+- Into the report, text side: report.py:16-24 renders each
+  surviving outcome as "mutant that walked through -
+  {source_path} - {kind} at line {line} - {detail}", a
+  rendering of the same three fields plus the path. Also
+  already ported under the report reading.
+
+describe() has no caller anywhere in the package or the suite
+(grep over the tree: no call site). It is public surface of the
+record and nothing more; section 7 says what the port should
+do with it.
+
+Boundary state at this head, verified by running the suite:
+the consumer is dead. import ostensible.runner raises
+ModuleNotFoundError: No module named 'ostensible.static_scan'
+(runner.py:74), the stated consequence of the Round 15
+retirement under PORT7-9, and the whole Python suite except
+tests/test_mutations.py errors at collection:
+5 errors, tests/test_cli.py, test_functions.py, test_report.py,
+test_runner.py, test_slice7.py, while test_mutations.py passes
+7 of 7. Round 16 does not change that state and must not be
+read as breaking it: after mutations.py retires, the same files
+fail one import earlier, at the mutations import of runner.py:67
+and tests/test_functions.py:7, for the same stated reason. The
+execution machinery slice is the one that has to bridge the
+runner to the crate; this slice only has to keep the boundary
+shape the runner's two call sites state, which the recordings
+pin.
+
+## 4. Recorded probes: what each family established
+
+The probe programs are banked under probes/ with their outputs.
+Families and their headline answers, all at head 5b4c936d,
+CPython 3.12.3, the interpreter of this box:
+
+- A, the operator panel. All ten comparison operators invert
+  exactly as the table at mutations.py:37 states, the detail
+  index is 0 for every one, a chained comparison earns one
+  site and inverts its first operator only, and a comparison
+  inside a return earns both a return_none and a
+  compare_invert mutant, container first.
+- B, order and determinism. Breadth first walk order, proven
+  by two source-order violations (section 2). In-process
+  determinism exact, and hash seed independence proven by
+  digest across PYTHONHASHSEED values.
+- C, constants. Int spellings normalise through the value
+  (1_000 records as 1000, 0x10 as 16), big ints shift exactly,
+  floats shift in double arithmetic including the no-op and
+  infinity shapes of section 6, complex earns no site, str,
+  bytes, None, and Ellipsis earn no site, and constants earn
+  sites in every position the walk reaches, including match
+  literal patterns.
+- D, returns. Every valued return earns a site, bare return
+  and return None earn none, yield earns none of its own, and
+  the return detail is the unparse of the value from the
+  original tree (return 1_000 details as "return value 1000").
+- E, identity. Duplicate (kind, line, detail) mutants are
+  emitted whole with no deduplication, and value-level no-op
+  mutants are emitted whole (section 2).
+- F, refusals and standings. Section 6 states these in full.
+- G, detail spellings. The details are unparse spellings:
+  string values arrive with the interpreter's quote choice
+  ('it\'s' details with double quotes, 'say "hi"' with
+  single), non-ASCII text stands as itself (café, and the
+  emoji of probe G1), escapes stand spelled (\n in the source
+  details as the two characters backslash n), and numeric
+  details are the value's own spelling (1.0 stays "1.0",
+  distinct from the int 1, and 1e308 spells "1e+308").
+- H, the demo corpus. examples/demo_project/calc.py earns 9
+  mutants (3 return_none, 1 compare_invert, 1 bool_negate, 4
+  constant_shift) and greeter.py earns 1 (return_none on
+  'hello'), in walk order, recorded in full in the output.
+  The module over itself: generate_mutants over the text of
+  mutations.py earns 18 mutants (5 return_none, 8
+  compare_invert, 1 bool_negate, 4 constant_shift), a useful
+  scale anchor for the recordings corpus.
+- M, the record. Mutant is frozen (attribute assignment
+  raises FrozenInstanceError), equality and hash are by
+  value, describe() spells "{kind} at line {line},
+  {detail}", and to_dict() keys stand in the order kind,
+  line, detail with source excluded.
+
+## 5. Test census for the generation surface
+
+Python suite at this head: six test files, 57 test functions by
+def test_ count, plus tests/factories.py (123 code lines), the
+shared project writer. The files and their standing:
+
+- tests/test_mutations.py, 7 tests, 57 code lines. The only
+  file that pins generate_mutants directly, under obligation
+  C2, the fixed mutation panel, and the only Python test file
+  that runs at this head (7 passed, verified). Its assertions:
+  the panel applies every kind; shifts go in both directions;
+  every mutant of its panel source parses and differs from the
+  original and carries line >= 1; the return_none, compare_
+  invert, and bool_negate mutants really do what they say,
+  proven by exec of the mutant source; and the panel is
+  deterministic across two calls.
+- tests/test_functions.py, 6 tests. Constructs a Mutant by
+  keyword by hand at line 18 (kind="return_none", line=1,
+  detail="return value 1", source="") to build outcomes for
+  the verdict readings. It pins the record's field names and
+  keyword shape, not generation, and it cannot run at this
+  head because it also imports the runner.
+- tests/test_runner.py (5), tests/test_report.py (5),
+  tests/test_cli.py (3), tests/test_slice7.py (21). These
+  name mutants only through the runner and the report. They
+  are specification for the execution and command line
+  slices, not for this one, and none of them runs at this
+  head.
+
+Rust side at this head: 66 #[test] functions in tests/*.rs,
+plus the recorded conformance batteries those tests drive
+(the scan battery of PORT7 at 533 cases and the report and
+settings batteries at 189 cases standing in
+tests/conformance/). No recording anywhere in the repo covers
+a generate_mutants answer today; the surface is unrecorded.
+
+What the port must re-express, on the PORT7-10 pattern:
+
+- tests/test_mutations.py retires with mutations.py at this
+  slice's close, and its specification passes to recordings
+  generated from the landed Python by a generator program,
+  never written by hand. The recording shape the battery
+  wants is one case per source text, carrying the source and
+  the full mutant list in order, each mutant as kind, line,
+  detail, source, compared field for field and byte for
+  byte by the Rust tests offline.
+- The corpus must go beyond the suite's one panel source, on
+  the PORT7-10 precedent of a generated synthetic corpus
+  beside the suite's inputs: the families of section 4 give
+  the case list (operator panel, chained comparisons, walk
+  order discriminators, constant spellings including the
+  float edges and the big int, positions the walk reaches,
+  the demo project's two files, and the module's own text).
+- Two of the seven suite tests are exec proofs (the mutant
+  really returns None, really inverts). A recording cannot
+  exec, so the contract should re-express those as Rust tests
+  over the generated mutant's tree: the return_none mutant's
+  tree holds the constant None at that return, the
+  compare_invert mutant's tree holds the inverted operator,
+  which the crate can assert on its own parsed tree of the
+  recorded mutant source. The parses-and-differs test
+  re-expresses as a recorded answer plus the standing caveat
+  of probe E2: differs holds for the panel source, and the
+  corpus carries the no-op float shapes as recordings in
+  their own right, where the recorded answer is that the
+  mutant's tree EQUALS the original's.
+- tests/test_functions.py's hand-built Mutant is not this
+  slice's to retire; it goes when the execution slice takes
+  the runner's tests. But its keyword construction is the
+  standing proof that the record's four field names are
+  load-bearing beyond generation itself.

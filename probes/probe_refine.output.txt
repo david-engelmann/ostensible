@@ -1,0 +1,5 @@
+parens: stands at 200, refuses at 201
+unparse chain: stands at 327 terms, RecursionError at 328 terms
+multiline compare: [('return_none', 2, 'return value a < b'), ('compare_invert', 2, 'comparison a < b operator 0')]
+multiline constants: [('constant_shift', 1, 'numeric constant 1 moved plus one'), ('constant_shift', 1, 'numeric constant 1 moved minus one'), ('constant_shift', 2, 'numeric constant 2 moved plus one'), ('constant_shift', 2, 'numeric constant 2 moved minus one')]
+mutations.py over itself: 18 {'return_none': 5, 'compare_invert': 8, 'bool_negate': 1, 'constant_shift': 4}

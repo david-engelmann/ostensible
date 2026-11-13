@@ -1,0 +1,57 @@
+== B1: walk order is breadth first, not source order ==
+    [('return_none', 4), ('return_none', 3), ('constant_shift', 3), ('constant_shift', 3)]
+    module constant after a function: [('constant_shift', 1), ('constant_shift', 1), ('return_none', 3), ('constant_shift', 3), ('constant_shift', 3)]
+== B2: determinism in process ==
+    two calls identical: True
+== E1: duplicate (kind, line, detail) pairs are both emitted ==
+    ('constant_shift', 1, 'numeric constant 1 moved plus one', 'x = 2 + 1')
+    ('constant_shift', 1, 'numeric constant 1 moved minus one', 'x = 0 + 1')
+    ('constant_shift', 1, 'numeric constant 1 moved plus one', 'x = 1 + 2')
+    ('constant_shift', 1, 'numeric constant 1 moved minus one', 'x = 1 + 0')
+    two plus-one mutants share (kind, line, detail); sources differ; no dedup
+== E2: a mutant can be a value level no-op ==
+    1e308 mutants parse back to the original dump: [True, True]
+    7 mutants parse back to the original dump: [False, False]
+== F1: syntax error propagates ==
+    SyntaxError: invalid syntax (line 1)
+== F2: null byte ==
+    SyntaxError: source code string cannot contain null bytes
+== F3: empty and inert sources ==
+    '': 0 mutants
+    '\n\n': 0 mutants
+    '# only a comment\n': 0 mutants
+    'pass\n': 0 mutants
+    "x = 'str'\n": 0 mutants
+== F4: bytes input ==
+    bytes accepted: [('constant_shift', 'numeric constant 1 moved plus one'), ('constant_shift', 'numeric constant 1 moved minus one')]
+== F5: nested parentheses depth ==
+    depth 50: 2 mutants
+    depth 100: 2 mutants
+    depth 200: 2 mutants
+    depth 500: SyntaxError: too many nested parentheses (<unknown>, line 1)
+    depth 1000: SyntaxError: too many nested parentheses (<unknown>, line 1)
+    depth 5000: SyntaxError: too many nested parentheses (<unknown>, line 1)
+== F6: unparse standing over a long name chain with one constant ==
+    terms 100: 2 mutants
+    terms 300: 2 mutants
+    terms 330: RecursionError: maximum recursion depth exceeded
+    terms 400: RecursionError: maximum recursion depth exceeded
+    terms 900: RecursionError: maximum recursion depth exceeded
+    terms 2000: RecursionError: maximum recursion depth exceeded
+== F7: lone surrogate through an escape in a string constant ==
+    return_none | "return value '\\ud800'" | 'def f():\n    return None'
+    raw surrogate character in source text:
+    UnicodeEncodeError: 'utf-8' codec can't encode character '\ud800' in position 5: surrogates not allowed
+== F8: BOM and CRLF ==
+    BOM: SyntaxError: invalid non-printable character U+FEFF (<unknown>, line 1)
+    CRLF mutants: [('constant_shift', 1, 'x = 2\ny = 2'), ('constant_shift', 1, 'x = 0\ny = 2'), ('constant_shift', 2, 'x = 1\ny = 3'), ('constant_shift', 2, 'x = 1\ny = 1')]
+== F9: source with a coding cookie ==
+    cookie: [('constant_shift', 2, 'numeric constant 1 moved plus one'), ('constant_shift', 2, 'numeric constant 1 moved minus one')]
+== M: the Mutant record ==
+    describe(): 'return_none at line 1, return value 1'
+    to_dict(): {'kind': 'return_none', 'line': 1, 'detail': 'return value 1'} keys in order: ['kind', 'line', 'detail']
+    frozen: attribute assignment raises FrozenInstanceError
+    equality by value: True | hash equal: True
+    describe of a generated mutant: 'return_none at line 2, return value 9'
+== digest for the hash seed probe ==
+    sha256: 7e217cc98fb979adf2aab73cc5f7a3f1405aec24d7b60d9b592350fc3ddfcf96
