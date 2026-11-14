@@ -192,10 +192,7 @@ fn pyproject_source(path: &Path) -> Option<CollectionSettings> {
         Some(tool) if tool.is_table() => tool,
         _ => return None,
     };
-    let table = match tool.get("pytest") {
-        Some(table) => table,
-        None => return None,
-    };
+    let table = tool.get("pytest")?;
     if !table.is_table() {
         return Some(CollectionSettings::default());
     }

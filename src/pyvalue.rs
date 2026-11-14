@@ -252,7 +252,7 @@ pub fn py_str_repr(text: &str) -> String {
 /// plain space left out of its own separator range.
 fn is_printable(ch: char) -> bool {
     let cp = ch as u32;
-    !NON_PRINTABLE_RANGES
+    NON_PRINTABLE_RANGES
         .binary_search_by(|&(low, high)| {
             if cp < low {
                 std::cmp::Ordering::Greater
@@ -262,7 +262,7 @@ fn is_printable(ch: char) -> bool {
                 std::cmp::Ordering::Equal
             }
         })
-        .is_ok()
+        .is_err()
 }
 pub fn py_str(value: &PyValue) -> String {
     match value {

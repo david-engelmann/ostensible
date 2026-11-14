@@ -119,6 +119,16 @@ pub fn load_ini(path: &Path) -> IniLoad {
 /// runs. Any error the parser would raise, a duplicate section,
 /// a duplicate option, a line before any section, or a line the
 /// option reading cannot split, refuses the whole file.
+/// The key and value pairs of one section or of the defaults,
+/// each key holding its value in its standing parts.
+type IniPairs = Vec<(String, Vec<String>)>;
+
+/// One named section, its name and its pairs.
+type IniSection = (String, IniPairs);
+
+/// The sections of one file in the order they stand.
+type IniSections = Vec<IniSection>;
+
 pub fn parse_ini(text: &str) -> IniLoad {
     // The Python reader opens the file in text mode, where a
     // carriage return before a newline and a lone carriage return
@@ -126,8 +136,8 @@ pub fn parse_ini(text: &str) -> IniLoad {
     let normalized = text.replace("\r\n", "\n").replace('\r', "\n");
     let lines: Vec<&str> = normalized.split('\n').collect();
 
-    let mut defaults: Vec<(String, Vec<String>)> = Vec::new();
-    let mut sections: Vec<(String, Vec<(String, Vec<String>)>)> = Vec::new();
+    let mut defaults: IniPairs = Vec::new();
+    let mut sections: IniSections = Vec::new();
     let mut added_sections: HashSet<String> = HashSet::new();
     let mut added_options: HashSet<(String, String)> = HashSet::new();
     let mut current: Option<SectionRef> = None;
@@ -136,8 +146,8 @@ pub fn parse_ini(text: &str) -> IniLoad {
     let mut indent_level: usize = 0;
 
     fn store(
-        defaults: &mut Vec<(String, Vec<String>)>,
-        sections: &mut Vec<(String, Vec<(String, Vec<String>)>)>,
+        defaults: &mut IniPairs,
+        sections: &mut [IniSection],
         current: &SectionRef,
         key: &str,
         parts: Vec<String>,
@@ -153,8 +163,8 @@ pub fn parse_ini(text: &str) -> IniLoad {
     }
 
     fn append_part(
-        defaults: &mut Vec<(String, Vec<String>)>,
-        sections: &mut Vec<(String, Vec<(String, Vec<String>)>)>,
+        defaults: &mut IniPairs,
+        sections: &mut [IniSection],
         current: &SectionRef,
         key: &str,
         part: String,
@@ -169,8 +179,8 @@ pub fn parse_ini(text: &str) -> IniLoad {
     }
 
     fn current_has_value(
-        defaults: &[(String, Vec<String>)],
-        sections: &[(String, Vec<(String, Vec<String>)>)],
+        defaults: &IniPairs,
+        sections: &[IniSection],
         current: &SectionRef,
         key: &str,
     ) -> bool {
