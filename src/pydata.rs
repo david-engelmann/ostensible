@@ -156,3 +156,68 @@ pub fn lookup_name(name: &str) -> Option<char> {
     }
     None
 }
+
+/// The printable reading of one codepoint. A lone
+/// surrogate is never printable, as the interpreter's
+/// category reading states, and a codepoint past the
+/// Unicode range never stands as a character at all.
+pub fn is_printable_cp(point: u32) -> bool {
+    match char::from_u32(point) {
+        Some(ch) => is_printable(ch),
+        None => false,
+    }
+}
+
+/// The escape spelling of one codepoint the repr
+/// cannot stand as itself, on the interpreter's tiers.
+pub fn unicode_escape_cp(point: u32) -> String {
+    match point {
+        0x5c => "\\\\".to_string(),
+        0x0a => "\\n".to_string(),
+        0x0d => "\\r".to_string(),
+        0x09 => "\\t".to_string(),
+        _ => {
+            if point < 0x100 {
+                format!("\\x{:02x}", point)
+            } else if point < 0x10000 {
+                format!("\\u{:04x}", point)
+            } else {
+                format!("\\U{:08x}", point)
+            }
+        }
+    }
+}
+
+/// The Python repr form of a string, over codepoints,
+/// with its quote choice and its escapes. This is the
+/// one string repr implementation the crate carries,
+/// under PORT9-1. The unparse spells through it and the
+/// value world's repr converts its strings to
+/// codepoints and calls it, so no second copy stands.
+pub fn str_repr(value: &[u32]) -> String {
+    let quote = if value.contains(&0x27) && !value.contains(&0x22) {
+        '"'
+    } else {
+        '\''
+    };
+    let mut out = String::new();
+    out.push(quote);
+    for point in value {
+        if *point == quote as u32 || *point == 0x5c {
+            out.push('\\');
+            out.push(char::from_u32(*point).unwrap());
+        } else if *point == 0x0a {
+            out.push_str("\\n");
+        } else if *point == 0x0d {
+            out.push_str("\\r");
+        } else if *point == 0x09 {
+            out.push_str("\\t");
+        } else if is_printable_cp(*point) {
+            out.push(char::from_u32(*point).unwrap());
+        } else {
+            out.push_str(&unicode_escape_cp(*point));
+        }
+    }
+    out.push(quote);
+    out
+}
