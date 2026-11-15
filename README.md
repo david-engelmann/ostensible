@@ -6,6 +6,14 @@ It mutates the code under a test and the test's own assertions, and any test no 
 
 Agent written suites flood repos with tests that cannot fail for a real reason, including tests that assert a mock returns what the mock was told to return. Ostensible applies a fixed panel of small, fast mutations per test file and reports the tests that stayed green under every applicable mutant. A decorative test is named in plain language on the pull request, next to the mutant that walked through it. The boundary with its siblings is one sentence. Ostensible asks whether a test can fail, canaryfield asks whether the harness catches planted defects, greenharvest asks which tests earn their runtime.
 
+## Running it
+
+Build the binary with cargo build --release and run it against a project folder.
+
+    ostensible [--json] [--timeout SECONDS] <project>
+
+The report prints as text, or as JSON under --json. The timeout bounds each single test file run and stands at 30 seconds where no flag gives it. The runs the tool makes are pytest runs, read under the python3 the path provides, and the naming settings of the project are read from the one config source pytest itself would use.
+
 ## Status
 
 Local seed is done and the seed commit sits on the local main branch. Remote seed is pending a token access fix and writes returned 403 when verified on 2026-10-31. Setup is in progress locally on a branch and nothing has been pushed yet.
