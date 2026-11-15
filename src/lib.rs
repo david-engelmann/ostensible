@@ -25,6 +25,7 @@ pub mod pyunparse;
 pub mod pyvalue;
 pub mod pywalk;
 pub mod report;
+pub mod runner;
 pub mod settings;
 pub mod toml;
 
@@ -33,6 +34,7 @@ pub use model::{
     StaticFinding,
 };
 pub use mutations::{generate_mutants, GenerateRefusal};
+pub use runner::{analyse_project, RunnerError};
 pub use settings::{
     file_matches, load_collection_settings, load_collection_settings_with_source, name_matches,
     CollectionSettings,
