@@ -6,10 +6,11 @@
 //! the report reading whole, the collection settings reading
 //! whole, the static scan whole with the Python source parser
 //! it carries, and the mutant generation whole. The execution
-//! machinery and the command line with the package front doors
-//! stay Python only, and the contract states that boundary by
-//! name.
+//! machinery stands ported under PORT10 and the command line
+//! under PORT11, and no Python stands in the implementation
+//! from PORT11 on.
 
+pub mod cli;
 pub mod globmatch;
 pub mod ini;
 pub mod jsonvalue;

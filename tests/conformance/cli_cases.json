@@ -1,0 +1,70 @@
+{
+  "format": "ostensible-port11-cases/1",
+  "cases": [
+    {
+      "name": "decorative_text",
+      "files": {
+        "greeter.py": "def greet():\n    return 'hello'\n",
+        "test_greeter.py": "from unittest.mock import Mock\n\n\ndef test_fetch_returns_what_it_was_told():\n    client = Mock()\n    client.fetch.return_value = 42\n    result = client.fetch()\n    assert result == 42\n"
+      },
+      "argv": [
+        "decorative"
+      ],
+      "exit": 0,
+      "stdout": "cantfail report\nproject - decorative\nschema - cantfail-report/3\n\nstatic findings\ntest_greeter.py line 8 - mock_return_value - assertion checks a value read from a mock against the return value the mock was assigned, 42\n\ntest file verdicts\ntest_greeter.py - decorative_candidate\n  function - test_fetch_returns_what_it_was_told - decorative_candidate\n    decorative candidate - this function stayed green under every applicable mutant in the fixed panel\n    mutant that walked through - greeter.py - return_none at line 2 - return value 'hello'\n  decorative candidate - every judged function in this file stayed green under every applicable mutant in the fixed panel\n\nA surviving mutant is evidence about this fixed panel only. It does not prove a test is worthless and a killed mutant does not prove a test is strong.\n",
+      "stderr": ""
+    },
+    {
+      "name": "decorative_json",
+      "files": {
+        "greeter.py": "def greet():\n    return 'hello'\n",
+        "test_greeter.py": "from unittest.mock import Mock\n\n\ndef test_fetch_returns_what_it_was_told():\n    client = Mock()\n    client.fetch.return_value = 42\n    result = client.fetch()\n    assert result == 42\n"
+      },
+      "argv": [
+        "decorative",
+        "--json"
+      ],
+      "exit": 0,
+      "stdout": "{\n  \"project\": \"decorative\",\n  \"schema\": \"cantfail-report/3\",\n  \"static_findings\": [\n    {\n      \"detail\": \"assertion checks a value read from a mock against the return value the mock was assigned, 42\",\n      \"kind\": \"mock_return_value\",\n      \"line\": 8,\n      \"path\": \"test_greeter.py\"\n    }\n  ],\n  \"verdicts\": [\n    {\n      \"functions\": [\n        {\n          \"mutants\": [\n            {\n              \"detail\": \"return value 'hello'\",\n              \"kind\": \"return_none\",\n              \"line\": 2,\n              \"result\": \"survived\",\n              \"source\": \"greeter.py\"\n            }\n          ],\n          \"name\": \"test_fetch_returns_what_it_was_told\",\n          \"status\": \"decorative_candidate\",\n          \"surviving_mutants\": [\n            {\n              \"detail\": \"return value 'hello'\",\n              \"kind\": \"return_none\",\n              \"line\": 2,\n              \"result\": \"survived\",\n              \"source\": \"greeter.py\"\n            }\n          ]\n        }\n      ],\n      \"mutants\": [\n        {\n          \"detail\": \"return value 'hello'\",\n          \"kind\": \"return_none\",\n          \"line\": 2,\n          \"result\": \"survived\",\n          \"source\": \"greeter.py\"\n        }\n      ],\n      \"no_tests\": false,\n      \"partial_selection\": false,\n      \"path\": \"test_greeter.py\",\n      \"status\": \"decorative_candidate\",\n      \"surviving_mutants\": [\n        {\n          \"detail\": \"return value 'hello'\",\n          \"kind\": \"return_none\",\n          \"line\": 2,\n          \"result\": \"survived\",\n          \"source\": \"greeter.py\"\n        }\n      ],\n      \"test_functions\": [\n        \"test_fetch_returns_what_it_was_told\"\n      ],\n      \"whole_file\": false\n    }\n  ]\n}\n",
+      "stderr": ""
+    },
+    {
+      "name": "well_tested_text",
+      "files": {
+        "calc.py": "def add_one(x):\n    return x + 1\n\n\ndef is_adult(age):\n    return age >= 18\n\n\ndef enabled():\n    return True\n",
+        "test_calc.py": "from calc import add_one, enabled, is_adult\n\n\ndef test_add_one():\n    assert add_one(1) == 2\n    assert add_one(0) == 1\n\n\ndef test_is_adult_boundary():\n    assert is_adult(18) is True\n    assert is_adult(17) is False\n\n\ndef test_enabled():\n    assert enabled() is True\n"
+      },
+      "argv": [
+        "well_tested"
+      ],
+      "exit": 0,
+      "stdout": "cantfail report\nproject - well_tested\nschema - cantfail-report/3\n\nstatic findings\nnone\n\ntest file verdicts\ntest_calc.py - can_fail\n  function - test_add_one - can_fail\n    this function turned red under 3 of 9 mutants in the fixed panel\n    mutant that walked through - calc.py - return_none at line 6 - return value age >= 18\n    mutant that walked through - calc.py - return_none at line 10 - return value True\n    mutant that walked through - calc.py - compare_invert at line 6 - comparison age >= 18 operator 0\n    mutant that walked through - calc.py - bool_negate at line 10 - boolean constant True\n    mutant that walked through - calc.py - constant_shift at line 6 - numeric constant 18 moved plus one\n    mutant that walked through - calc.py - constant_shift at line 6 - numeric constant 18 moved minus one\n  function - test_is_adult_boundary - can_fail\n    this function turned red under 4 of 9 mutants in the fixed panel\n    mutant that walked through - calc.py - return_none at line 2 - return value x + 1\n    mutant that walked through - calc.py - return_none at line 10 - return value True\n    mutant that walked through - calc.py - bool_negate at line 10 - boolean constant True\n    mutant that walked through - calc.py - constant_shift at line 2 - numeric constant 1 moved plus one\n    mutant that walked through - calc.py - constant_shift at line 2 - numeric constant 1 moved minus one\n  function - test_enabled - can_fail\n    this function turned red under 2 of 9 mutants in the fixed panel\n    mutant that walked through - calc.py - return_none at line 2 - return value x + 1\n    mutant that walked through - calc.py - return_none at line 6 - return value age >= 18\n    mutant that walked through - calc.py - compare_invert at line 6 - comparison age >= 18 operator 0\n    mutant that walked through - calc.py - constant_shift at line 2 - numeric constant 1 moved plus one\n    mutant that walked through - calc.py - constant_shift at line 2 - numeric constant 1 moved minus one\n    mutant that walked through - calc.py - constant_shift at line 6 - numeric constant 18 moved plus one\n    mutant that walked through - calc.py - constant_shift at line 6 - numeric constant 18 moved minus one\n  this file turned red under 9 of 9 mutants in the fixed panel\n\nA surviving mutant is evidence about this fixed panel only. It does not prove a test is worthless and a killed mutant does not prove a test is strong.\n",
+      "stderr": ""
+    },
+    {
+      "name": "missing_project",
+      "files": {},
+      "argv": [
+        "missing_project"
+      ],
+      "exit": 2,
+      "stdout": "",
+      "stderr": "project directory not found - missing_project\n"
+    },
+    {
+      "name": "short_timeout",
+      "files": {
+        "slow.py": "def drift():\n    return 1\n",
+        "test_slow.py": "import time\n\nfrom slow import drift\n\n\ndef test_drift():\n    time.sleep(5)\n    assert drift() == 1\n"
+      },
+      "argv": [
+        "sleepy",
+        "--timeout",
+        "0.2"
+      ],
+      "exit": 0,
+      "stdout": "cantfail report\nproject - sleepy\nschema - cantfail-report/3\n\nstatic findings\nnone\n\ntest file verdicts\ntest_slow.py - inconclusive\n  function - test_drift - inconclusive\n    this function turned red under 0 of 0 mutants in the fixed panel\n  no mutant in the fixed panel applied\n\nA surviving mutant is evidence about this fixed panel only. It does not prove a test is worthless and a killed mutant does not prove a test is strong.\n",
+      "stderr": ""
+    }
+  ]
+}
