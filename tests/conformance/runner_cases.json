@@ -1,0 +1,758 @@
+{
+ "format": "ostensible-port10-cases/1",
+ "cases": [
+  {
+   "name": "well_tested",
+   "timeout": 20.0,
+   "files": {
+    "calc.py": "def add(a, b):\n    return a + b\n\n\ndef is_positive(x):\n    if x > 0:\n        return True\n    return False\n",
+    "test_calc.py": "from calc import add, is_positive\n\n\ndef test_add():\n    assert add(2, 3) == 5\n    assert add(-1, 1) == 0\n\n\ndef test_is_positive():\n    assert is_positive(3) is True\n    assert is_positive(-2) is False\n    assert is_positive(0) is False\n"
+   },
+   "expected": {
+    "schema": "cantfail-report/3",
+    "project": "well_tested",
+    "static_findings": [],
+    "verdicts": [
+     {
+      "path": "test_calc.py",
+      "test_functions": [
+       "test_add",
+       "test_is_positive"
+      ],
+      "status": "can_fail",
+      "whole_file": false,
+      "no_tests": false,
+      "partial_selection": false,
+      "functions": [
+       {
+        "name": "test_add",
+        "status": "can_fail",
+        "mutants": [
+         {
+          "kind": "return_none",
+          "line": 2,
+          "detail": "return value a + b",
+          "source": "calc.py",
+          "result": "killed"
+         },
+         {
+          "kind": "return_none",
+          "line": 8,
+          "detail": "return value False",
+          "source": "calc.py",
+          "result": "survived"
+         },
+         {
+          "kind": "compare_invert",
+          "line": 6,
+          "detail": "comparison x > 0 operator 0",
+          "source": "calc.py",
+          "result": "survived"
+         },
+         {
+          "kind": "return_none",
+          "line": 7,
+          "detail": "return value True",
+          "source": "calc.py",
+          "result": "survived"
+         },
+         {
+          "kind": "bool_negate",
+          "line": 8,
+          "detail": "boolean constant False",
+          "source": "calc.py",
+          "result": "survived"
+         },
+         {
+          "kind": "constant_shift",
+          "line": 6,
+          "detail": "numeric constant 0 moved plus one",
+          "source": "calc.py",
+          "result": "survived"
+         },
+         {
+          "kind": "constant_shift",
+          "line": 6,
+          "detail": "numeric constant 0 moved minus one",
+          "source": "calc.py",
+          "result": "survived"
+         },
+         {
+          "kind": "bool_negate",
+          "line": 7,
+          "detail": "boolean constant True",
+          "source": "calc.py",
+          "result": "survived"
+         }
+        ],
+        "surviving_mutants": [
+         {
+          "kind": "return_none",
+          "line": 8,
+          "detail": "return value False",
+          "source": "calc.py",
+          "result": "survived"
+         },
+         {
+          "kind": "compare_invert",
+          "line": 6,
+          "detail": "comparison x > 0 operator 0",
+          "source": "calc.py",
+          "result": "survived"
+         },
+         {
+          "kind": "return_none",
+          "line": 7,
+          "detail": "return value True",
+          "source": "calc.py",
+          "result": "survived"
+         },
+         {
+          "kind": "bool_negate",
+          "line": 8,
+          "detail": "boolean constant False",
+          "source": "calc.py",
+          "result": "survived"
+         },
+         {
+          "kind": "constant_shift",
+          "line": 6,
+          "detail": "numeric constant 0 moved plus one",
+          "source": "calc.py",
+          "result": "survived"
+         },
+         {
+          "kind": "constant_shift",
+          "line": 6,
+          "detail": "numeric constant 0 moved minus one",
+          "source": "calc.py",
+          "result": "survived"
+         },
+         {
+          "kind": "bool_negate",
+          "line": 7,
+          "detail": "boolean constant True",
+          "source": "calc.py",
+          "result": "survived"
+         }
+        ]
+       },
+       {
+        "name": "test_is_positive",
+        "status": "can_fail",
+        "mutants": [
+         {
+          "kind": "return_none",
+          "line": 2,
+          "detail": "return value a + b",
+          "source": "calc.py",
+          "result": "survived"
+         },
+         {
+          "kind": "return_none",
+          "line": 8,
+          "detail": "return value False",
+          "source": "calc.py",
+          "result": "killed"
+         },
+         {
+          "kind": "compare_invert",
+          "line": 6,
+          "detail": "comparison x > 0 operator 0",
+          "source": "calc.py",
+          "result": "killed"
+         },
+         {
+          "kind": "return_none",
+          "line": 7,
+          "detail": "return value True",
+          "source": "calc.py",
+          "result": "killed"
+         },
+         {
+          "kind": "bool_negate",
+          "line": 8,
+          "detail": "boolean constant False",
+          "source": "calc.py",
+          "result": "killed"
+         },
+         {
+          "kind": "constant_shift",
+          "line": 6,
+          "detail": "numeric constant 0 moved plus one",
+          "source": "calc.py",
+          "result": "survived"
+         },
+         {
+          "kind": "constant_shift",
+          "line": 6,
+          "detail": "numeric constant 0 moved minus one",
+          "source": "calc.py",
+          "result": "killed"
+         },
+         {
+          "kind": "bool_negate",
+          "line": 7,
+          "detail": "boolean constant True",
+          "source": "calc.py",
+          "result": "killed"
+         }
+        ],
+        "surviving_mutants": [
+         {
+          "kind": "return_none",
+          "line": 2,
+          "detail": "return value a + b",
+          "source": "calc.py",
+          "result": "survived"
+         },
+         {
+          "kind": "constant_shift",
+          "line": 6,
+          "detail": "numeric constant 0 moved plus one",
+          "source": "calc.py",
+          "result": "survived"
+         }
+        ]
+       }
+      ],
+      "mutants": [
+       {
+        "kind": "return_none",
+        "line": 2,
+        "detail": "return value a + b",
+        "source": "calc.py",
+        "result": "killed"
+       },
+       {
+        "kind": "return_none",
+        "line": 8,
+        "detail": "return value False",
+        "source": "calc.py",
+        "result": "killed"
+       },
+       {
+        "kind": "compare_invert",
+        "line": 6,
+        "detail": "comparison x > 0 operator 0",
+        "source": "calc.py",
+        "result": "killed"
+       },
+       {
+        "kind": "return_none",
+        "line": 7,
+        "detail": "return value True",
+        "source": "calc.py",
+        "result": "killed"
+       },
+       {
+        "kind": "bool_negate",
+        "line": 8,
+        "detail": "boolean constant False",
+        "source": "calc.py",
+        "result": "killed"
+       },
+       {
+        "kind": "constant_shift",
+        "line": 6,
+        "detail": "numeric constant 0 moved plus one",
+        "source": "calc.py",
+        "result": "survived"
+       },
+       {
+        "kind": "constant_shift",
+        "line": 6,
+        "detail": "numeric constant 0 moved minus one",
+        "source": "calc.py",
+        "result": "killed"
+       },
+       {
+        "kind": "bool_negate",
+        "line": 7,
+        "detail": "boolean constant True",
+        "source": "calc.py",
+        "result": "killed"
+       }
+      ],
+      "surviving_mutants": [
+       {
+        "kind": "constant_shift",
+        "line": 6,
+        "detail": "numeric constant 0 moved plus one",
+        "source": "calc.py",
+        "result": "survived"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "name": "decorative",
+   "timeout": 20.0,
+   "files": {
+    "stats.py": "def mean(values):\n    return sum(values) / len(values)\n",
+    "test_stats.py": "from stats import mean\n\n\ndef test_mean_runs():\n    mean([1, 2, 3])\n    assert True\n"
+   },
+   "expected": {
+    "schema": "cantfail-report/3",
+    "project": "decorative",
+    "static_findings": [
+     {
+      "kind": "constant_assert",
+      "path": "test_stats.py",
+      "line": 6,
+      "detail": "assertion on the constant true value"
+     }
+    ],
+    "verdicts": [
+     {
+      "path": "test_stats.py",
+      "test_functions": [
+       "test_mean_runs"
+      ],
+      "status": "decorative_candidate",
+      "whole_file": false,
+      "no_tests": false,
+      "partial_selection": false,
+      "functions": [
+       {
+        "name": "test_mean_runs",
+        "status": "decorative_candidate",
+        "mutants": [
+         {
+          "kind": "return_none",
+          "line": 2,
+          "detail": "return value sum(values) / len(values)",
+          "source": "stats.py",
+          "result": "survived"
+         }
+        ],
+        "surviving_mutants": [
+         {
+          "kind": "return_none",
+          "line": 2,
+          "detail": "return value sum(values) / len(values)",
+          "source": "stats.py",
+          "result": "survived"
+         }
+        ]
+       }
+      ],
+      "mutants": [
+       {
+        "kind": "return_none",
+        "line": 2,
+        "detail": "return value sum(values) / len(values)",
+        "source": "stats.py",
+        "result": "survived"
+       }
+      ],
+      "surviving_mutants": [
+       {
+        "kind": "return_none",
+        "line": 2,
+        "detail": "return value sum(values) / len(values)",
+        "source": "stats.py",
+        "result": "survived"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "name": "baseline_failure",
+   "timeout": 20.0,
+   "files": {
+    "broken.py": "def double(x):\n    return x * 2\n",
+    "test_broken.py": "from broken import double\n\n\ndef test_double():\n    assert double(3) == 7\n"
+   },
+   "expected": {
+    "schema": "cantfail-report/3",
+    "project": "baseline_failure",
+    "static_findings": [],
+    "verdicts": [
+     {
+      "path": "test_broken.py",
+      "test_functions": [
+       "test_double"
+      ],
+      "status": "baseline_failed",
+      "whole_file": false,
+      "no_tests": false,
+      "partial_selection": false,
+      "functions": [
+       {
+        "name": "test_double",
+        "status": "baseline_failed",
+        "mutants": [],
+        "surviving_mutants": []
+       }
+      ],
+      "mutants": [],
+      "surviving_mutants": []
+     }
+    ]
+   }
+  },
+  {
+   "name": "unmatched_stem",
+   "timeout": 20.0,
+   "files": {
+    "alpha.py": "def shout(word):\n    return word.upper()\n",
+    "beta.py": "def whisper(word):\n    return word.lower()\n",
+    "test_misc.py": "from alpha import shout\n\n\ndef test_shout():\n    assert shout(\"hey\") == \"HEY\"\n"
+   },
+   "expected": {
+    "schema": "cantfail-report/3",
+    "project": "unmatched_stem",
+    "static_findings": [],
+    "verdicts": [
+     {
+      "path": "test_misc.py",
+      "test_functions": [
+       "test_shout"
+      ],
+      "status": "can_fail",
+      "whole_file": false,
+      "no_tests": false,
+      "partial_selection": false,
+      "functions": [
+       {
+        "name": "test_shout",
+        "status": "can_fail",
+        "mutants": [
+         {
+          "kind": "return_none",
+          "line": 2,
+          "detail": "return value word.upper()",
+          "source": "alpha.py",
+          "result": "killed"
+         },
+         {
+          "kind": "return_none",
+          "line": 2,
+          "detail": "return value word.lower()",
+          "source": "beta.py",
+          "result": "survived"
+         }
+        ],
+        "surviving_mutants": [
+         {
+          "kind": "return_none",
+          "line": 2,
+          "detail": "return value word.lower()",
+          "source": "beta.py",
+          "result": "survived"
+         }
+        ]
+       }
+      ],
+      "mutants": [
+       {
+        "kind": "return_none",
+        "line": 2,
+        "detail": "return value word.upper()",
+        "source": "alpha.py",
+        "result": "killed"
+       },
+       {
+        "kind": "return_none",
+        "line": 2,
+        "detail": "return value word.lower()",
+        "source": "beta.py",
+        "result": "survived"
+       }
+      ],
+      "surviving_mutants": [
+       {
+        "kind": "return_none",
+        "line": 2,
+        "detail": "return value word.lower()",
+        "source": "beta.py",
+        "result": "survived"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "name": "whole_file_no_tests",
+   "timeout": 20.0,
+   "files": {
+    "util.py": "def tidy(text):\n    return text.strip()\n",
+    "test_util.py": "from util import tidy\n\n\ndef helper_clean():\n    return tidy(\"  x  \")\n"
+   },
+   "expected": {
+    "schema": "cantfail-report/3",
+    "project": "whole_file_no_tests",
+    "static_findings": [],
+    "verdicts": [
+     {
+      "path": "test_util.py",
+      "test_functions": [],
+      "status": "no_applicable_mutants",
+      "whole_file": true,
+      "no_tests": true,
+      "partial_selection": false,
+      "functions": [],
+      "mutants": [],
+      "surviving_mutants": []
+     }
+    ]
+   }
+  },
+  {
+   "name": "whole_file_baseline_failure",
+   "timeout": 20.0,
+   "files": {
+    "mod.py": "def ping():\n    return \"pong\"\n",
+    "test_mod.py": "from mod import ping\n\nassert ping() == \"pang\"\n"
+   },
+   "expected": {
+    "schema": "cantfail-report/3",
+    "project": "whole_file_baseline_failure",
+    "static_findings": [],
+    "verdicts": [
+     {
+      "path": "test_mod.py",
+      "test_functions": [],
+      "status": "baseline_failed",
+      "whole_file": true,
+      "no_tests": false,
+      "partial_selection": false,
+      "functions": [],
+      "mutants": [],
+      "surviving_mutants": []
+     }
+    ]
+   }
+  },
+  {
+   "name": "timeout",
+   "timeout": 1.0,
+   "files": {
+    "slow.py": "def drift():\n    return 1\n",
+    "test_slow.py": "import time\n\nfrom slow import drift\n\n\ndef test_drift():\n    time.sleep(5)\n    assert drift() == 1\n"
+   },
+   "expected": {
+    "schema": "cantfail-report/3",
+    "project": "timeout",
+    "static_findings": [],
+    "verdicts": [
+     {
+      "path": "test_slow.py",
+      "test_functions": [
+       "test_drift"
+      ],
+      "status": "inconclusive",
+      "whole_file": false,
+      "no_tests": false,
+      "partial_selection": false,
+      "functions": [
+       {
+        "name": "test_drift",
+        "status": "inconclusive",
+        "mutants": [],
+        "surviving_mutants": []
+       }
+      ],
+      "mutants": [],
+      "surviving_mutants": []
+     }
+    ]
+   }
+  },
+  {
+   "name": "settings",
+   "timeout": 20.0,
+   "files": {
+    "pyproject.toml": "[tool.pytest.ini_options]\npython_functions = [\"check_*\"]\n",
+    "checks.py": "def total(prices):\n    return sum(prices)\n",
+    "test_checks.py": "from checks import total\n\n\ndef check_total():\n    assert total([1, 2, 3]) == 6\n    assert total([]) == 0\n"
+   },
+   "expected": {
+    "schema": "cantfail-report/3",
+    "project": "settings",
+    "static_findings": [],
+    "verdicts": [
+     {
+      "path": "test_checks.py",
+      "test_functions": [
+       "check_total"
+      ],
+      "status": "can_fail",
+      "whole_file": false,
+      "no_tests": false,
+      "partial_selection": false,
+      "functions": [
+       {
+        "name": "check_total",
+        "status": "can_fail",
+        "mutants": [
+         {
+          "kind": "return_none",
+          "line": 2,
+          "detail": "return value sum(prices)",
+          "source": "checks.py",
+          "result": "killed"
+         }
+        ],
+        "surviving_mutants": []
+       }
+      ],
+      "mutants": [
+       {
+        "kind": "return_none",
+        "line": 2,
+        "detail": "return value sum(prices)",
+        "source": "checks.py",
+        "result": "killed"
+       }
+      ],
+      "surviving_mutants": []
+     }
+    ],
+    "collection_settings": {
+     "python_functions": [
+      "check_*"
+     ]
+    },
+    "collection_settings_source": "project root"
+   }
+  },
+  {
+   "name": "conftest_supply",
+   "timeout": 20.0,
+   "files": {
+    "conftest.py": "import pytest\n\n\n@pytest.fixture\ndef supply():\n    return 41\n",
+    "bump.py": "def bump(x):\n    return x + 1\n",
+    "test_bump.py": "from bump import bump\n\n\ndef test_bump(supply):\n    assert bump(supply) == 42\n"
+   },
+   "expected": {
+    "schema": "cantfail-report/3",
+    "project": "conftest_supply",
+    "static_findings": [],
+    "verdicts": [
+     {
+      "path": "test_bump.py",
+      "test_functions": [
+       "test_bump"
+      ],
+      "status": "can_fail",
+      "whole_file": false,
+      "no_tests": false,
+      "partial_selection": false,
+      "functions": [
+       {
+        "name": "test_bump",
+        "status": "can_fail",
+        "mutants": [
+         {
+          "kind": "return_none",
+          "line": 2,
+          "detail": "return value x + 1",
+          "source": "bump.py",
+          "result": "killed"
+         },
+         {
+          "kind": "constant_shift",
+          "line": 2,
+          "detail": "numeric constant 1 moved plus one",
+          "source": "bump.py",
+          "result": "killed"
+         },
+         {
+          "kind": "constant_shift",
+          "line": 2,
+          "detail": "numeric constant 1 moved minus one",
+          "source": "bump.py",
+          "result": "killed"
+         }
+        ],
+        "surviving_mutants": []
+       }
+      ],
+      "mutants": [
+       {
+        "kind": "return_none",
+        "line": 2,
+        "detail": "return value x + 1",
+        "source": "bump.py",
+        "result": "killed"
+       },
+       {
+        "kind": "constant_shift",
+        "line": 2,
+        "detail": "numeric constant 1 moved plus one",
+        "source": "bump.py",
+        "result": "killed"
+       },
+       {
+        "kind": "constant_shift",
+        "line": 2,
+        "detail": "numeric constant 1 moved minus one",
+        "source": "bump.py",
+        "result": "killed"
+       }
+      ],
+      "surviving_mutants": []
+     }
+    ]
+   }
+  },
+  {
+   "name": "subfolder",
+   "timeout": 20.0,
+   "files": {
+    "shapes.py": "def area(width, height):\n    return width * height\n",
+    "sub/test_shapes.py": "from shapes import area\n\n\ndef test_area():\n    assert area(3, 4) == 12\n    assert area(0, 5) == 0\n"
+   },
+   "expected": {
+    "schema": "cantfail-report/3",
+    "project": "subfolder",
+    "static_findings": [],
+    "verdicts": [
+     {
+      "path": "sub/test_shapes.py",
+      "test_functions": [
+       "test_area"
+      ],
+      "status": "can_fail",
+      "whole_file": false,
+      "no_tests": false,
+      "partial_selection": false,
+      "functions": [
+       {
+        "name": "test_area",
+        "status": "can_fail",
+        "mutants": [
+         {
+          "kind": "return_none",
+          "line": 2,
+          "detail": "return value width * height",
+          "source": "shapes.py",
+          "result": "killed"
+         }
+        ],
+        "surviving_mutants": []
+       }
+      ],
+      "mutants": [
+       {
+        "kind": "return_none",
+        "line": 2,
+        "detail": "return value width * height",
+        "source": "shapes.py",
+        "result": "killed"
+       }
+      ],
+      "surviving_mutants": []
+     }
+    ]
+   }
+  }
+ ]
+}
