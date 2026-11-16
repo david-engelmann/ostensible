@@ -779,10 +779,29 @@ fn d5_assert_finding(
     if ops.len() != 1 || ops[0] != CmpKind::Eq || comparators.len() != 1 {
         return Ok(None);
     }
-    for (side, other_node) in [
-        (left.as_ref(), &comparators[0]),
-        (&comparators[0], left.as_ref()),
-    ] {
+    d5_site_finding(
+        left.as_ref(),
+        &comparators[0],
+        node.pos.line as i64,
+        env,
+        path,
+        origin,
+    )
+}
+
+/// The helper and fixture finding one comparison site
+/// draws, or None, read over the two compared expressions
+/// at the given line. The assert statement form and the
+/// method comparison form of PORT13 read this one reading.
+fn d5_site_finding(
+    left: &Expr,
+    right: &Expr,
+    line: i64,
+    env: &HashMap<String, Table>,
+    path: &str,
+    origin: &HashMap<String, bool>,
+) -> Result<Option<StaticFinding>, ScanRefusal> {
+    for (side, other_node) in [(left, right), (right, left)] {
         if !matches!(side.kind, ExprKind::Call { .. }) {
             continue;
         }
@@ -807,7 +826,7 @@ fn d5_assert_finding(
                 return Ok(Some(StaticFinding {
                     kind: "mock_return_value".to_string(),
                     path: path.to_string(),
-                    line: node.pos.line as i64,
+                    line,
                     detail: format!(
                         "assertion checks a call on a mock against the return value that call was assigned in {}, {}",
                         source, other
@@ -915,6 +934,20 @@ fn d5_findings_in_function(
                 if let Some(finding) = d5_assert_finding(statement, scope.env, path, scope.origin)?
                 {
                     findings.push(finding);
+                }
+            }
+            if let StmtKind::ExprStmt { value } = &statement.kind {
+                if let Some(MethodSite::Comparison(first, second)) = method_assertion_site(value) {
+                    if let Some(finding) = d5_site_finding(
+                        first,
+                        second,
+                        value.pos.line as i64,
+                        scope.env,
+                        path,
+                        scope.origin,
+                    )? {
+                        findings.push(finding);
+                    }
                 }
             }
             for nested in statement_lists(statement) {
@@ -1042,6 +1075,136 @@ pub fn scan_source(
     }
 }
 
+/// One assertion site the unittest method spellings form,
+/// the method reading of PORT13. The comparison form
+/// carries the two compared expressions, and the constant
+/// form carries the one expression the truth method
+/// asserts.
+enum MethodSite<'a> {
+    Comparison(&'a Expr, &'a Expr),
+    Constant(&'a Expr),
+}
+
+/// The assertion site a call expression forms under the
+/// method reading, or None. The reading is by attribute
+/// name alone on any receiver, as PORT13-2 states it, and
+/// imports are never resolved. The equality methods form a
+/// comparison site over their first two positional
+/// arguments where at least two stand, and the truth
+/// method forms a constant site over its first positional
+/// argument where one stands, with further arguments and
+/// every keyword standing outside the reading.
+fn method_assertion_site<'a>(expr: &'a Expr) -> Option<MethodSite<'a>> {
+    let ExprKind::Call { func, args, .. } = &expr.kind else {
+        return None;
+    };
+    let ExprKind::Attribute { attr, .. } = &func.kind else {
+        return None;
+    };
+    match attr.as_str() {
+        "assertEqual" | "assertIs" => {
+            if args.len() >= 2 {
+                Some(MethodSite::Comparison(&args[0], &args[1]))
+            } else {
+                None
+            }
+        }
+        "assertTrue" => {
+            if !args.is_empty() {
+                Some(MethodSite::Constant(&args[0]))
+            } else {
+                None
+            }
+        }
+        _ => None,
+    }
+}
+
+/// The findings one comparison draws under the main
+/// reading, the self comparison and the mock return value
+/// forms in both their shapes, read over the two compared
+/// expressions at the given line. The assert statement
+/// form and the method comparison form read this one
+/// reading.
+fn comparison_findings(
+    left: &Expr,
+    right_node: &Expr,
+    line: i64,
+    return_values: &HashMap<String, String>,
+    read_from_mock: &HashMap<String, String>,
+    path: &str,
+) -> Result<Vec<StaticFinding>, ScanRefusal> {
+    let mut findings = Vec::new();
+    unparse_guard(left, UNPARSE_MAIN_STANDING)?;
+    let left_text = unparse_expr(left);
+    unparse_guard(right_node, UNPARSE_MAIN_STANDING)?;
+    let right_text = unparse_expr(right_node);
+    if left_text == right_text {
+        findings.push(StaticFinding {
+            kind: "self_comparison".to_string(),
+            path: path.to_string(),
+            line,
+            detail: format!("assertion compares {} with itself", left_text),
+        });
+        return Ok(findings);
+    }
+    for (side, other) in [(left, &right_text), (right_node, &left_text)] {
+        if is_return_value(side) {
+            if let Some(root) = root_name(side) {
+                if return_values.get(root) == Some(other) {
+                    findings.push(StaticFinding {
+                        kind: "mock_return_value".to_string(),
+                        path: path.to_string(),
+                        line,
+                        detail: format!(
+                            "assertion checks the mock return value against the value it was assigned, {}",
+                            other
+                        ),
+                    });
+                    return Ok(findings);
+                }
+            }
+        }
+    }
+    for (name_node, other) in [(left, &right_text), (right_node, &left_text)] {
+        let mut done = false;
+        if let ExprKind::Name(name) = &name_node.kind {
+            if let Some(root) = read_from_mock.get(name) {
+                if return_values.get(root) == Some(other) {
+                    findings.push(StaticFinding {
+                        kind: "mock_return_value".to_string(),
+                        path: path.to_string(),
+                        line,
+                        detail: format!(
+                            "assertion checks a value read from a mock against the return value the mock was assigned, {}",
+                            other
+                        ),
+                    });
+                    done = true;
+                }
+            }
+        }
+        if done {
+            break;
+        }
+        if let Some(root) = call_root(name_node) {
+            if return_values.get(root) == Some(other) {
+                findings.push(StaticFinding {
+                    kind: "mock_return_value".to_string(),
+                    path: path.to_string(),
+                    line,
+                    detail: format!(
+                        "assertion checks a call on a mock against the return value the mock was assigned, {}",
+                        other
+                    ),
+                });
+                break;
+            }
+        }
+    }
+    Ok(findings)
+}
+
 fn scan_source_inner(
     source: &str,
     path: &str,
@@ -1155,77 +1318,45 @@ fn scan_source_inner(
         if ops.len() != 1 || ops[0] != CmpKind::Eq || comparators.len() != 1 {
             continue;
         }
-        unparse_guard(left, UNPARSE_MAIN_STANDING)?;
-        let left_text = unparse_expr(left);
         let right_node = &comparators[0];
-        unparse_guard(right_node, UNPARSE_MAIN_STANDING)?;
-        let right_text = unparse_expr(right_node);
-        if left_text == right_text {
-            findings.push(StaticFinding {
-                kind: "self_comparison".to_string(),
-                path: path.to_string(),
-                line: stmt.pos.line as i64,
-                detail: format!("assertion compares {} with itself", left_text),
-            });
+        findings.extend(comparison_findings(
+            left,
+            right_node,
+            stmt.pos.line as i64,
+            &return_values,
+            &read_from_mock,
+            path,
+        )?);
+    }
+
+    for node in walk(&tree) {
+        let Some(expr) = node.as_expr() else { continue };
+        let Some(site) = method_assertion_site(expr) else {
+            continue;
+        };
+        if !in_test_function(node) {
             continue;
         }
-        let mut placed = false;
-        for (side, other) in [(left.as_ref(), &right_text), (right_node, &left_text)] {
-            if is_return_value(side) {
-                if let Some(root) = root_name(side) {
-                    if return_values.get(root) == Some(other) {
-                        findings.push(StaticFinding {
-                            kind: "mock_return_value".to_string(),
-                            path: path.to_string(),
-                            line: stmt.pos.line as i64,
-                            detail: format!(
-                                "assertion checks the mock return value against the value it was assigned, {}",
-                                other
-                            ),
-                        });
-                        placed = true;
-                        break;
-                    }
-                }
-            }
-        }
-        if placed {
-            continue;
-        }
-        for (name_node, other) in [(left.as_ref(), &right_text), (right_node, &left_text)] {
-            let mut done = false;
-            if let ExprKind::Name(name) = &name_node.kind {
-                if let Some(root) = read_from_mock.get(name) {
-                    if return_values.get(root) == Some(other) {
-                        findings.push(StaticFinding {
-                            kind: "mock_return_value".to_string(),
-                            path: path.to_string(),
-                            line: stmt.pos.line as i64,
-                            detail: format!(
-                                "assertion checks a value read from a mock against the return value the mock was assigned, {}",
-                                other
-                            ),
-                        });
-                        done = true;
-                    }
-                }
-            }
-            if done {
-                break;
-            }
-            if let Some(root) = call_root(name_node) {
-                if return_values.get(root) == Some(other) {
+        match site {
+            MethodSite::Constant(first) => {
+                if let ExprKind::Constant(ConstVal::Bool(true)) = &first.kind {
                     findings.push(StaticFinding {
-                        kind: "mock_return_value".to_string(),
+                        kind: "constant_assert".to_string(),
                         path: path.to_string(),
-                        line: stmt.pos.line as i64,
-                        detail: format!(
-                            "assertion checks a call on a mock against the return value the mock was assigned, {}",
-                            other
-                        ),
+                        line: expr.pos.line as i64,
+                        detail: "assertion on the constant true value".to_string(),
                     });
-                    break;
                 }
+            }
+            MethodSite::Comparison(first, second) => {
+                findings.extend(comparison_findings(
+                    first,
+                    second,
+                    expr.pos.line as i64,
+                    &return_values,
+                    &read_from_mock,
+                    path,
+                )?);
             }
         }
     }
