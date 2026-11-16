@@ -835,6 +835,20 @@ struct D5Scope<'a> {
     origin: &'a mut HashMap<String, bool>,
 }
 
+/// The one bundled value the finding walk travels in, the
+/// statements it walks beside the binding scope and the
+/// fixture context and the path and the findings sink,
+/// named as one value so the walk takes the clump as one
+/// argument and every level of the walk travels in the
+/// same shape.
+struct D5Walk<'a, 'b> {
+    statements: &'a [Stmt],
+    scope: &'b mut D5Scope<'a>,
+    context: &'a D5Context<'a>,
+    path: &'a str,
+    findings: &'b mut Vec<StaticFinding>,
+}
+
 /// Helper and fixture findings inside one function scope.
 fn d5_findings_in_function(
     func: &Stmt,
@@ -851,13 +865,14 @@ fn d5_findings_in_function(
         }
     }
 
-    fn visit(
-        statements: &[Stmt],
-        scope: &mut D5Scope,
-        context: &D5Context,
-        path: &str,
-        findings: &mut Vec<StaticFinding>,
-    ) -> Result<(), ScanRefusal> {
+    fn visit(walk: D5Walk<'_, '_>) -> Result<(), ScanRefusal> {
+        let D5Walk {
+            statements,
+            scope,
+            context,
+            path,
+            findings,
+        } = walk;
         for statement in statements {
             if is_funcdef(statement) {
                 let mut child_env = scope.env.clone();
@@ -867,13 +882,13 @@ fn d5_findings_in_function(
                     origin: &mut child_origin,
                 };
                 fixture_env(funcdef_args(statement), context, &mut child_scope);
-                visit(
-                    funcdef_body(statement),
-                    &mut child_scope,
+                visit(D5Walk {
+                    statements: funcdef_body(statement),
+                    scope: &mut child_scope,
                     context,
                     path,
-                    findings,
-                )?;
+                    findings: &mut *findings,
+                })?;
                 continue;
             }
             if let StmtKind::Assign { targets, value } = &statement.kind {
@@ -903,7 +918,13 @@ fn d5_findings_in_function(
                 }
             }
             for nested in statement_lists(statement) {
-                visit(nested, scope, context, path, findings)?;
+                visit(D5Walk {
+                    statements: nested,
+                    scope: &mut *scope,
+                    context,
+                    path,
+                    findings: &mut *findings,
+                })?;
             }
         }
         Ok(())
@@ -918,13 +939,13 @@ fn d5_findings_in_function(
         origin: &mut origin,
     };
     fixture_env(funcdef_args(func), &context, &mut scope);
-    visit(
-        funcdef_body(func),
-        &mut scope,
-        &context,
+    visit(D5Walk {
+        statements: funcdef_body(func),
+        scope: &mut scope,
+        context: &context,
         path,
-        &mut findings,
-    )?;
+        findings: &mut findings,
+    })?;
     Ok(findings)
 }
 
