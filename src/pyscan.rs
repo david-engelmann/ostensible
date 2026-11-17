@@ -1086,52 +1086,98 @@ enum MethodSite<'a> {
     Constant(&'a Expr, ConstVal),
 }
 
+/// The expression standing in one parameter's place in a
+/// method call, read under the binding discipline of
+/// PORT15-3, or None where the place is not read. The
+/// place is read from the positional argument at its index
+/// where one stands there and no keyword argument names
+/// the parameter, and from the keyword argument of the
+/// parameter's name where no positional argument stands at
+/// its index and the call carries no starred positional
+/// argument and no unnamed keyword argument. A place
+/// claimed by a positional argument and a keyword argument
+/// of its name together is not read, and a place a starred
+/// argument stands at or before is not read.
+fn method_place<'a>(
+    args: &'a [Expr],
+    keywords: &'a [Keyword],
+    index: usize,
+    name: &str,
+) -> Option<&'a Expr> {
+    let named = keywords
+        .iter()
+        .find(|keyword| keyword.arg.as_deref() == Some(name));
+    if let Some(keyword) = named {
+        if args.len() > index {
+            return None;
+        }
+        let starred = args
+            .iter()
+            .any(|arg| matches!(arg.kind, ExprKind::Starred { .. }));
+        let unnamed = keywords.iter().any(|keyword| keyword.arg.is_none());
+        if starred || unnamed {
+            return None;
+        }
+        return Some(&keyword.value);
+    }
+    if args.len() <= index {
+        return None;
+    }
+    let place = &args[index];
+    if matches!(place.kind, ExprKind::Starred { .. }) {
+        return None;
+    }
+    if args[..index]
+        .iter()
+        .any(|arg| matches!(arg.kind, ExprKind::Starred { .. }))
+    {
+        return None;
+    }
+    Some(place)
+}
+
 /// The assertion site a call expression forms under the
 /// method reading, or None. The reading is by attribute
 /// name alone on any receiver, as PORT13-2 states it, and
 /// imports are never resolved. The equality methods form a
-/// comparison site over their first two positional
-/// arguments where at least two stand, and the constant
-/// methods form a constant site over their first positional
-/// argument where one stands, each carrying the constant
-/// its method names, with further arguments and every
-/// keyword standing outside the reading.
+/// comparison site over their two compared places and the
+/// constant methods form a constant site over their one
+/// asserted place, each carrying the constant its method
+/// names, where every place the site reads is read under
+/// the binding discipline of PORT15-3, from the positional
+/// argument at its index or from the keyword argument of
+/// its parameter's own name, with further arguments and
+/// keywords naming no read place standing outside the
+/// reading.
 fn method_assertion_site<'a>(expr: &'a Expr) -> Option<MethodSite<'a>> {
-    let ExprKind::Call { func, args, .. } = &expr.kind else {
+    let ExprKind::Call {
+        func,
+        args,
+        keywords,
+    } = &expr.kind
+    else {
         return None;
     };
     let ExprKind::Attribute { attr, .. } = &func.kind else {
         return None;
     };
     match attr.as_str() {
-        "assertEqual" | "assertIs" => {
-            if args.len() >= 2 {
-                Some(MethodSite::Comparison(&args[0], &args[1]))
-            } else {
-                None
-            }
+        "assertEqual" => {
+            let first = method_place(args, keywords, 0, "first")?;
+            let second = method_place(args, keywords, 1, "second")?;
+            Some(MethodSite::Comparison(first, second))
         }
-        "assertTrue" => {
-            if !args.is_empty() {
-                Some(MethodSite::Constant(&args[0], ConstVal::Bool(true)))
-            } else {
-                None
-            }
+        "assertIs" => {
+            let first = method_place(args, keywords, 0, "expr1")?;
+            let second = method_place(args, keywords, 1, "expr2")?;
+            Some(MethodSite::Comparison(first, second))
         }
-        "assertFalse" => {
-            if !args.is_empty() {
-                Some(MethodSite::Constant(&args[0], ConstVal::Bool(false)))
-            } else {
-                None
-            }
-        }
-        "assertIsNone" => {
-            if !args.is_empty() {
-                Some(MethodSite::Constant(&args[0], ConstVal::NoneVal))
-            } else {
-                None
-            }
-        }
+        "assertTrue" => method_place(args, keywords, 0, "expr")
+            .map(|place| MethodSite::Constant(place, ConstVal::Bool(true))),
+        "assertFalse" => method_place(args, keywords, 0, "expr")
+            .map(|place| MethodSite::Constant(place, ConstVal::Bool(false))),
+        "assertIsNone" => method_place(args, keywords, 0, "obj")
+            .map(|place| MethodSite::Constant(place, ConstVal::NoneVal)),
         _ => None,
     }
 }
