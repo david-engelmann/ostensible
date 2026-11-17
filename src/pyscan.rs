@@ -1078,11 +1078,12 @@ pub fn scan_source(
 /// One assertion site the unittest method spellings form,
 /// the method reading of PORT13. The comparison form
 /// carries the two compared expressions, and the constant
-/// form carries the one expression the truth method
-/// asserts.
+/// form carries the one expression a constant method
+/// asserts and the constant that method names, PORT14
+/// widening the form the truth method alone used.
 enum MethodSite<'a> {
     Comparison(&'a Expr, &'a Expr),
-    Constant(&'a Expr),
+    Constant(&'a Expr, ConstVal),
 }
 
 /// The assertion site a call expression forms under the
@@ -1090,10 +1091,11 @@ enum MethodSite<'a> {
 /// name alone on any receiver, as PORT13-2 states it, and
 /// imports are never resolved. The equality methods form a
 /// comparison site over their first two positional
-/// arguments where at least two stand, and the truth
-/// method forms a constant site over its first positional
-/// argument where one stands, with further arguments and
-/// every keyword standing outside the reading.
+/// arguments where at least two stand, and the constant
+/// methods form a constant site over their first positional
+/// argument where one stands, each carrying the constant
+/// its method names, with further arguments and every
+/// keyword standing outside the reading.
 fn method_assertion_site<'a>(expr: &'a Expr) -> Option<MethodSite<'a>> {
     let ExprKind::Call { func, args, .. } = &expr.kind else {
         return None;
@@ -1111,7 +1113,21 @@ fn method_assertion_site<'a>(expr: &'a Expr) -> Option<MethodSite<'a>> {
         }
         "assertTrue" => {
             if !args.is_empty() {
-                Some(MethodSite::Constant(&args[0]))
+                Some(MethodSite::Constant(&args[0], ConstVal::Bool(true)))
+            } else {
+                None
+            }
+        }
+        "assertFalse" => {
+            if !args.is_empty() {
+                Some(MethodSite::Constant(&args[0], ConstVal::Bool(false)))
+            } else {
+                None
+            }
+        }
+        "assertIsNone" => {
+            if !args.is_empty() {
+                Some(MethodSite::Constant(&args[0], ConstVal::NoneVal))
             } else {
                 None
             }
@@ -1338,14 +1354,21 @@ fn scan_source_inner(
             continue;
         }
         match site {
-            MethodSite::Constant(first) => {
-                if let ExprKind::Constant(ConstVal::Bool(true)) = &first.kind {
-                    findings.push(StaticFinding {
-                        kind: "constant_assert".to_string(),
-                        path: path.to_string(),
-                        line: expr.pos.line as i64,
-                        detail: "assertion on the constant true value".to_string(),
-                    });
+            MethodSite::Constant(first, expected) => {
+                if let ExprKind::Constant(actual) = &first.kind {
+                    if *actual == expected {
+                        let detail = match expected {
+                            ConstVal::Bool(true) => "assertion on the constant true value",
+                            ConstVal::Bool(false) => "assertion on the constant false value",
+                            _ => "assertion on the constant none value",
+                        };
+                        findings.push(StaticFinding {
+                            kind: "constant_assert".to_string(),
+                            path: path.to_string(),
+                            line: expr.pos.line as i64,
+                            detail: detail.to_string(),
+                        });
+                    }
                 }
             }
             MethodSite::Comparison(first, second) => {
