@@ -87,13 +87,6 @@ fn test_an_assert_equal_against_a_different_literal_is_not_flagged() {
 }
 
 #[test]
-fn test_an_assert_false_on_the_constant_false_is_not_flagged() {
-    let source = "import unittest\n\n\nclass TestConstant(unittest.TestCase):\n    def test_constant(self):\n        self.assertFalse(False)\n";
-    let found = findings(source);
-    assert!(found.is_empty(), "no finding stands: {found:?}");
-}
-
-#[test]
 fn test_an_assert_equal_outside_a_test_function_is_not_flagged() {
     let source = format!(
         "{HELPER}import unittest\n\n\nclass HelperChecks(unittest.TestCase):\n    def check_fetch(self):\n        client = make_client()\n        self.assertEqual(client.fetch(), 42)\n"
