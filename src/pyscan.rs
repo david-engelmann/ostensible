@@ -868,6 +868,274 @@ struct D5Walk<'a, 'b> {
     findings: &'b mut Vec<StaticFinding>,
 }
 
+/// The method comparison sites standing inside one
+/// statement's own expressions, in the order the walk
+/// meets them in the expression, under PORT16-2. A
+/// definition statement contributes none, its body
+/// standing under its own visit, and a class definition
+/// contributes the expressions it stands on.
+fn d5_statement_sites<'a>(statement: &'a Stmt, sites: &mut Vec<(&'a Expr, &'a Expr, &'a Expr)>) {
+    match &statement.kind {
+        StmtKind::FuncDef { .. } => {}
+        StmtKind::ClassDef {
+            bases,
+            keywords,
+            decorators,
+            ..
+        } => {
+            for expr in decorators.iter().chain(bases) {
+                d5_collect_sites(expr, sites);
+            }
+            for keyword in keywords {
+                d5_collect_sites(&keyword.value, sites);
+            }
+        }
+        StmtKind::Return { value } => {
+            if let Some(value) = value {
+                d5_collect_sites(value, sites);
+            }
+        }
+        StmtKind::Delete { targets } => {
+            for target in targets {
+                d5_collect_sites(target, sites);
+            }
+        }
+        StmtKind::Assign { targets, value } => {
+            for target in targets {
+                d5_collect_sites(target, sites);
+            }
+            d5_collect_sites(value, sites);
+        }
+        StmtKind::AugAssign { target, value, .. } => {
+            d5_collect_sites(target, sites);
+            d5_collect_sites(value, sites);
+        }
+        StmtKind::AnnAssign {
+            target,
+            annotation,
+            value,
+            ..
+        } => {
+            d5_collect_sites(target, sites);
+            d5_collect_sites(annotation, sites);
+            if let Some(value) = value {
+                d5_collect_sites(value, sites);
+            }
+        }
+        StmtKind::For { target, iter, .. } => {
+            d5_collect_sites(target, sites);
+            d5_collect_sites(iter, sites);
+        }
+        StmtKind::While { test, .. } | StmtKind::If { test, .. } => {
+            d5_collect_sites(test, sites);
+        }
+        StmtKind::With { items, .. } => {
+            for item in items {
+                d5_collect_sites(&item.context_expr, sites);
+                if let Some(vars) = &item.optional_vars {
+                    d5_collect_sites(vars, sites);
+                }
+            }
+        }
+        StmtKind::Match { subject, cases } => {
+            d5_collect_sites(subject, sites);
+            for case in cases {
+                if let Some(guard) = &case.guard {
+                    d5_collect_sites(guard, sites);
+                }
+            }
+        }
+        StmtKind::Raise { exc, cause } => {
+            if let Some(exc) = exc {
+                d5_collect_sites(exc, sites);
+            }
+            if let Some(cause) = cause {
+                d5_collect_sites(cause, sites);
+            }
+        }
+        StmtKind::Try { handlers, .. } => {
+            for handler in handlers {
+                if let Some(type_) = &handler.type_ {
+                    d5_collect_sites(type_, sites);
+                }
+            }
+        }
+        StmtKind::Assert { test, msg } => {
+            d5_collect_sites(test, sites);
+            if let Some(msg) = msg {
+                d5_collect_sites(msg, sites);
+            }
+        }
+        StmtKind::Import { .. }
+        | StmtKind::ImportFrom { .. }
+        | StmtKind::Global { .. }
+        | StmtKind::Nonlocal { .. }
+        | StmtKind::Pass
+        | StmtKind::Break
+        | StmtKind::Continue => {}
+        StmtKind::ExprStmt { value } => {
+            d5_collect_sites(value, sites);
+        }
+        StmtKind::TypeAlias { name, value, .. } => {
+            d5_collect_sites(name, sites);
+            d5_collect_sites(value, sites);
+        }
+    }
+}
+
+/// Collect the method comparison sites standing inside
+/// one expression, the expression's own site first and
+/// its nested sites after it in the order they stand,
+/// under PORT16-2. A lambda's body contributes none,
+/// the lambda standing as a definition stands under
+/// PORT16-4, while the defaults it declares stand in
+/// this expression and are read.
+fn d5_collect_sites<'a>(expr: &'a Expr, sites: &mut Vec<(&'a Expr, &'a Expr, &'a Expr)>) {
+    if let Some(MethodSite::Comparison(first, second)) = method_assertion_site(expr) {
+        sites.push((expr, first, second));
+    }
+    match &expr.kind {
+        ExprKind::Constant(_) | ExprKind::Name(_) => {}
+        ExprKind::Attribute { value, .. } => {
+            d5_collect_sites(value, sites);
+        }
+        ExprKind::Call {
+            func,
+            args,
+            keywords,
+        } => {
+            d5_collect_sites(func, sites);
+            for arg in args {
+                d5_collect_sites(arg, sites);
+            }
+            for keyword in keywords {
+                d5_collect_sites(&keyword.value, sites);
+            }
+        }
+        ExprKind::BinOp { left, right, .. } => {
+            d5_collect_sites(left, sites);
+            d5_collect_sites(right, sites);
+        }
+        ExprKind::UnaryOp { operand, .. } => {
+            d5_collect_sites(operand, sites);
+        }
+        ExprKind::BoolOp { values, .. } => {
+            for value in values {
+                d5_collect_sites(value, sites);
+            }
+        }
+        ExprKind::Compare {
+            left, comparators, ..
+        } => {
+            d5_collect_sites(left, sites);
+            for comparator in comparators {
+                d5_collect_sites(comparator, sites);
+            }
+        }
+        ExprKind::IfExp {
+            test,
+            body,
+            orelse,
+        } => {
+            d5_collect_sites(test, sites);
+            d5_collect_sites(body, sites);
+            d5_collect_sites(orelse, sites);
+        }
+        ExprKind::Subscript { value, slice, .. } => {
+            d5_collect_sites(value, sites);
+            d5_collect_sites(slice, sites);
+        }
+        ExprKind::Slice { lower, upper, step } => {
+            for part in [lower, upper, step] {
+                if let Some(part) = part {
+                    d5_collect_sites(part, sites);
+                }
+            }
+        }
+        ExprKind::List { elts, .. }
+        | ExprKind::Tuple { elts, .. }
+        | ExprKind::Set { elts, .. } => {
+            for elt in elts {
+                d5_collect_sites(elt, sites);
+            }
+        }
+        ExprKind::Dict { keys, values, .. } => {
+            for key in keys.iter().flatten() {
+                d5_collect_sites(key, sites);
+            }
+            for value in values {
+                d5_collect_sites(value, sites);
+            }
+        }
+        ExprKind::Starred { value, .. }
+        | ExprKind::Await { value, .. }
+        | ExprKind::YieldFrom { value, .. } => {
+            d5_collect_sites(value, sites);
+        }
+        ExprKind::Yield { value } => {
+            if let Some(value) = value {
+                d5_collect_sites(value, sites);
+            }
+        }
+        ExprKind::Lambda { args, .. } => {
+            for default in &args.defaults {
+                d5_collect_sites(default, sites);
+            }
+            for default in args.kw_defaults.iter().flatten() {
+                d5_collect_sites(default, sites);
+            }
+        }
+        ExprKind::ListComp { elt, generators, .. }
+        | ExprKind::SetComp { elt, generators, .. }
+        | ExprKind::GeneratorExp { elt, generators, .. } => {
+            d5_collect_sites(elt, sites);
+            d5_collect_generators(generators, sites);
+        }
+        ExprKind::DictComp {
+            key,
+            value,
+            generators,
+            ..
+        } => {
+            d5_collect_sites(key, sites);
+            d5_collect_sites(value, sites);
+            d5_collect_generators(generators, sites);
+        }
+        ExprKind::JoinedStr { values, .. } => {
+            for value in values {
+                d5_collect_sites(value, sites);
+            }
+        }
+        ExprKind::FormattedValue {
+            value, format_spec, ..
+        } => {
+            d5_collect_sites(value, sites);
+            if let Some(spec) = format_spec {
+                d5_collect_sites(spec, sites);
+            }
+        }
+        ExprKind::NamedExpr { value, .. } => {
+            d5_collect_sites(value, sites);
+        }
+    }
+}
+
+/// Collect the sites standing inside a comprehension's
+/// generators, their targets and iterables and
+/// conditions in the order they stand.
+fn d5_collect_generators<'a>(
+    generators: &'a [Comprehension],
+    sites: &mut Vec<(&'a Expr, &'a Expr, &'a Expr)>,
+) {
+    for generator in generators {
+        d5_collect_sites(&generator.target, sites);
+        d5_collect_sites(&generator.iter, sites);
+        for condition in &generator.ifs {
+            d5_collect_sites(condition, sites);
+        }
+    }
+}
+
 /// Helper and fixture findings inside one function scope.
 fn d5_findings_in_function(
     func: &Stmt,
@@ -936,18 +1204,18 @@ fn d5_findings_in_function(
                     findings.push(finding);
                 }
             }
-            if let StmtKind::ExprStmt { value } = &statement.kind {
-                if let Some(MethodSite::Comparison(first, second)) = method_assertion_site(value) {
-                    if let Some(finding) = d5_site_finding(
-                        first,
-                        second,
-                        value.pos.line as i64,
-                        scope.env,
-                        path,
-                        scope.origin,
-                    )? {
-                        findings.push(finding);
-                    }
+            let mut sites: Vec<(&Expr, &Expr, &Expr)> = Vec::new();
+            d5_statement_sites(statement, &mut sites);
+            for (site, first, second) in sites {
+                if let Some(finding) = d5_site_finding(
+                    first,
+                    second,
+                    site.pos.line as i64,
+                    scope.env,
+                    path,
+                    scope.origin,
+                )? {
+                    findings.push(finding);
                 }
             }
             for nested in statement_lists(statement) {
