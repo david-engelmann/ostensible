@@ -1,6 +1,6 @@
 //! The pins of PORT18, a keyword argument spelled twice
 //! in one call, over synthetic sources the suite writes
-//! itself. The three refusing pins drive the scan over a
+//! itself. The four refusing pins drive the scan over a
 //! test case class carrying a flaggable constant
 //! assertion beside the refused shape, and fail on the
 //! head this slice branches from, where the parser reads
@@ -33,6 +33,12 @@ fn test_a_repeated_keyword_refuses_the_scan() {
 #[test]
 fn test_a_repeated_keyword_standing_apart_refuses_the_scan() {
     let source = wrap("        f(x=1, y=2, x=3)\n");
+    assert_eq!(refusal(&source), UNPARSEABLE);
+}
+
+#[test]
+fn test_a_repeated_keyword_across_a_starred_and_an_unpacking_refuses_the_scan() {
+    let source = wrap("        f(x=1, *b, **c, x=2)\n");
     assert_eq!(refusal(&source), UNPARSEABLE);
 }
 
