@@ -1178,6 +1178,20 @@ fn d5_findings_in_function(
                 })?;
                 continue;
             }
+            let mut sites: Vec<(&Expr, &Expr, &Expr)> = Vec::new();
+            d5_statement_sites(statement, &mut sites);
+            for (site, first, second) in sites {
+                if let Some(finding) = d5_site_finding(
+                    first,
+                    second,
+                    site.pos.line as i64,
+                    scope.env,
+                    path,
+                    scope.origin,
+                )? {
+                    findings.push(finding);
+                }
+            }
             if let StmtKind::Assign { targets, value } = &statement.kind {
                 if targets.len() == 1 {
                     if let ExprKind::Name(name) = &targets[0].kind {
@@ -1201,20 +1215,6 @@ fn d5_findings_in_function(
             if matches!(statement.kind, StmtKind::Assert { .. }) {
                 if let Some(finding) = d5_assert_finding(statement, scope.env, path, scope.origin)?
                 {
-                    findings.push(finding);
-                }
-            }
-            let mut sites: Vec<(&Expr, &Expr, &Expr)> = Vec::new();
-            d5_statement_sites(statement, &mut sites);
-            for (site, first, second) in sites {
-                if let Some(finding) = d5_site_finding(
-                    first,
-                    second,
-                    site.pos.line as i64,
-                    scope.env,
-                    path,
-                    scope.origin,
-                )? {
                     findings.push(finding);
                 }
             }

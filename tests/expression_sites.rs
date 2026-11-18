@@ -105,6 +105,18 @@ fn test_a_method_comparison_in_an_assignment_inside_a_nested_function_is_flagged
 }
 
 #[test]
+fn test_a_method_comparison_in_a_value_rebinding_its_own_operand_is_flagged() {
+    // The value of an assignment is evaluated before its
+    // target is bound, so the comparison reads the client
+    // the helper configured under the environment standing
+    // before the rebinding, and earns its finding there.
+    let source = format!(
+        "{HELPER}import unittest\n\n\nclass TestFetch(unittest.TestCase):\n    def test_fetch(self):\n        client = make_client()\n        client = self.assertEqual(client.fetch(), 42)\n"
+    );
+    assert_helper_finding(&findings(&source));
+}
+
+#[test]
 fn test_a_method_comparison_in_a_statement_value_still_reads_once() {
     let source = fetch_source("        self.assertEqual(client.fetch(), 42)\n");
     assert_helper_finding(&findings(&source));
