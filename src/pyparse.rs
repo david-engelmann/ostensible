@@ -1800,6 +1800,21 @@ impl Parser {
             return Ok((args, keywords));
         }
         loop {
+            // A plain positional argument standing after a
+            // keyword argument refuses the parse, under
+            // PORT17-2. A starred argument is no plain
+            // positional argument and stands after a keyword
+            // as it stands today.
+            if !keywords.is_empty()
+                && !self.at_op("**")
+                && !self.at_op("*")
+                && !self.at_op(")")
+                && !(matches!(self.peek_kind(), Tok::Name(_))
+                    && self.at_op_at(1, "=")
+                    && !matches!(self.peek_kind(), Tok::Name(text) if is_keyword(text)))
+            {
+                return Err(err("a positional argument after a keyword argument"));
+            }
             if self.at_op("**") {
                 let pos = self.bump().pos;
                 let value = self.parse_expr()?;
