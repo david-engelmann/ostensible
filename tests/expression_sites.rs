@@ -76,25 +76,31 @@ fn test_a_method_comparison_inside_an_assert_test_is_flagged() {
 
 #[test]
 fn test_a_method_comparison_inside_an_if_test_is_flagged() {
-    let source = fetch_source("        if self.assertEqual(client.fetch(), 42) is None:\n            pass\n");
+    let source = fetch_source(
+        "        if self.assertEqual(client.fetch(), 42) is None:\n            pass\n",
+    );
     assert_helper_finding(&findings(&source));
 }
 
 #[test]
 fn test_a_keyword_method_comparison_in_an_assignment_value_is_flagged() {
-    let source = fetch_source("        result = self.assertEqual(first=client.fetch(), second=42)\n");
+    let source =
+        fetch_source("        result = self.assertEqual(first=client.fetch(), second=42)\n");
     assert_helper_finding(&findings(&source));
 }
 
 #[test]
 fn test_a_method_comparison_nested_in_another_assertion_is_flagged() {
-    let source = fetch_source("        self.assertEqual(self.assertEqual(client.fetch(), 42), None)\n");
+    let source =
+        fetch_source("        self.assertEqual(self.assertEqual(client.fetch(), 42), None)\n");
     assert_helper_finding(&findings(&source));
 }
 
 #[test]
 fn test_a_method_comparison_in_an_assignment_inside_a_nested_function_is_flagged() {
-    let source = fetch_source("        def check():\n            result = self.assertEqual(client.fetch(), 42)\n");
+    let source = fetch_source(
+        "        def check():\n            result = self.assertEqual(client.fetch(), 42)\n",
+    );
     assert_helper_finding(&findings(&source));
 }
 

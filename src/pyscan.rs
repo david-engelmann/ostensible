@@ -1032,11 +1032,7 @@ fn d5_collect_sites<'a>(expr: &'a Expr, sites: &mut Vec<(&'a Expr, &'a Expr, &'a
                 d5_collect_sites(comparator, sites);
             }
         }
-        ExprKind::IfExp {
-            test,
-            body,
-            orelse,
-        } => {
+        ExprKind::IfExp { test, body, orelse } => {
             d5_collect_sites(test, sites);
             d5_collect_sites(body, sites);
             d5_collect_sites(orelse, sites);
@@ -1052,9 +1048,7 @@ fn d5_collect_sites<'a>(expr: &'a Expr, sites: &mut Vec<(&'a Expr, &'a Expr, &'a
                 }
             }
         }
-        ExprKind::List { elts, .. }
-        | ExprKind::Tuple { elts, .. }
-        | ExprKind::Set { elts, .. } => {
+        ExprKind::List { elts, .. } | ExprKind::Tuple { elts, .. } | ExprKind::Set { elts, .. } => {
             for elt in elts {
                 d5_collect_sites(elt, sites);
             }
@@ -1085,9 +1079,15 @@ fn d5_collect_sites<'a>(expr: &'a Expr, sites: &mut Vec<(&'a Expr, &'a Expr, &'a
                 d5_collect_sites(default, sites);
             }
         }
-        ExprKind::ListComp { elt, generators, .. }
-        | ExprKind::SetComp { elt, generators, .. }
-        | ExprKind::GeneratorExp { elt, generators, .. } => {
+        ExprKind::ListComp {
+            elt, generators, ..
+        }
+        | ExprKind::SetComp {
+            elt, generators, ..
+        }
+        | ExprKind::GeneratorExp {
+            elt, generators, ..
+        } => {
             d5_collect_sites(elt, sites);
             d5_collect_generators(generators, sites);
         }
