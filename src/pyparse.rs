@@ -1843,6 +1843,17 @@ impl Parser {
                     Tok::Name(word) => word,
                     _ => unreachable!(),
                 };
+                // A keyword argument whose name already stands
+                // among this list's keyword arguments refuses
+                // the parse, under PORT18-2. An unpacking
+                // keyword carries no name and forms no
+                // repetition.
+                if keywords
+                    .iter()
+                    .any(|keyword| keyword.arg.as_deref() == Some(name.as_str()))
+                {
+                    return Err(err("a keyword argument spelled twice"));
+                }
                 self.bump(); // the equals sign
                 let value = self.parse_expr()?;
                 keywords.push(Keyword {

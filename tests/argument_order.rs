@@ -5,8 +5,10 @@
 //! constant assertion beside the refused shape, and fail
 //! on the head this slice branches from, where the parser
 //! reads the file and the scan reports the finding. The
-//! three standing pins hold the standings PORT17-2 keeps
-//! and the boundary PORT17-3 states, on both heads.
+//! standing pins hold the standings PORT17-2 keeps, on
+//! both heads. The boundary pin the file carried for the
+//! repeated keyword stands retired under PORT18-3, its
+//! expectation reversed there.
 
 use ostensible::pyscan::scan_source;
 
@@ -53,14 +55,6 @@ fn test_a_starred_argument_after_a_keyword_still_reads() {
 #[test]
 fn test_a_keyword_argument_after_positionals_still_reads() {
     let source = wrap("        f(1, a=2)\n");
-    let found = scan_source(&source, "test_case.py", None, None).expect("the scan reads");
-    assert_eq!(found.len(), 1, "the constant finding stands: {found:?}");
-    assert_eq!(found[0].kind, "constant_assert");
-}
-
-#[test]
-fn test_a_repeated_keyword_still_reads_the_file() {
-    let source = wrap("        f(x=1, x=2)\n");
     let found = scan_source(&source, "test_case.py", None, None).expect("the scan reads");
     assert_eq!(found.len(), 1, "the constant finding stands: {found:?}");
     assert_eq!(found[0].kind, "constant_assert");
