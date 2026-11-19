@@ -340,7 +340,7 @@ fn decompose_char(ch: char, out: &mut Vec<char>) {
 /// over the data standing in nfkc_tables.txt. A name
 /// standing in plain ASCII stands already normalized
 /// and returns as written.
-pub fn normalize_name(raw: &str) -> String {
+pub fn normalize_identifier(raw: &str) -> String {
     if raw.is_ascii() {
         return raw.to_string();
     }

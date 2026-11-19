@@ -7,7 +7,7 @@
 //! over the tokenizer's shallower bracket limit.
 
 use crate::pyast::*;
-use crate::pydata::normalize_name;
+use crate::pydata::normalize_identifier;
 use crate::pytoken::{tokenize, FPart, StrTok, Tok, Token, TokenError};
 
 /// A failure to parse, carried up to the scan refusal.
@@ -545,7 +545,7 @@ impl Parser {
         match self.peek_kind().clone() {
             Tok::Name(word) => {
                 self.bump();
-                Ok(normalize_name(&word))
+                Ok(normalize_identifier(&word))
             }
             _ => Err(err("expected a name")),
         }
@@ -1441,7 +1441,7 @@ impl Parser {
         let name_token = self.bump();
         let name_pos = name_token.pos;
         let name_text = match name_token.kind {
-            Tok::Name(word) => normalize_name(&word),
+            Tok::Name(word) => normalize_identifier(&word),
             _ => return Err(err("expected a name")),
         };
         let name = self.expr(name_pos, ExprKind::Name(name_text));
@@ -1470,7 +1470,7 @@ impl Parser {
             let token = self.bump();
             let pos = token.pos;
             let name = match token.kind {
-                Tok::Name(word) => normalize_name(&word),
+                Tok::Name(word) => normalize_identifier(&word),
                 _ => unreachable!(),
             };
             self.bump(); // the walrus
@@ -1858,7 +1858,7 @@ impl Parser {
                 let token = self.bump();
                 let pos = token.pos;
                 let name = match token.kind {
-                    Tok::Name(word) => normalize_name(&word),
+                    Tok::Name(word) => normalize_identifier(&word),
                     _ => unreachable!(),
                 };
                 // A keyword argument whose name already stands
@@ -2076,7 +2076,7 @@ impl Parser {
             let token = self.bump();
             let pos = token.pos;
             let name = match token.kind {
-                Tok::Name(word) => normalize_name(&word),
+                Tok::Name(word) => normalize_identifier(&word),
                 _ => unreachable!(),
             };
             self.bump();
@@ -2103,7 +2103,7 @@ impl Parser {
                     "False" => Ok(self.expr(token.pos, ExprKind::Constant(ConstVal::Bool(false)))),
                     "None" => Ok(self.expr(token.pos, ExprKind::Constant(ConstVal::NoneVal))),
                     _ if is_keyword(&word) => Err(err("a keyword stands where a value belongs")),
-                    _ => Ok(self.expr(token.pos, ExprKind::Name(normalize_name(&word)))),
+                    _ => Ok(self.expr(token.pos, ExprKind::Name(normalize_identifier(&word)))),
                 }
             }
             Tok::Number(text) => {
@@ -2839,7 +2839,7 @@ impl Parser {
         let token = self.bump();
         let pos = token.pos;
         let word = match token.kind {
-            Tok::Name(word) => normalize_name(&word),
+            Tok::Name(word) => normalize_identifier(&word),
             _ => return Err(err("expected a name")),
         };
         let mut expr = self.expr(pos, ExprKind::Name(word));
