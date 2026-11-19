@@ -1277,6 +1277,11 @@ impl Parser {
         // parameter after it must carry one. Keyword only
         // parameters stand outside the rule and mix freely.
         let mut saw_default = false;
+        // The names this list has already taken, in reading
+        // order, across every slot. A parameter whose name
+        // already stands among them refuses the parse, under
+        // PORT19-2.
+        let mut seen: Vec<String> = Vec::new();
         if self.at_op(")") {
             return Ok(args);
         }
@@ -1297,6 +1302,10 @@ impl Parser {
                 zone = Zone::KwOnly;
                 if matches!(self.peek_kind(), Tok::Name(_)) {
                     let arg = self.parse_one_arg(true, allow_annotations)?;
+                    if seen.iter().any(|name| name == &arg.name) {
+                        return Err(err("a parameter name spelled twice"));
+                    }
+                    seen.push(arg.name.clone());
                     args.vararg = Some(arg);
                 }
                 if !self.eat_op(",") {
@@ -1310,6 +1319,10 @@ impl Parser {
             if self.at_op("**") {
                 self.bump();
                 let arg = self.parse_one_arg(false, allow_annotations)?;
+                if seen.iter().any(|name| name == &arg.name) {
+                    return Err(err("a parameter name spelled twice"));
+                }
+                seen.push(arg.name.clone());
                 args.kwarg = Some(arg);
                 self.eat_op(",");
                 break;
@@ -1318,6 +1331,10 @@ impl Parser {
                 return Err(err("arguments after the keyword argument"));
             }
             let arg = self.parse_one_arg(false, allow_annotations)?;
+            if seen.iter().any(|name| name == &arg.name) {
+                return Err(err("a parameter name spelled twice"));
+            }
+            seen.push(arg.name.clone());
             let default = if self.eat_op("=") {
                 Some(self.parse_expr()?)
             } else {
