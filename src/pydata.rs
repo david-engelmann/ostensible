@@ -2,7 +2,9 @@
 //! files beside this module and read at first use. The
 //! printable ranges state which codepoints CPython's repr
 //! leaves unescaped, and the name table states the character
-//! names the string escape reading resolves, both generated
+//! names the string escape reading resolves, and the normalization
+//! tables state the decomposition, combining class, and composition
+//! data the name normalization of PORT20 drives, all generated
 //! from the interpreter's own unicode database under the
 //! generator standing in the round scratch. Names the
 //! database forms algorithmically, the Hangul syllables and
@@ -220,4 +222,187 @@ pub fn str_repr(value: &[u32]) -> String {
     }
     out.push(quote);
     out
+}
+
+static NFKC_DECOMP: OnceLock<HashMap<u32, Vec<char>>> = OnceLock::new();
+static NFKC_CCC: OnceLock<HashMap<u32, u8>> = OnceLock::new();
+static NFKC_COMP: OnceLock<HashMap<(char, char), char>> = OnceLock::new();
+
+fn nfkc_decomp() -> &'static HashMap<u32, Vec<char>> {
+    NFKC_DECOMP.get_or_init(|| {
+        let text = include_str!("nfkc_tables.txt");
+        let mut map = HashMap::new();
+        for line in text.lines() {
+            let mut fields = line.split_whitespace();
+            if fields.next() != Some("D") {
+                continue;
+            }
+            let cp = fields
+                .next()
+                .map(|field| u32::from_str_radix(field, 16).unwrap_or(0))
+                .unwrap_or(0);
+            let parts: Vec<char> = fields
+                .filter_map(|field| u32::from_str_radix(field, 16).ok())
+                .filter_map(char::from_u32)
+                .collect();
+            if !parts.is_empty() {
+                map.insert(cp, parts);
+            }
+        }
+        map
+    })
+}
+
+fn nfkc_ccc() -> &'static HashMap<u32, u8> {
+    NFKC_CCC.get_or_init(|| {
+        let text = include_str!("nfkc_tables.txt");
+        let mut map = HashMap::new();
+        for line in text.lines() {
+            let mut fields = line.split_whitespace();
+            if fields.next() != Some("C") {
+                continue;
+            }
+            if let (Some(cp), Some(class)) = (fields.next(), fields.next()) {
+                if let (Ok(cp), Ok(class)) =
+                    (u32::from_str_radix(cp, 16), class.parse::<u8>())
+                {
+                    map.insert(cp, class);
+                }
+            }
+        }
+        map
+    })
+}
+
+fn nfkc_comp() -> &'static HashMap<(char, char), char> {
+    NFKC_COMP.get_or_init(|| {
+        let text = include_str!("nfkc_tables.txt");
+        let mut map = HashMap::new();
+        for line in text.lines() {
+            let mut fields = line.split_whitespace();
+            if fields.next() != Some("P") {
+                continue;
+            }
+            let parsed: Vec<char> = fields
+                .filter_map(|field| u32::from_str_radix(field, 16).ok())
+                .filter_map(char::from_u32)
+                .collect();
+            if parsed.len() == 3 {
+                map.insert((parsed[0], parsed[1]), parsed[2]);
+            }
+        }
+        map
+    })
+}
+
+fn combining_class(ch: char) -> u8 {
+    nfkc_ccc().get(&(ch as u32)).copied().unwrap_or(0)
+}
+
+const HANGUL_S_BASE: u32 = 0xac00;
+const HANGUL_L_BASE: u32 = 0x1100;
+const HANGUL_V_BASE: u32 = 0x1161;
+const HANGUL_T_BASE: u32 = 0x11a7;
+const HANGUL_L_COUNT: u32 = 19;
+const HANGUL_V_COUNT: u32 = 21;
+const HANGUL_T_COUNT: u32 = 28;
+const HANGUL_N_COUNT: u32 = HANGUL_V_COUNT * HANGUL_T_COUNT;
+const HANGUL_S_COUNT: u32 = HANGUL_L_COUNT * HANGUL_N_COUNT;
+
+fn decompose_char(ch: char, out: &mut Vec<char>) {
+    let cp = ch as u32;
+    if (HANGUL_S_BASE..HANGUL_S_BASE + HANGUL_S_COUNT).contains(&cp) {
+        let s = cp - HANGUL_S_BASE;
+        let lead = char::from_u32(HANGUL_L_BASE + s / HANGUL_N_COUNT).unwrap();
+        let vowel =
+            char::from_u32(HANGUL_V_BASE + (s % HANGUL_N_COUNT) / HANGUL_T_COUNT).unwrap();
+        out.push(lead);
+        out.push(vowel);
+        let tail = s % HANGUL_T_COUNT;
+        if tail != 0 {
+            out.push(char::from_u32(HANGUL_T_BASE + tail).unwrap());
+        }
+        return;
+    }
+    match nfkc_decomp().get(&cp) {
+        Some(parts) => {
+            for &part in parts.iter() {
+                decompose_char(part, out);
+            }
+        }
+        None => out.push(ch),
+    }
+}
+
+/// Return the name under its normalized form, the
+/// compatibility normalization the arbiter applies to
+/// every identifier it reads, NFKC at Unicode 15.0.0
+/// over the data standing in nfkc_tables.txt. A name
+/// standing in plain ASCII stands already normalized
+/// and returns as written.
+pub fn normalize_name(raw: &str) -> String {
+    if raw.is_ascii() {
+        return raw.to_string();
+    }
+    let mut seq: Vec<char> = Vec::new();
+    for ch in raw.chars() {
+        decompose_char(ch, &mut seq);
+    }
+    for i in 1..seq.len() {
+        let class = combining_class(seq[i]);
+        if class == 0 {
+            continue;
+        }
+        let mut j = i;
+        while j > 0 && combining_class(seq[j - 1]) > class {
+            seq.swap(j, j - 1);
+            j -= 1;
+        }
+    }
+    let mut out: Vec<char> = Vec::new();
+    let mut last_starter = 0usize;
+    let mut last_class = 0u8;
+    for (index, ch) in seq.into_iter().enumerate() {
+        if index == 0 {
+            out.push(ch);
+            continue;
+        }
+        let class = combining_class(ch);
+        let mut composed = None;
+        if last_class == 0 || last_class < class {
+            let starter = out[last_starter];
+            let s_cp = starter as u32;
+            let cp = ch as u32;
+            if (HANGUL_S_BASE..HANGUL_S_BASE + HANGUL_S_COUNT).contains(&s_cp)
+                && cp > HANGUL_T_BASE
+                && cp < HANGUL_T_BASE + HANGUL_T_COUNT
+                && (s_cp - HANGUL_S_BASE) % HANGUL_T_COUNT == 0
+            {
+                composed = char::from_u32(s_cp + (cp - HANGUL_T_BASE));
+            } else if (HANGUL_L_BASE..HANGUL_L_BASE + HANGUL_L_COUNT).contains(&s_cp)
+                && (HANGUL_V_BASE..HANGUL_V_BASE + HANGUL_V_COUNT).contains(&cp)
+            {
+                composed = char::from_u32(
+                    HANGUL_S_BASE
+                        + ((s_cp - HANGUL_L_BASE) * HANGUL_V_COUNT + (cp - HANGUL_V_BASE))
+                            * HANGUL_T_COUNT,
+                );
+            } else {
+                composed = nfkc_comp().get(&(starter, ch)).copied();
+            }
+        }
+        match composed {
+            Some(joined) => {
+                out[last_starter] = joined;
+            }
+            None => {
+                out.push(ch);
+                if class == 0 {
+                    last_starter = out.len() - 1;
+                }
+                last_class = class;
+            }
+        }
+    }
+    out.into_iter().collect()
 }
