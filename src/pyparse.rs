@@ -1160,10 +1160,20 @@ impl Parser {
         if !self.eat_op("[") {
             return Ok(params);
         }
+        // PORT21-2. A type parameter whose name an earlier
+        // type parameter of the same list already carries
+        // refuses the parse, the three kinds sharing the
+        // one standing and the names standing as the
+        // reading carries them.
+        let mut seen: Vec<String> = Vec::new();
         loop {
             let pos = self.peek_pos();
             if self.eat_op("*") {
                 let name = self.expect_name_text()?;
+                if seen.iter().any(|standing| standing == &name) {
+                    return Err(err("a type parameter name spelled twice"));
+                }
+                seen.push(name.clone());
                 params.push(TypeParam {
                     id: self.fresh_id(),
                     pos,
@@ -1171,6 +1181,10 @@ impl Parser {
                 });
             } else if self.eat_op("**") {
                 let name = self.expect_name_text()?;
+                if seen.iter().any(|standing| standing == &name) {
+                    return Err(err("a type parameter name spelled twice"));
+                }
+                seen.push(name.clone());
                 params.push(TypeParam {
                     id: self.fresh_id(),
                     pos,
@@ -1178,6 +1192,10 @@ impl Parser {
                 });
             } else {
                 let name = self.expect_name_text()?;
+                if seen.iter().any(|standing| standing == &name) {
+                    return Err(err("a type parameter name spelled twice"));
+                }
+                seen.push(name.clone());
                 let bound = if self.eat_op(":") {
                     Some(Box::new(self.parse_expr()?))
                 } else {
