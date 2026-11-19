@@ -263,9 +263,7 @@ fn nfkc_ccc() -> &'static HashMap<u32, u8> {
                 continue;
             }
             if let (Some(cp), Some(class)) = (fields.next(), fields.next()) {
-                if let (Ok(cp), Ok(class)) =
-                    (u32::from_str_radix(cp, 16), class.parse::<u8>())
-                {
+                if let (Ok(cp), Ok(class)) = (u32::from_str_radix(cp, 16), class.parse::<u8>()) {
                     map.insert(cp, class);
                 }
             }
@@ -314,8 +312,7 @@ fn decompose_char(ch: char, out: &mut Vec<char>) {
     if (HANGUL_S_BASE..HANGUL_S_BASE + HANGUL_S_COUNT).contains(&cp) {
         let s = cp - HANGUL_S_BASE;
         let lead = char::from_u32(HANGUL_L_BASE + s / HANGUL_N_COUNT).unwrap();
-        let vowel =
-            char::from_u32(HANGUL_V_BASE + (s % HANGUL_N_COUNT) / HANGUL_T_COUNT).unwrap();
+        let vowel = char::from_u32(HANGUL_V_BASE + (s % HANGUL_N_COUNT) / HANGUL_T_COUNT).unwrap();
         out.push(lead);
         out.push(vowel);
         let tail = s % HANGUL_T_COUNT;
