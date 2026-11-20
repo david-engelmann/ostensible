@@ -68,9 +68,9 @@ fn pattern_paths(pattern: &Pattern) -> Result<Vec<Vec<String>>, ParseError> {
             }
             Ok(paths)
         }
-        PatternKind::MatchSequence(patterns) => combine_pattern_paths(patterns),
+        PatternKind::MatchSequence(patterns) => combine_pattern_paths(patterns.iter()),
         PatternKind::MatchMapping { patterns, rest, .. } => {
-            let mut paths = combine_pattern_paths(patterns)?;
+            let mut paths = combine_pattern_paths(patterns.iter())?;
             if let Some(rest) = rest {
                 let rest = normalize_identifier(rest);
                 for path in &mut paths {
@@ -86,19 +86,17 @@ fn pattern_paths(pattern: &Pattern) -> Result<Vec<Vec<String>>, ParseError> {
             patterns,
             kwd_patterns,
             ..
-        } => {
-            let all: Vec<&Pattern> = patterns.iter().chain(kwd_patterns.iter()).collect();
-            combine_pattern_paths(&all)
-        }
+        } => combine_pattern_paths(patterns.iter().chain(kwd_patterns.iter())),
     }
 }
 
-fn combine_pattern_paths<P: AsRef<Pattern>>(
-    patterns: &[P],
-) -> Result<Vec<Vec<String>>, ParseError> {
+fn combine_pattern_paths<'a, I>(patterns: I) -> Result<Vec<Vec<String>>, ParseError>
+where
+    I: IntoIterator<Item = &'a Pattern>,
+{
     let mut paths: Vec<Vec<String>> = vec![Vec::new()];
     for pattern in patterns {
-        let sub_paths = pattern_paths(pattern.as_ref())?;
+        let sub_paths = pattern_paths(pattern)?;
         let mut combined = Vec::new();
         for path in &paths {
             for sub_path in &sub_paths {
