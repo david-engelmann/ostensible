@@ -1,11 +1,11 @@
 //! The pins of PORT23, the alternatives of one pattern
 //! binding different names, over synthetic sources the
-//! suite writes itself. The ten refusing pins drive the
-//! scan over a test case class carrying a flaggable
+//! suite writes itself. The eleven refusing pins drive
+//! the scan over a test case class carrying a flaggable
 //! constant assertion beside the refused shape, and fail
 //! on the head this slice branches from, where the parser
 //! reads the file and the scan reports the finding. The
-//! seven standing pins hold the standings PORT23-1 and
+//! eight standing pins hold the standings PORT23-1 and
 //! PORT23-3 keep, on both heads.
 
 use ostensible::pyscan::scan_source;
@@ -86,6 +86,12 @@ fn test_alternatives_differing_after_normalization_refuse_the_scan() {
 }
 
 #[test]
+fn test_an_as_name_wrapping_an_alternation_inside_an_alternative_stands_in_that_alternatives_set() {
+    let source = wrap("def helper(value):\n    match value:\n        case ((1 | 2) as x) | 3:\n            return x\n    return None\n");
+    assert_eq!(refusal(&source), UNPARSEABLE);
+}
+
+#[test]
 fn test_a_wildcard_alternative_against_a_capture_alternative_refuses_the_scan() {
     let source = wrap("def helper(value):\n    match value:\n        case [x] | _:\n            return x\n    return None\n");
     assert_eq!(refusal(&source), UNPARSEABLE);
@@ -124,6 +130,12 @@ fn test_alternatives_agreeing_after_normalization_stand() {
 #[test]
 fn test_a_bare_capture_standing_last_among_equals_stands() {
     let source = wrap("def helper(value):\n    match value:\n        case [x] | x:\n            return x\n    return None\n");
+    stands(&source);
+}
+
+#[test]
+fn test_an_as_name_wrapping_an_alternation_inside_an_alternative_agreeing_with_a_capture_stands() {
+    let source = wrap("def helper(value):\n    match value:\n        case ((1 | 2) as x) | x:\n            return x\n    return None\n");
     stands(&source);
 }
 
