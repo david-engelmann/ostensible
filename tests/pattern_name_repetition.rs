@@ -4,9 +4,13 @@
 //! test case class carrying a flaggable constant
 //! assertion beside the refused shape, and fail on the
 //! head this slice branches from, where the parser reads
-//! the file and the scan reports the finding. The five
+//! the file and the scan reports the finding. The four
 //! standing pins hold the standings PORT22-1 and PORT22-3
-//! keep, on both heads.
+//! keep, on both heads. A fifth standing pin, named for
+//! alternatives binding different name sets standing
+//! under this slice, stood here until PORT23 took that
+//! judgement and retired it, as PORT23's build amendment
+//! records.
 
 use ostensible::pyscan::scan_source;
 
@@ -123,11 +127,5 @@ fn test_the_same_name_in_different_cases_stands() {
 #[test]
 fn test_two_starred_names_in_one_sequence_stand_under_this_slice() {
     let source = wrap("def helper(value):\n    match value:\n        case [*x, *y]:\n            return x\n    return None\n");
-    stands(&source);
-}
-
-#[test]
-fn test_alternatives_binding_different_name_sets_stand_under_this_slice() {
-    let source = wrap("def helper(value):\n    match value:\n        case [x] | [y] as z:\n            return z\n    return None\n");
     stands(&source);
 }
