@@ -6,6 +6,8 @@
 //! the port bound of 4,000 refuses here, the bound standing
 //! over the tokenizer's shallower bracket limit.
 
+use std::collections::BTreeSet;
+
 use crate::pyast::*;
 use crate::pydata::normalize_identifier;
 use crate::pytoken::{tokenize, FPart, StrTok, Tok, Token, TokenError};
@@ -113,6 +115,81 @@ where
         paths = combined;
     }
     Ok(paths)
+}
+
+/// PORT23's check, standing at the case reading beside
+/// PORT22's check. Every alternation standing in the
+/// pattern is judged on the sets of names its
+/// alternatives bind, the names as carried after
+/// normalization, and an alternation whose alternatives
+/// bind different sets refuses the reading. An
+/// alternation nested inside an alternative lends the
+/// names it binds to that alternative's set.
+fn check_pattern_alternatives(pattern: &Pattern) -> Result<(), ParseError> {
+    pattern_name_set(pattern)?;
+    Ok(())
+}
+
+fn pattern_name_set(pattern: &Pattern) -> Result<BTreeSet<String>, ParseError> {
+    match &pattern.kind {
+        PatternKind::MatchValue(_) | PatternKind::MatchSingleton(_) => Ok(BTreeSet::new()),
+        PatternKind::MatchStar(name) => Ok(match name {
+            Some(name) => BTreeSet::from([normalize_identifier(name)]),
+            None => BTreeSet::new(),
+        }),
+        PatternKind::MatchAs {
+            pattern: inner,
+            name,
+        } => {
+            let mut set = match inner {
+                Some(inner) => pattern_name_set(inner)?,
+                None => BTreeSet::new(),
+            };
+            if let Some(name) = name {
+                set.insert(normalize_identifier(name));
+            }
+            Ok(set)
+        }
+        PatternKind::MatchOr(alternatives) => {
+            let mut agreed: Option<BTreeSet<String>> = None;
+            for alternative in alternatives {
+                let set = pattern_name_set(alternative)?;
+                match &agreed {
+                    None => agreed = Some(set),
+                    Some(standing) => {
+                        if *standing != set {
+                            return Err(err("the alternatives of a pattern bind different names"));
+                        }
+                    }
+                }
+            }
+            Ok(agreed.unwrap_or_default())
+        }
+        PatternKind::MatchSequence(patterns) => union_pattern_sets(patterns.iter()),
+        PatternKind::MatchMapping { patterns, rest, .. } => {
+            let mut set = union_pattern_sets(patterns.iter())?;
+            if let Some(rest) = rest {
+                set.insert(normalize_identifier(rest));
+            }
+            Ok(set)
+        }
+        PatternKind::MatchClass {
+            patterns,
+            kwd_patterns,
+            ..
+        } => union_pattern_sets(patterns.iter().chain(kwd_patterns.iter())),
+    }
+}
+
+fn union_pattern_sets<'a, I>(patterns: I) -> Result<BTreeSet<String>, ParseError>
+where
+    I: IntoIterator<Item = &'a Pattern>,
+{
+    let mut set = BTreeSet::new();
+    for pattern in patterns {
+        set.extend(pattern_name_set(pattern)?);
+    }
+    Ok(set)
 }
 
 impl From<TokenError> for ParseError {
@@ -2689,6 +2766,7 @@ impl Parser {
             let case_pos = self.bump().pos;
             let pattern = self.parse_pattern()?;
             check_pattern_names(&pattern)?;
+            check_pattern_alternatives(&pattern)?;
             let guard = if self.eat_name("if") {
                 Some(self.parse_expr()?)
             } else {
