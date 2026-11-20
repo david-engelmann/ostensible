@@ -129,5 +129,3 @@ fn test_two_starred_names_in_one_sequence_stand_under_this_slice() {
     let source = wrap("def helper(value):\n    match value:\n        case [*x, *y]:\n            return x\n    return None\n");
     stands(&source);
 }
-
-
