@@ -22,6 +22,101 @@ fn err(message: &str) -> ParseError {
     }
 }
 
+/// PORT22's check, standing at the case reading over the
+/// finished pattern of each case. The names a pattern
+/// carries are judged alternative by alternative: each
+/// alternative of an alternation is judged on the names it
+/// carries together with the names standing on the path
+/// around it, and a name spelled twice on one such path
+/// refuses the reading. The names compared are the names
+/// as carried after normalization.
+fn check_pattern_names(pattern: &Pattern) -> Result<(), ParseError> {
+    pattern_paths(pattern)?;
+    Ok(())
+}
+
+fn pattern_paths(pattern: &Pattern) -> Result<Vec<Vec<String>>, ParseError> {
+    match &pattern.kind {
+        PatternKind::MatchValue(_) | PatternKind::MatchSingleton(_) => Ok(vec![Vec::new()]),
+        PatternKind::MatchStar(name) => Ok(vec![match name {
+            Some(name) => vec![normalize_identifier(name)],
+            None => Vec::new(),
+        }]),
+        PatternKind::MatchAs {
+            pattern: inner,
+            name,
+        } => {
+            let mut paths = match inner {
+                Some(inner) => pattern_paths(inner)?,
+                None => vec![Vec::new()],
+            };
+            if let Some(name) = name {
+                let name = normalize_identifier(name);
+                for path in &mut paths {
+                    if path.contains(&name) {
+                        return Err(err("a pattern name spelled twice"));
+                    }
+                    path.push(name.clone());
+                }
+            }
+            Ok(paths)
+        }
+        PatternKind::MatchOr(alternatives) => {
+            let mut paths = Vec::new();
+            for alternative in alternatives {
+                paths.extend(pattern_paths(alternative)?);
+            }
+            Ok(paths)
+        }
+        PatternKind::MatchSequence(patterns) => combine_pattern_paths(patterns),
+        PatternKind::MatchMapping { patterns, rest, .. } => {
+            let mut paths = combine_pattern_paths(patterns)?;
+            if let Some(rest) = rest {
+                let rest = normalize_identifier(rest);
+                for path in &mut paths {
+                    if path.contains(&rest) {
+                        return Err(err("a pattern name spelled twice"));
+                    }
+                    path.push(rest.clone());
+                }
+            }
+            Ok(paths)
+        }
+        PatternKind::MatchClass {
+            patterns,
+            kwd_patterns,
+            ..
+        } => {
+            let all: Vec<&Pattern> = patterns.iter().chain(kwd_patterns.iter()).collect();
+            combine_pattern_paths(&all)
+        }
+    }
+}
+
+fn combine_pattern_paths<P: AsRef<Pattern>>(
+    patterns: &[P],
+) -> Result<Vec<Vec<String>>, ParseError> {
+    let mut paths: Vec<Vec<String>> = vec![Vec::new()];
+    for pattern in patterns {
+        let sub_paths = pattern_paths(pattern.as_ref())?;
+        let mut combined = Vec::new();
+        for path in &paths {
+            for sub_path in &sub_paths {
+                for name in sub_path {
+                    if path.contains(name) {
+                        return Err(err("a pattern name spelled twice"));
+                    }
+                }
+                let mut next = path.clone();
+                next.extend(sub_path.iter().cloned());
+                combined.push(next);
+            }
+        }
+        paths = combined;
+    }
+    Ok(paths)
+}
+
 impl From<TokenError> for ParseError {
     fn from(error: TokenError) -> ParseError {
         err(&error.message)
@@ -2595,6 +2690,7 @@ impl Parser {
         while self.at_name("case") {
             let case_pos = self.bump().pos;
             let pattern = self.parse_pattern()?;
+            check_pattern_names(&pattern)?;
             let guard = if self.eat_name("if") {
                 Some(self.parse_expr()?)
             } else {
