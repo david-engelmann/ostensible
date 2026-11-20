@@ -1,6 +1,6 @@
 //! The pins of PORT22, a capture name spelled twice in
 //! one pattern, over synthetic sources the suite writes
-//! itself. The ten refusing pins drive the scan over a
+//! itself. The twelve refusing pins drive the scan over a
 //! test case class carrying a flaggable constant
 //! assertion beside the refused shape, and fail on the
 //! head this slice branches from, where the parser reads
@@ -87,6 +87,18 @@ fn test_a_name_repeated_inside_one_alternative_refuses_the_scan() {
 #[test]
 fn test_an_as_name_outside_an_alternation_repeating_a_capture_inside_it_refuses_the_scan() {
     let source = wrap("def helper(value):\n    match value:\n        case ([x] | [y]) as x:\n            return x\n    return None\n");
+    assert_eq!(refusal(&source), UNPARSEABLE);
+}
+
+#[test]
+fn test_a_capture_name_repeated_across_sibling_alternations_refuses_the_scan() {
+    let source = wrap("def helper(value):\n    match value:\n        case [([x] | (x,)), ([x] | (x,))]:\n            return x\n    return None\n");
+    assert_eq!(refusal(&source), UNPARSEABLE);
+}
+
+#[test]
+fn test_a_starred_name_spelled_twice_refuses_the_scan() {
+    let source = wrap("def helper(value):\n    match value:\n        case [*x, *x]:\n            return x\n    return None\n");
     assert_eq!(refusal(&source), UNPARSEABLE);
 }
 
