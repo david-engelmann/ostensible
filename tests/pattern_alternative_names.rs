@@ -55,8 +55,8 @@ fn test_a_value_alternative_against_a_capture_alternative_refuses_the_scan() {
 }
 
 #[test]
-fn test_a_mapping_alternative_against_a_sequence_alternative_binding_another_name_refuses_the_scan(
-) {
+fn test_a_mapping_alternative_against_a_sequence_alternative_binding_another_name_refuses_the_scan()
+{
     let source = wrap("def helper(value):\n    match value:\n        case {\"a\": x} | [y]:\n            return x\n    return None\n");
     assert_eq!(refusal(&source), UNPARSEABLE);
 }
