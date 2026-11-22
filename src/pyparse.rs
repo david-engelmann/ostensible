@@ -194,10 +194,12 @@ where
 
 /// PORT24's check, standing at the case reading between
 /// PORT22's check and PORT23's check. The walk judges an
-/// alternation when it meets it, before the shapes inside
-/// its alternatives, and a mapping's keys when it meets the
-/// mapping, before the shapes inside its values, and
-/// refuses at the first shape either judgement refuses.
+/// alternation alternative by alternative in their order,
+/// each alternative's reach judged as it is met and the
+/// shapes inside it walked before the next alternative is
+/// judged, and a mapping's keys when it meets the mapping,
+/// before the shapes inside its values, and refuses at the
+/// first shape either judgement refuses.
 fn check_pattern_reachability_and_keys(pattern: &Pattern) -> Result<(), ParseError> {
     match &pattern.kind {
         PatternKind::MatchValue(_) | PatternKind::MatchSingleton(_) => Ok(()),
@@ -207,16 +209,13 @@ fn check_pattern_reachability_and_keys(pattern: &Pattern) -> Result<(), ParseErr
             None => Ok(()),
         },
         PatternKind::MatchOr(alternatives) => {
-            if alternatives.len() > 1 {
-                for alternative in &alternatives[..alternatives.len() - 1] {
-                    if alternative_reaches_everything(alternative) {
-                        return Err(err(
-                            "an alternative of a pattern makes the alternatives after it unreachable",
-                        ));
-                    }
+            let last = alternatives.len().saturating_sub(1);
+            for (index, alternative) in alternatives.iter().enumerate() {
+                if index < last && alternative_reaches_everything(alternative) {
+                    return Err(err(
+                        "an alternative of a pattern makes the alternatives after it unreachable",
+                    ));
                 }
-            }
-            for alternative in alternatives {
                 check_pattern_reachability_and_keys(alternative)?;
             }
             Ok(())
@@ -260,8 +259,10 @@ fn check_pattern_reachability_and_keys(pattern: &Pattern) -> Result<(), ParseErr
 
 /// Whether an alternative reaches every value under
 /// PORT24-1. A wildcard and a capture reach every value,
-/// and an as pattern reaches every value where the pattern
-/// it wraps does, and no other shape does.
+/// an as pattern reaches every value where the pattern it
+/// wraps does, and an alternation reaches every value
+/// where one of its alternatives does, and no other shape
+/// does.
 fn alternative_reaches_everything(pattern: &Pattern) -> bool {
     match &pattern.kind {
         PatternKind::MatchAs { pattern: None, .. } => true,
@@ -269,6 +270,9 @@ fn alternative_reaches_everything(pattern: &Pattern) -> bool {
             pattern: Some(inner),
             ..
         } => alternative_reaches_everything(inner),
+        PatternKind::MatchOr(alternatives) => {
+            alternatives.iter().any(alternative_reaches_everything)
+        }
         _ => false,
     }
 }
@@ -322,7 +326,11 @@ fn literal_key_value(expr: &Expr) -> Option<LiteralKey> {
         _ => match key_number(expr)? {
             KeyNumber::Int(decimal) => Some(LiteralKey::Int(decimal)),
             KeyNumber::Float(value) => Some(real_key_of_float(value)),
-            KeyNumber::Complex(re, im) => Some(LiteralKey::Complex(re, im)),
+            KeyNumber::Complex(re, im) => Some(if im == 0.0 {
+                real_key_of_float(re)
+            } else {
+                LiteralKey::Complex(re, im)
+            }),
         },
     }
 }

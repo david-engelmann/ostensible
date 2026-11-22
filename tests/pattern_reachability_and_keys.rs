@@ -1,6 +1,6 @@
 //! The pins of PORT24, the unreachable alternative and
 //! the duplicated mapping key, over synthetic sources the
-//! suite writes itself. The fourteen refusing pins drive
+//! suite writes itself. The seventeen refusing pins drive
 //! the scan over a test case class carrying a flaggable
 //! constant assertion beside the refused shape, and fail
 //! on the head this slice branches from, where the parser
@@ -105,6 +105,24 @@ fn test_a_complex_key_against_its_respelling_refuses_the_scan() {
 #[test]
 fn test_a_duplicated_key_inside_a_nested_mapping_refuses_the_scan() {
     let source = wrap("def helper(value):\n    match value:\n        case {\"k\": {\"a\": y, \"a\": z}}:\n            return y\n    return None\n");
+    assert_eq!(refusal(&source), UNPARSEABLE);
+}
+
+#[test]
+fn test_an_as_pattern_wrapping_an_alternation_with_a_wildcard_refuses_the_scan() {
+    let source = wrap("def helper(value):\n    match value:\n        case ((0 | _) as x) | (1 as x):\n            return x\n    return None\n");
+    assert_eq!(refusal(&source), UNPARSEABLE);
+}
+
+#[test]
+fn test_a_zero_key_against_a_zero_imaginary_key_refuses_the_scan() {
+    let source = wrap("def helper(value):\n    match value:\n        case {0: y, 0j: z}:\n            return y\n    return None\n");
+    assert_eq!(refusal(&source), UNPARSEABLE);
+}
+
+#[test]
+fn test_an_integer_key_against_its_joined_complex_spelling_refuses_the_scan() {
+    let source = wrap("def helper(value):\n    match value:\n        case {1: y, 1+0j: z}:\n            return y\n    return None\n");
     assert_eq!(refusal(&source), UNPARSEABLE);
 }
 
