@@ -311,9 +311,11 @@ fn literal_keys_equal(left: &LiteralKey, right: &LiteralKey) -> bool {
 fn literal_key_value(expr: &Expr) -> Option<LiteralKey> {
     match &expr.kind {
         ExprKind::Constant(ConstVal::NoneVal) => Some(LiteralKey::NoneKey),
-        ExprKind::Constant(ConstVal::Bool(value)) => Some(LiteralKey::Int(
-            if *value { "1".to_string() } else { "0".to_string() },
-        )),
+        ExprKind::Constant(ConstVal::Bool(value)) => Some(LiteralKey::Int(if *value {
+            "1".to_string()
+        } else {
+            "0".to_string()
+        })),
         ExprKind::Constant(ConstVal::Str(text)) => Some(LiteralKey::Text(text.clone())),
         ExprKind::Constant(ConstVal::Bytes(bytes)) => Some(LiteralKey::Bytes(bytes.clone())),
         ExprKind::Constant(ConstVal::Ellipsis) => None,
