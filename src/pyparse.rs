@@ -192,6 +192,225 @@ where
     Ok(set)
 }
 
+/// PORT24's check, standing at the case reading between
+/// PORT22's check and PORT23's check. The walk judges an
+/// alternation alternative by alternative in their order,
+/// each alternative's reach judged as it is met and the
+/// shapes inside it walked before the next alternative is
+/// judged, and a mapping's keys when it meets the mapping,
+/// before the shapes inside its values, and refuses at the
+/// first shape either judgement refuses.
+fn check_pattern_reachability_and_keys(pattern: &Pattern) -> Result<(), ParseError> {
+    match &pattern.kind {
+        PatternKind::MatchValue(_) | PatternKind::MatchSingleton(_) => Ok(()),
+        PatternKind::MatchStar(_) => Ok(()),
+        PatternKind::MatchAs { pattern: inner, .. } => match inner {
+            Some(inner) => check_pattern_reachability_and_keys(inner),
+            None => Ok(()),
+        },
+        PatternKind::MatchOr(alternatives) => {
+            let last = alternatives.len().saturating_sub(1);
+            for (index, alternative) in alternatives.iter().enumerate() {
+                if index < last && alternative_reaches_everything(alternative) {
+                    return Err(err(
+                        "an alternative of a pattern makes the alternatives after it unreachable",
+                    ));
+                }
+                check_pattern_reachability_and_keys(alternative)?;
+            }
+            Ok(())
+        }
+        PatternKind::MatchSequence(patterns) => {
+            for pattern in patterns {
+                check_pattern_reachability_and_keys(pattern)?;
+            }
+            Ok(())
+        }
+        PatternKind::MatchMapping { keys, patterns, .. } => {
+            let mut seen: Vec<LiteralKey> = Vec::new();
+            for key in keys {
+                if let Some(value) = literal_key_value(key) {
+                    if seen
+                        .iter()
+                        .any(|standing| literal_keys_equal(standing, &value))
+                    {
+                        return Err(err("a mapping pattern checks a key twice"));
+                    }
+                    seen.push(value);
+                }
+            }
+            for pattern in patterns {
+                check_pattern_reachability_and_keys(pattern)?;
+            }
+            Ok(())
+        }
+        PatternKind::MatchClass {
+            patterns,
+            kwd_patterns,
+            ..
+        } => {
+            for pattern in patterns.iter().chain(kwd_patterns.iter()) {
+                check_pattern_reachability_and_keys(pattern)?;
+            }
+            Ok(())
+        }
+    }
+}
+
+/// Whether an alternative reaches every value under
+/// PORT24-1. A wildcard and a capture reach every value,
+/// an as pattern reaches every value where the pattern it
+/// wraps does, and an alternation reaches every value
+/// where one of its alternatives does, and no other shape
+/// does.
+fn alternative_reaches_everything(pattern: &Pattern) -> bool {
+    match &pattern.kind {
+        PatternKind::MatchAs { pattern: None, .. } => true,
+        PatternKind::MatchAs {
+            pattern: Some(inner),
+            ..
+        } => alternative_reaches_everything(inner),
+        PatternKind::MatchOr(alternatives) => {
+            alternatives.iter().any(alternative_reaches_everything)
+        }
+        _ => false,
+    }
+}
+
+/// A literal key of a mapping pattern under PORT24-2,
+/// carried in the family its equality stands in. A real
+/// number standing as a whole number carries as an integer
+/// in its exact decimal spelling, so an integer and a float
+/// and a boolean compare by their exact values.
+#[derive(Debug, Clone)]
+enum LiteralKey {
+    NoneKey,
+    Int(String),
+    Float(f64),
+    Complex(f64, f64),
+    Text(PyText),
+    Bytes(Vec<u8>),
+}
+
+fn literal_keys_equal(left: &LiteralKey, right: &LiteralKey) -> bool {
+    match (left, right) {
+        (LiteralKey::NoneKey, LiteralKey::NoneKey) => true,
+        (LiteralKey::Int(a), LiteralKey::Int(b)) => a == b,
+        (LiteralKey::Float(a), LiteralKey::Float(b)) => a == b,
+        (LiteralKey::Int(_), LiteralKey::Float(_)) => false,
+        (LiteralKey::Float(_), LiteralKey::Int(_)) => false,
+        (LiteralKey::Complex(a_re, a_im), LiteralKey::Complex(b_re, b_im)) => {
+            a_re == b_re && a_im == b_im
+        }
+        (LiteralKey::Text(a), LiteralKey::Text(b)) => a == b,
+        (LiteralKey::Bytes(a), LiteralKey::Bytes(b)) => a == b,
+        _ => false,
+    }
+}
+
+/// The literal key a mapping key expression stands as,
+/// where it stands as one. A name and a dotted name and
+/// every other expression stand outside the judgement and
+/// carry no literal key.
+fn literal_key_value(expr: &Expr) -> Option<LiteralKey> {
+    match &expr.kind {
+        ExprKind::Constant(ConstVal::NoneVal) => Some(LiteralKey::NoneKey),
+        ExprKind::Constant(ConstVal::Bool(value)) => Some(LiteralKey::Int(if *value {
+            "1".to_string()
+        } else {
+            "0".to_string()
+        })),
+        ExprKind::Constant(ConstVal::Str(text)) => Some(LiteralKey::Text(text.clone())),
+        ExprKind::Constant(ConstVal::Bytes(bytes)) => Some(LiteralKey::Bytes(bytes.clone())),
+        ExprKind::Constant(ConstVal::Ellipsis) => None,
+        _ => match key_number(expr)? {
+            KeyNumber::Int(decimal) => Some(LiteralKey::Int(decimal)),
+            KeyNumber::Float(value) => Some(real_key_of_float(value)),
+            KeyNumber::Complex(re, im) => Some(if im == 0.0 {
+                real_key_of_float(re)
+            } else {
+                LiteralKey::Complex(re, im)
+            }),
+        },
+    }
+}
+
+/// A real number standing as a key, carried as an integer
+/// in its exact decimal spelling where the value stands
+/// whole, so it compares exactly against integer keys.
+fn real_key_of_float(value: f64) -> LiteralKey {
+    if value == 0.0 {
+        LiteralKey::Int("0".to_string())
+    } else if value.is_finite() && value.fract() == 0.0 {
+        LiteralKey::Int(format!("{value:.0}"))
+    } else {
+        LiteralKey::Float(value)
+    }
+}
+
+/// The number a key expression stands as, under the forms
+/// the pattern key reading writes, a constant, a sign over
+/// a constant, or a real part and an imaginary part joined
+/// by addition or subtraction.
+enum KeyNumber {
+    Int(String),
+    Float(f64),
+    Complex(f64, f64),
+}
+
+fn key_number(expr: &Expr) -> Option<KeyNumber> {
+    match &expr.kind {
+        ExprKind::Constant(ConstVal::Int(decimal)) => Some(KeyNumber::Int(decimal.clone())),
+        ExprKind::Constant(ConstVal::Float(value)) => Some(KeyNumber::Float(*value)),
+        ExprKind::Constant(ConstVal::Complex(re, im)) => Some(KeyNumber::Complex(*re, *im)),
+        ExprKind::UnaryOp { op, operand } => {
+            let inner = key_number(operand)?;
+            match op {
+                UnaryKind::USub => Some(match inner {
+                    KeyNumber::Int(decimal) => KeyNumber::Int(negate_decimal(&decimal)),
+                    KeyNumber::Float(value) => KeyNumber::Float(-value),
+                    KeyNumber::Complex(re, im) => KeyNumber::Complex(-re, -im),
+                }),
+                UnaryKind::UAdd => Some(inner),
+                _ => None,
+            }
+        }
+        ExprKind::BinOp { left, op, right } => {
+            let (left_re, left_im) = key_number_parts(&key_number(left)?)?;
+            let (right_re, right_im) = key_number_parts(&key_number(right)?)?;
+            match op {
+                BinOpKind::Add => Some(KeyNumber::Complex(left_re + right_re, left_im + right_im)),
+                BinOpKind::Sub => Some(KeyNumber::Complex(left_re - right_re, left_im - right_im)),
+                _ => None,
+            }
+        }
+        _ => None,
+    }
+}
+
+/// The parts of a key number standing as a complex value, a
+/// real number standing with an imaginary part of zero, the
+/// parts carried as the doubles the arbiter carries.
+fn key_number_parts(number: &KeyNumber) -> Option<(f64, f64)> {
+    match number {
+        KeyNumber::Int(decimal) => decimal.parse::<f64>().ok().map(|value| (value, 0.0)),
+        KeyNumber::Float(value) => Some((*value, 0.0)),
+        KeyNumber::Complex(re, im) => Some((*re, *im)),
+    }
+}
+
+/// The negation of a canonical decimal spelling, the
+/// spelling of zero standing unchanged.
+fn negate_decimal(decimal: &str) -> String {
+    if decimal == "0" {
+        decimal.to_string()
+    } else if let Some(rest) = decimal.strip_prefix('-') {
+        rest.to_string()
+    } else {
+        format!("-{decimal}")
+    }
+}
+
 impl From<TokenError> for ParseError {
     fn from(error: TokenError) -> ParseError {
         err(&error.message)
@@ -2766,6 +2985,7 @@ impl Parser {
             let case_pos = self.bump().pos;
             let pattern = self.parse_pattern()?;
             check_pattern_names(&pattern)?;
+            check_pattern_reachability_and_keys(&pattern)?;
             check_pattern_alternatives(&pattern)?;
             let guard = if self.eat_name("if") {
                 Some(self.parse_expr()?)
