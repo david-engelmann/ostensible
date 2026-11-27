@@ -20,7 +20,7 @@ For releases cut from `v0.20.0` onward on Linux (`x86_64`, `aarch64`) and macOS 
 curl -fsSL https://raw.githubusercontent.com/david-engelmann/ostensible/main/install.sh | sh
 ```
 
-Pin a specific release tag that carries release archives by setting `OSTENSIBLE_VERSION` (for example `OSTENSIBLE_VERSION=v0.20.0`). On Windows (`x86_64-pc-windows-msvc`), download the `.zip` archive and its `.sha256` file from the GitHub Releases page.
+Pin a specific release tag that carries release archives by setting `OSTENSIBLE_VERSION` (for example `OSTENSIBLE_VERSION=v0.20.0`). Because `install.sh` does not edit shell profile files, ensure `$HOME/.local/bin` (or your custom `$OSTENSIBLE_INSTALL_DIR`) stands on `PATH` in your shell (`export PATH="$HOME/.local/bin:$PATH"`). On Windows (`x86_64-pc-windows-msvc`), download the `.zip` archive and its `.sha256` file from the GitHub Releases page.
 
 ## Preparing Your Python Environment
 
@@ -29,6 +29,8 @@ Ostensible invokes `python3 -m pytest -q -p no:cacheprovider` inside temporary s
 ```sh
 PATH="/path/to/project/.venv/bin:$PATH" ostensible /path/to/project
 ```
+
+Make sure `pytest` imports the code under test from each temporary scratch copy rather than from an editable install (`pip install -e .`) pointing back at your original checkout directory, or every mutant in the scratch copy will go unexecuted and appear to survive. Install third-party test dependencies without editable-installing the target package itself, and for `src/`-layout repositories configure `pythonpath = ["src"]` inside `pyproject.toml` or `pytest.ini` (which `pytest 9.1.1` resolves relative to each scratch copy's `rootdir`, unlike an absolute `PYTHONPATH`).
 
 On Windows, Python virtual environments under `.venv\Scripts` frequently create `python.exe` without a `python3.exe` alias. Because `ostensible` invokes `python3`, copy or link `python.exe` to `python3.exe` inside `.venv\Scripts` and prepend `.venv\Scripts` to `PATH` so Windows does not fall through to the Microsoft Store `python3.exe` stub.
 
@@ -93,7 +95,7 @@ File-level verdicts roll up their member function verdicts in the exact order ev
 - `can_fail` Otherwise, at least one function in the file has status `can_fail`.
 - `baseline_failed` Zero functions are `can_fail` and **at least one** function has status `baseline_failed` (preventing a broken sibling test from allowing a file to be labelled `decorative_candidate`).
 - `inconclusive` Neither `decorative_candidate`, `can_fail`, nor `baseline_failed` fired, and at least one function has status `inconclusive` (such as a mutant timeout or a baseline timeout without judged `decorative_candidate` siblings).
-- `no_applicable_mutants` Every function in the file had `no_applicable_mutants` (or no selectable tests ran).
+- `no_applicable_mutants` Every function in the file had `no_applicable_mutants`. When static item selection finds zero selectable functions or methods in a file (`whole_file` fallback), Ostensible executes the whole file (`can_fail`, `decorative_candidate`, `baseline_failed`, or `inconclusive`) and reports `no_applicable_mutants` when `pytest` collects zero tests (`no_tests`) or zero mutants apply.
 
 ## Report Schema (`cantfail-report/3`)
 
@@ -107,7 +109,7 @@ Under `--json`, Ostensible prints a sorted-key JSON object carrying `"schema"` s
 
 ## GitHub Actions Pull Request Check
 
-The workflow below builds `ostensible`, runs `pytest` dependencies in `.venv`, writes the `cantfail-report/3` JSON report, and fails the job if any static finding, whole-file `decorative_candidate`, or individual `decorative_candidate` function inside a mixed test file is detected.
+The workflow below builds `ostensible`, installs third-party test dependencies into `.venv` without an editable `.pth` back to the checkout (for `src/` layouts, set `pythonpath = ["src"]` in `pyproject.toml` or `pytest.ini`), writes the `cantfail-report/3` JSON report, and fails the job if any static finding, whole-file `decorative_candidate`, or individual `decorative_candidate` function inside a mixed test file is detected.
 
 ```yaml
 name: decorative-tests
@@ -123,10 +125,10 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Install project test dependencies
+      - name: Install third-party test dependencies
         run: |
           python3 -m venv .venv
-          .venv/bin/pip install -e ".[test]" pytest
+          .venv/bin/pip install pytest -r requirements-dev.txt
       - name: Build ostensible
         run: cargo install --git https://github.com/david-engelmann/ostensible --locked
       - name: Audit suite for decorative tests
