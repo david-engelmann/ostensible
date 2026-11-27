@@ -7,11 +7,24 @@ description = "It mutates the code under a test and the test's own assertions, a
 license = "MIT"
 readme = "README.md"
 repository = "https://github.com/david-engelmann/ostensible"
-homepage = "https://github.com/david-engelmann/ostensible"
+homepage = "https://david-engelmann.github.io/ostensible/"
 documentation = "https://docs.rs/ostensible"
 keywords = ["testing", "mutation-testing", "pytest", "ci", "quality"]
 categories = ["command-line-utilities", "development-tools::testing"]
-exclude = ["tests/**", "tools/**", "CONTRACT.md", "AGENTS.md", ".github/**", "deny.toml", "install.sh"]
+exclude = [
+    "tests/**",
+    "tools/**",
+    "book/**",
+    "docs/media/**",
+    "CONTRACT.md",
+    "AGENTS.md",
+    "CITATION.cff",
+    ".editorconfig",
+    ".gitattributes",
+    ".github/**",
+    "deny.toml",
+    "install.sh",
+]
 
 [lib]
 name = "ostensible"
@@ -20,3 +33,11 @@ path = "src/lib.rs"
 [[bin]]
 name = "ostensible"
 path = "src/main.rs"
+
+[package.metadata.binstall]
+pkg-url = "{ repo }/releases/download/v{ version }/{ name }-v{ version }-{ target }.{ archive-format }"
+bin-dir = "{ bin }{ binary-ext }"
+pkg-fmt = "tgz"
+
+[package.metadata.binstall.overrides.x86_64-pc-windows-msvc]
+pkg-fmt = "zip"

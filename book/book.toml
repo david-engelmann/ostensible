@@ -1,0 +1,16 @@
+[book]
+title = "ostensible Documentation"
+authors = ["David Engelmann"]
+description = "It mutates the code under a test and the test's own assertions, and any test no mutation can turn red is named decorative."
+language = "en"
+src = "src"
+
+[build]
+build-dir = "build"
+create-missing = false
+
+[output.html]
+default-theme = "coal"
+preferred-dark-theme = "ayu"
+site-url = "/ostensible/"
+git-repository-url = "https://github.com/david-engelmann/ostensible"

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 332 60" width="332" height="60" role="img" aria-label="ostensible Gate Truth">
+  <title>ostensible - Gate Truth verification tool</title>
+  <g transform="translate(2, 0)">
+    <path d="M28 7 L47 15 V29 C47 41 38.5 49.5 28 53 C17.5 49.5 9 41 9 29 V15 Z" fill="none" stroke="#1c1917" stroke-width="3.5" stroke-linejoin="round"/><path d="M30 16 L21 31 H29 L26 44 L36 28 H28 Z" fill="#e11d48"/>
+  </g>
+  <text x="66" y="40" fill="#1c1917" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="31" font-weight="750" letter-spacing="-0.8">ostensible</text>
+  <rect x="218" y="18" width="104" height="25" rx="12.5" fill="#ece8e1" stroke="#d6d0c4" stroke-width="1.2"/>
+  <circle cx="233" cy="30.5" r="4" fill="#e11d48"/>
+  <text x="243" y="34.5" fill="#57534e" font-family="'SFMono-Regular', ui-monospace, Menlo, Consolas, monospace" font-size="10.5" font-weight="700" letter-spacing="0.6">GATE TRUTH</text>
+</svg>
