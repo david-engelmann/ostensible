@@ -30,7 +30,7 @@ Ostensible invokes `python3 -m pytest -q -p no:cacheprovider` inside temporary s
 PATH="/path/to/project/.venv/bin:$PATH" ostensible /path/to/project
 ```
 
-Make sure `pytest` imports the code under test from each temporary scratch copy rather than from an editable install (`pip install -e .`) pointing back at your original checkout directory, or every mutant in the scratch copy will go unexecuted and appear to survive. Install third-party test dependencies without editable-installing the target package itself, and for `src/`-layout repositories configure `pythonpath = ["src"]` inside `pyproject.toml` or `pytest.ini` (which `pytest 9.1.1` resolves relative to each scratch copy's `rootdir`, unlike an absolute `PYTHONPATH`).
+Make sure `pytest` imports the code under test from each temporary scratch copy rather than from an editable install (`pip install -e .`) pointing back at your original checkout directory, or every mutant in the scratch copy will go unexecuted and appear to survive. Install third-party test dependencies without editable-installing the target package itself, and for `src/`-layout repositories configure `pythonpath = ["src"]` inside `pyproject.toml` (or `pythonpath = src` inside `pytest.ini`), which `pytest 9.1.1` resolves relative to each scratch copy's `rootdir`, unlike an absolute `PYTHONPATH`.
 
 On Windows, Python virtual environments under `.venv\Scripts` frequently create `python.exe` without a `python3.exe` alias. Because `ostensible` invokes `python3`, copy or link `python.exe` to `python3.exe` inside `.venv\Scripts` and prepend `.venv\Scripts` to `PATH` so Windows does not fall through to the Microsoft Store `python3.exe` stub.
 
@@ -109,7 +109,7 @@ Under `--json`, Ostensible prints a sorted-key JSON object carrying `"schema"` s
 
 ## GitHub Actions Pull Request Check
 
-The workflow below builds `ostensible`, installs third-party test dependencies into `.venv` without an editable `.pth` back to the checkout (for `src/` layouts, set `pythonpath = ["src"]` in `pyproject.toml` or `pytest.ini`), writes the `cantfail-report/3` JSON report, and fails the job if any static finding, whole-file `decorative_candidate`, or individual `decorative_candidate` function inside a mixed test file is detected.
+The workflow below builds `ostensible`, installs third-party test dependencies into `.venv` without an editable `.pth` back to the checkout (for `src/` layouts, set `pythonpath = ["src"]` in `pyproject.toml` or `pythonpath = src` in `pytest.ini`), writes the `cantfail-report/3` JSON report, and fails the job if any static finding, whole-file `decorative_candidate`, or individual `decorative_candidate` function inside a mixed test file is detected.
 
 ```yaml
 name: decorative-tests
