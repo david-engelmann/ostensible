@@ -7,7 +7,7 @@ Ostensible emits two deterministic output representations from the same analysis
 Top-level object keys (sorted lexicographically, 2-space indented)
 
 - `collection_settings` Optional object present only when non-default `python_files`, `python_classes`, or `python_functions` patterns are active.
-- `collection_settings_source` Optional relative or upward path naming the governing `pytest` config file when non-default settings apply.
+- `collection_settings_source` Optional string present when non-default settings apply, set to `"project root"` when governed at `<project>` or the governing ancestor directory path when inherited from above `<project>`.
 - `project` String directory name of `<project>`.
 - `schema` Always `"cantfail-report/3"`.
 - `static_findings` Array of static tautology objects carrying

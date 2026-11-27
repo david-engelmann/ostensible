@@ -1,6 +1,6 @@
 # Ostensible Architecture
 
-Ostensible asks whether a Python `pytest` test can fail for a real reason. Its implementation is a zero-dependency pure-Rust crate (`src/`) organised into five deterministic stages so static analysis never executes untrusted code and dynamic mutation runs strictly inside temporary scratch copies.
+Ostensible asks whether a Python `pytest` test can fail for a real reason. Its implementation is a zero-dependency pure-Rust crate (`src/`) organised into five deterministic stages so static analysis never executes untrusted code and dynamic mutation applies edits inside temporary scratch copies rather than modifying `<project>` in place.
 
 <p align="center">
   <picture>
@@ -29,7 +29,7 @@ For each discovered test file, Ostensible pairs stem-matching source modules (`t
 
 ### 4. Scratch-Copy Baseline and Mutant Runner (`src/runner.rs`)
 
-The target project directory is never modified in place. Ostensible copies the project (and any parent governing config file) into temporary scratch directories, runs passing baseline items first (`python3 -m pytest -q -p no:cacheprovider`), and evaluates each mutant inside a fresh scratch copy under the bounded `--timeout` deadline.
+Ostensible itself never modifies `<project>` in place. It copies the project (and any parent governing config file) into temporary scratch directories, runs passing baseline items first (`python3 -m pytest -q -p no:cacheprovider`), and evaluates each mutant inside a fresh scratch copy under the bounded `--timeout` deadline (note that scratch copies are not an OS filesystem sandbox around target `pytest` code).
 
 ### 5. Verdict Rollup and Deterministic Renderer (`src/model.rs`, `src/report.rs`)
 

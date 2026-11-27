@@ -14,7 +14,7 @@ Check whether your virtual environment installed the target package with `pip in
 
 ## Does Ostensible modify my working tree or leave `.pytest_cache` behind?
 
-Never. Static scanning reads source files read-only, and dynamic mutation copies the project into temporary scratch directories and passes `-p no:cacheprovider` to `pytest`. Conformance tests verify byte-for-byte working-tree invariance before and after every run.
+Ostensible itself never modifies `<project>` in place. Static scanning reads source files read-only, and dynamic mutation copies `<project>` into temporary scratch directories and passes `-p no:cacheprovider` to `pytest`. Note that scratch copies are not an OS filesystem sandbox, so target test suites still execute with your user privileges and could write to external absolute paths if coded to do so.
 
 ## Can I run Ostensible on untrusted code safely?
 

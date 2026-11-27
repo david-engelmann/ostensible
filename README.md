@@ -48,27 +48,27 @@ Agent written suites flood repos with tests that cannot fail for a real reason, 
 
 ## Install
 
-Install a prebuilt binary on Linux or macOS with the checksum-verifying installer script.
+Install from source with Cargo (Rust 1.80 or newer) or via `cargo-binstall` and the checksum-verifying installer script on releases carrying prebuilt archives (`v0.19.0` once release archives are attached and `v0.20.0` onward).
+
+```sh
+cargo install --git https://github.com/david-engelmann/ostensible --locked
+```
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/david-engelmann/ostensible/main/install.sh | sh
 export PATH="$HOME/.local/bin:$PATH"
-```
-
-Or install via `cargo-binstall` or from source with Cargo (Rust 1.80 or newer).
-
-```sh
 cargo binstall --git https://github.com/david-engelmann/ostensible ostensible
-cargo install --git https://github.com/david-engelmann/ostensible --locked
 ```
 
 From a local checkout, `cargo build --release --locked` places the binary at `target/release/ostensible` (Windows `.zip` archives ship on the [Releases](https://github.com/david-engelmann/ostensible/releases) page).
 
 ## Quickstart
 
-Ostensible executes `pytest` through the first `python3` executable on `PATH`. Activate your project virtual environment first (avoiding `pip install -e .` on `src/` layouts in favour of `pythonpath = ["src"]` in `pyproject.toml` so scratch copies import mutated code), then pass the project folder.
+Ostensible executes `pytest` through the first `python3` executable on `PATH`. Activate your project virtual environment first (avoiding `pip install -e .` on `src/` layouts in favour of `pythonpath = ["src"]` in `pyproject.toml` so scratch copies import mutated code), then clone this repository to try the bundled `examples/demo_project` or pass your own project folder.
 
 ```sh
+git clone https://github.com/david-engelmann/ostensible.git
+cd ostensible
 ostensible examples/demo_project
 ```
 
@@ -141,7 +141,7 @@ cargo package --locked
 | --- | --- | --- |
 | Upward config discovery | Pure-Rust TOML and INI readers across 7 `pytest 9.1.1` sources | Sub-millisecond upward directory walk, zero Python spawn |
 | Static tautology scan | Pure-Rust Python 3.12 lexer, AST parser, NFKC normalizer, and `conftest.py` dataflow | Zero untrusted code execution, linear in test-tree size |
-| Dynamic mutation panel | 4 operators (`return_none`, `compare_invert`, `bool_negate`, `constant_shift`) in scratch copies | `1` baseline run + `M` applicable mutant runs per passing test file (`11` `pytest` runs on `examples/demo_project`) |
+| Dynamic mutation panel | 4 operators (`return_none`, `compare_invert`, `bool_negate`, `constant_shift`) in scratch copies | `1` baseline run per selected test item + `M` applicable mutants * `P` passing items per test file (`30` `pytest` runs on `test_calc.py` and `2` on `test_greeter.py` on `examples/demo_project`) |
 
 ## The Gate Truth Suite
 
@@ -158,7 +158,7 @@ cargo package --locked
 | [finaltree](https://github.com/david-engelmann/finaltree) | What tree did CI actually evaluate? | Commit and tree lineage across merge queues |
 | [blindgate](https://github.com/david-engelmann/blindgate) | What files did the gate actually read? | Linux `strace` descriptor and path reconstruction |
 | [ostensible](https://github.com/david-engelmann/ostensible) | Can the test actually fail? | Static tautology scan and 4-family `pytest` mutants |
-| [canaryfield](https://github.com/david-engelmann/canaryfield) | Does the harness catch planted defects? | 200 seeded Python defect classes across real gates |
+| [canaryfield](https://github.com/david-engelmann/canaryfield) | Does the harness catch planted defects? | 200+ seeded Python defect classes across real gates |
 | [greenharvest](https://github.com/david-engelmann/greenharvest) | Which tests earn their CI runtime? | Marginal defect-catch value per second of execution |
 
 ## Documentation
