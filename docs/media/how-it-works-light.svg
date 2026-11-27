@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 408" width="960" height="408" role="img" aria-label="How ostensible works">
+  <title>How ostensible works from input ingestion to deterministic verification verdict</title>
+  <rect width="960" height="408" rx="20" fill="#faf8f5" stroke="#ded8ce" stroke-width="1.5"/>
+  <text x="30" y="42" fill="#e11d48" font-family="'SFMono-Regular', ui-monospace, Menlo, Consolas, monospace" font-size="11.5" font-weight="700" letter-spacing="1.2">ARCHITECTURE PIPELINE  /  OSTENSIBLE</text>
+  <text x="30" y="72" fill="#1c1917" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="22" font-weight="750">Can the test actually fail?  <tspan fill="#57534e" font-size="15.5" font-weight="450">Pure-Rust static mock/tautology scanner paired with a fast four-family pytest mutation panel.</tspan></text>
+  
+  <rect x="28" y="104" width="214" height="228" rx="14" fill="#ffffff" stroke="#ded8ce" stroke-width="1.5"/>
+  <rect x="46" y="122" width="42" height="26" rx="8" fill="#ffe4e6" stroke="#e11d48" stroke-width="1.2"/>
+  <text x="67" y="139.5" text-anchor="middle" fill="#e11d48" font-family="'SFMono-Regular', ui-monospace, Menlo, Consolas, monospace" font-size="12" font-weight="700">01</text>
+  <text x="46" y="176" fill="#1c1917" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13.5" font-weight="750" letter-spacing="0.4">UPWARD SETTINGS</text>
+  <line x1="46" y1="190" x2="224" y2="190" stroke="#ded8ce" stroke-width="1"/>
+  <text x="46" y="216" fill="#57534e" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13"><tspan x="46" dy="0">Resolves all 7 pytest</tspan><tspan x="46" dy="19">9.1.1 config sources from</tspan><tspan x="46" dy="19">pytest.toml through</tspan><tspan x="46" dy="19">setup.cfg</tspan></text><path d="M245 218 H255 M251 214 L255 218 L251 222" stroke="#e11d48" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <rect x="258" y="104" width="214" height="228" rx="14" fill="#ffffff" stroke="#ded8ce" stroke-width="1.5"/>
+  <rect x="276" y="122" width="42" height="26" rx="8" fill="#ffe4e6" stroke="#e11d48" stroke-width="1.2"/>
+  <text x="297" y="139.5" text-anchor="middle" fill="#e11d48" font-family="'SFMono-Regular', ui-monospace, Menlo, Consolas, monospace" font-size="12" font-weight="700">02</text>
+  <text x="276" y="176" fill="#1c1917" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13.5" font-weight="750" letter-spacing="0.4">STATIC TAUTOLOGY SCAN</text>
+  <line x1="276" y1="190" x2="454" y2="190" stroke="#ded8ce" stroke-width="1"/>
+  <text x="276" y="216" fill="#57534e" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13"><tspan x="276" dy="0">Flags mock_return_value</tspan><tspan x="276" dy="19">across helpers and</tspan><tspan x="276" dy="19">conftest chains plus</tspan><tspan x="276" dy="19">constant/self asserts</tspan></text><path d="M475 218 H485 M481 214 L485 218 L481 222" stroke="#e11d48" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <rect x="488" y="104" width="214" height="228" rx="14" fill="#ffffff" stroke="#ded8ce" stroke-width="1.5"/>
+  <rect x="506" y="122" width="42" height="26" rx="8" fill="#ffe4e6" stroke="#e11d48" stroke-width="1.2"/>
+  <text x="527" y="139.5" text-anchor="middle" fill="#e11d48" font-family="'SFMono-Regular', ui-monospace, Menlo, Consolas, monospace" font-size="12" font-weight="700">03</text>
+  <text x="506" y="176" fill="#1c1917" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13.5" font-weight="750" letter-spacing="0.4">SCRATCH MUTATOR</text>
+  <line x1="506" y1="190" x2="684" y2="190" stroke="#ded8ce" stroke-width="1"/>
+  <text x="506" y="216" fill="#57534e" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13"><tspan x="506" dy="0">Applies return_none,</tspan><tspan x="506" dy="19">compare_invert,</tspan><tspan x="506" dy="19">bool_negate, and</tspan><tspan x="506" dy="19">constant_shift in scratch</tspan><tspan x="506" dy="19">copies</tspan></text><path d="M705 218 H715 M711 214 L715 218 L711 222" stroke="#e11d48" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <rect x="718" y="104" width="214" height="228" rx="14" fill="#ffffff" stroke="#ded8ce" stroke-width="1.5"/>
+  <rect x="736" y="122" width="42" height="26" rx="8" fill="#ffe4e6" stroke="#e11d48" stroke-width="1.2"/>
+  <text x="757" y="139.5" text-anchor="middle" fill="#e11d48" font-family="'SFMono-Regular', ui-monospace, Menlo, Consolas, monospace" font-size="12" font-weight="700">04</text>
+  <text x="736" y="176" fill="#1c1917" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13.5" font-weight="750" letter-spacing="0.4">VERDICT ROLLUP</text>
+  <line x1="736" y1="190" x2="914" y2="190" stroke="#ded8ce" stroke-width="1"/>
+  <text x="736" y="216" fill="#57534e" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13"><tspan x="736" dy="0">Names decorative_candidate</tspan><tspan x="736" dy="19">functions alongside every</tspan><tspan x="736" dy="19">surviving mutant in</tspan><tspan x="736" dy="19">cantfail-report/3</tspan></text>
+  <rect x="28" y="350" width="904" height="38" rx="10" fill="#f1ede6" stroke="#ded8ce" stroke-width="1"/>
+  <circle cx="48" cy="369" r="4.5" fill="#22c55e"/>
+  <text x="62" y="373.5" fill="#57534e" font-family="'SFMono-Regular', ui-monospace, Menlo, Consolas, monospace" font-size="11.5">Zero untrusted code execution during static scan  |  Stable cantfail-report/3 schema  |  Per-function and per-file rollups</text>
+</svg>

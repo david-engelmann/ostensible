@@ -1,8 +1,78 @@
-# ostensible
+<p align="center">
+  <a href="https://github.com/david-engelmann/ostensible">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/david-engelmann/ostensible/main/docs/media/ostensible-lockup-dark.svg">
+      <img src="https://raw.githubusercontent.com/david-engelmann/ostensible/main/docs/media/ostensible-lockup-light.svg" alt="ostensible" height="56">
+    </picture>
+  </a>
+</p>
 
-It mutates the code under a test and the test's own assertions, and any test no mutation can turn red is named decorative.
+<h3 align="center">Mutate code under test and scan mock tautologies to convict tests that cannot fail.</h3>
 
-[![CI](https://github.com/david-engelmann/ostensible/actions/workflows/ci.yml/badge.svg)](https://github.com/david-engelmann/ostensible/actions/workflows/ci.yml)
+<p align="center">AI coding agents routinely ship green tests that assert a mock returns what the mock was configured to return, or execute code without asserting anything falsifiable. <code>ostensible</code> combines a pure-Rust static tautology scanner with a fast four-family <code>pytest</code> mutation panel so decorative tests are named on the pull request alongside the exact mutants that walked through them.</p>
+
+<p align="center">
+  <a href="https://github.com/david-engelmann/ostensible/blob/main/docs/GUIDE.md"><b>Operator Guide</b></a> |
+  <a href="https://david-engelmann.github.io/ostensible/">Published Docs</a> |
+  <a href="https://github.com/david-engelmann/ostensible/tree/main/examples">Examples</a> |
+  <a href="https://github.com/david-engelmann/ostensible/blob/main/docs/ARCHITECTURE.md">Architecture</a> |
+  <a href="https://github.com/david-engelmann/ostensible/blob/main/docs/FORMATS.md">Wire Formats</a> |
+  <a href="https://github.com/david-engelmann/ostensible/blob/main/docs/COMPARISON.md">Comparison</a> |
+  <a href="https://github.com/david-engelmann/ostensible/blob/main/docs/FAQ.md">FAQ</a> |
+  <a href="https://github.com/david-engelmann/ostensible/releases">Releases</a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/david-engelmann/ostensible/actions/workflows/ci.yml"><img src="https://github.com/david-engelmann/ostensible/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://david-engelmann.github.io/ostensible/"><img src="https://img.shields.io/badge/docs-GitHub%20Pages-0284c7" alt="Published docs"></a>
+  <a href="https://github.com/david-engelmann/ostensible/blob/main/Cargo.toml"><img src="https://img.shields.io/badge/MSRV-1.80-informational" alt="MSRV 1.80"></a>
+  <a href="https://github.com/david-engelmann/ostensible/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT License"></a>
+</p>
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/david-engelmann/ostensible/main/docs/media/money-shot.gif" alt="ostensible terminal showcase over synthetic examples" width="900">
+</p>
+
+<p align="center"><sub>Every terminal line above comes from running the ostensible release binary against examples/demo_project.</sub></p>
+
+## What this is
+
+Agent written suites flood repos with tests that cannot fail for a real reason, including tests that assert a mock returns what the mock was told to return. Ostensible applies a fixed panel of small, fast mutations per test file and reports the tests that stayed green under every applicable mutant. A decorative test is named in plain language on the pull request, next to the mutant that walked through it. The boundary with its siblings is one sentence. Ostensible asks whether a test can fail, canaryfield asks whether the harness catches planted defects, greenharvest asks which tests earn their runtime.
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/david-engelmann/ostensible/main/docs/media/how-it-works-dark.svg">
+    <img src="https://raw.githubusercontent.com/david-engelmann/ostensible/main/docs/media/how-it-works-light.svg" alt="How ostensible evaluates a pytest suite" width="900">
+  </picture>
+</p>
+
+## Install
+
+Install a prebuilt binary on Linux or macOS with the checksum-verifying installer script.
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/david-engelmann/ostensible/main/install.sh | sh
+export PATH="$HOME/.local/bin:$PATH"
+```
+
+Or install via `cargo-binstall` or from source with Cargo (Rust 1.80 or newer).
+
+```sh
+cargo binstall --git https://github.com/david-engelmann/ostensible ostensible
+cargo install --git https://github.com/david-engelmann/ostensible --locked
+```
+
+From a local checkout, `cargo build --release --locked` places the binary at `target/release/ostensible` (Windows `.zip` archives ship on the [Releases](https://github.com/david-engelmann/ostensible/releases) page).
+
+## Quickstart
+
+Ostensible executes `pytest` through the first `python3` executable on `PATH`. Activate your project virtual environment first (avoiding `pip install -e .` on `src/` layouts in favour of `pythonpath = ["src"]` in `pyproject.toml` so scratch copies import mutated code), then pass the project folder.
+
+```sh
+ostensible examples/demo_project
+```
+
+Running over `examples/demo_project` prints the verbatim `cantfail-report/3` text report below (or sorted-key JSON under `--json`).
 
 ```
 cantfail report
@@ -48,49 +118,59 @@ test_greeter.py - decorative_candidate
 A surviving mutant is evidence about this fixed panel only. It does not prove a test is worthless and a killed mutant does not prove a test is strong.
 ```
 
-## What this is
-
-Agent written suites flood repos with tests that cannot fail for a real reason, including tests that assert a mock returns what the mock was told to return. Ostensible applies a fixed panel of small, fast mutations per test file and reports the tests that stayed green under every applicable mutant. A decorative test is named in plain language on the pull request, next to the mutant that walked through it. The boundary with its siblings is one sentence. Ostensible asks whether a test can fail, canaryfield asks whether the harness catches planted defects, greenharvest asks which tests earn their runtime.
-
-## Install
-
-Build and install from source with Cargo (Rust 1.80 or newer).
-
-```sh
-cargo install --git https://github.com/david-engelmann/ostensible --locked
-```
-
-For releases tagged from `v0.20.0` onward, prebuilt archives for Linux and macOS can also be installed with the checksum-verifying installer script.
-
-```sh
-curl -fsSL https://raw.githubusercontent.com/david-engelmann/ostensible/main/install.sh | sh
-```
-
-From a local checkout, `cargo build --release --locked` places the binary at `target/release/ostensible`.
-
-## Quickstart
-
-Ostensible executes `pytest` through the first `python3` executable on `PATH`. Activate your project virtual environment first (or prepend `.venv/bin` to `PATH`) so `python3 -m pytest` resolves to the environment that runs your suite, then pass the project folder.
-
-```sh
-./target/release/ostensible examples/demo_project
-```
-
-The command prints the human-readable report shown in `examples/demo_report.txt`, or prints the `cantfail-report/3` JSON document under `--json` (`examples/demo_report.json`).
-
 ## Running it
 
-Build the binary with `cargo build --release --locked` and run it against a project folder.
-
 ```
-ostensible [--json] [--timeout SECONDS] <project>
+ostensible [-h | --help] [--json] [--timeout SECONDS] <project>
 ```
 
 The report prints as text, or as JSON under `--json`. The timeout bounds each single test file run and stands at 30 seconds where no flag gives it. The runs the tool makes are `pytest` runs, read under the `python3` the path provides, and the naming settings of the project are read from the one config source `pytest` itself would use.
 
-## Schema and Guides
+## Verification and Performance
 
-Both text and JSON reports retain the `cantfail-report/3` schema identifier established before the package was renamed from `cantfail` to `ostensible` so downstream consumers remain compatible. Read [docs/GUIDE.md](docs/GUIDE.md) for the full operator manual, static mock rules, mutation families, verdict rollups, and a GitHub Actions workflow.
+Run the full local verification gate from a clean checkout.
+
+```sh
+cargo test --locked
+cargo fmt --check
+cargo clippy --all-targets
+cargo package --locked
+```
+
+| Stage | Mechanism | Complexity and Isolation |
+| --- | --- | --- |
+| Upward config discovery | Pure-Rust TOML and INI readers across 7 `pytest 9.1.1` sources | Sub-millisecond upward directory walk, zero Python spawn |
+| Static tautology scan | Pure-Rust Python 3.12 lexer, AST parser, NFKC normalizer, and `conftest.py` dataflow | Zero untrusted code execution, linear in test-tree size |
+| Dynamic mutation panel | 4 operators (`return_none`, `compare_invert`, `bool_negate`, `constant_shift`) in scratch copies | `1` baseline run + `M` applicable mutant runs per passing test file (`11` `pytest` runs on `examples/demo_project`) |
+
+## The Gate Truth Suite
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/david-engelmann/ostensible/main/docs/media/gate-truth-arc-dark.svg">
+    <img src="https://raw.githubusercontent.com/david-engelmann/ostensible/main/docs/media/gate-truth-arc-light.svg" alt="Gate Truth verification suite architecture" width="900">
+  </picture>
+</p>
+
+| Tool | Question answered | Primary evidence |
+| --- | --- | --- |
+| [deadgate](https://github.com/david-engelmann/deadgate) | Did the required check actually run? | Branch protection, workflow YAML, and job history |
+| [finaltree](https://github.com/david-engelmann/finaltree) | What tree did CI actually evaluate? | Commit and tree lineage across merge queues |
+| [blindgate](https://github.com/david-engelmann/blindgate) | What files did the gate actually read? | Linux `strace` descriptor and path reconstruction |
+| [ostensible](https://github.com/david-engelmann/ostensible) | Can the test actually fail? | Static tautology scan and 4-family `pytest` mutants |
+| [canaryfield](https://github.com/david-engelmann/canaryfield) | Does the harness catch planted defects? | 200 seeded Python defect classes across real gates |
+| [greenharvest](https://github.com/david-engelmann/greenharvest) | Which tests earn their CI runtime? | Marginal defect-catch value per second of execution |
+
+## Documentation
+
+| If you want to... | Read |
+| --- | --- |
+| Browse the searchable handbook with diagrams | [Published documentation](https://david-engelmann.github.io/ostensible/) |
+| Install, configure CI workflows, and run day-two operations | [Operator Guide](https://github.com/david-engelmann/ostensible/blob/main/docs/GUIDE.md) |
+| Understand parser bounds, engine phases, and containment invariants | [Architecture](https://github.com/david-engelmann/ostensible/blob/main/docs/ARCHITECTURE.md) |
+| Integrate JSON or text schemas into downstream tooling | [Wire Formats](https://github.com/david-engelmann/ostensible/blob/main/docs/FORMATS.md) |
+| Compare `ostensible` against existing linters, coverage, and mutators | [Comparison](https://github.com/david-engelmann/ostensible/blob/main/docs/COMPARISON.md) and [FAQ](https://github.com/david-engelmann/ostensible/blob/main/docs/FAQ.md) |
+| Review threat boundaries, vulnerability reporting, and contribution gates | [Security Policy](https://github.com/david-engelmann/ostensible/blob/main/SECURITY.md) and [Contributing](https://github.com/david-engelmann/ostensible/blob/main/CONTRIBUTING.md) |
 
 ## Status
 

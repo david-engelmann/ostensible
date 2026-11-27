@@ -1,0 +1,12 @@
+cff-version: 1.2.0
+message: "If you use ostensible in research or engineering benchmarks, please cite this repository."
+title: "ostensible"
+abstract: "It mutates the code under a test and the test's own assertions, and any test no mutation can turn red is named decorative."
+authors:
+  - family-names: "Engelmann"
+    given-names: "David"
+version: "0.19.0"
+date-released: "2026-11-21"
+license: "MIT"
+repository-code: "https://github.com/david-engelmann/ostensible"
+url: "https://david-engelmann.github.io/ostensible/"
