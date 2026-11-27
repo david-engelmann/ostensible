@@ -2,17 +2,95 @@
 
 It mutates the code under a test and the test's own assertions, and any test no mutation can turn red is named decorative.
 
+[![CI](https://github.com/david-engelmann/ostensible/actions/workflows/ci.yml/badge.svg)](https://github.com/david-engelmann/ostensible/actions/workflows/ci.yml)
+
+```
+cantfail report
+project - demo_project
+schema - cantfail-report/3
+
+static findings
+test_greeter.py line 8 - mock_return_value - assertion checks a value read from a mock against the return value the mock was assigned, 42
+
+test file verdicts
+test_calc.py - can_fail
+  function - test_add_one - can_fail
+    this function turned red under 3 of 9 mutants in the fixed panel
+    mutant that walked through - calc.py - return_none at line 6 - return value age >= 18
+    mutant that walked through - calc.py - return_none at line 10 - return value True
+    mutant that walked through - calc.py - compare_invert at line 6 - comparison age >= 18 operator 0
+    mutant that walked through - calc.py - bool_negate at line 10 - boolean constant True
+    mutant that walked through - calc.py - constant_shift at line 6 - numeric constant 18 moved plus one
+    mutant that walked through - calc.py - constant_shift at line 6 - numeric constant 18 moved minus one
+  function - test_is_adult_boundary - can_fail
+    this function turned red under 4 of 9 mutants in the fixed panel
+    mutant that walked through - calc.py - return_none at line 2 - return value x + 1
+    mutant that walked through - calc.py - return_none at line 10 - return value True
+    mutant that walked through - calc.py - bool_negate at line 10 - boolean constant True
+    mutant that walked through - calc.py - constant_shift at line 2 - numeric constant 1 moved plus one
+    mutant that walked through - calc.py - constant_shift at line 2 - numeric constant 1 moved minus one
+  function - test_enabled - can_fail
+    this function turned red under 2 of 9 mutants in the fixed panel
+    mutant that walked through - calc.py - return_none at line 2 - return value x + 1
+    mutant that walked through - calc.py - return_none at line 6 - return value age >= 18
+    mutant that walked through - calc.py - compare_invert at line 6 - comparison age >= 18 operator 0
+    mutant that walked through - calc.py - constant_shift at line 2 - numeric constant 1 moved plus one
+    mutant that walked through - calc.py - constant_shift at line 2 - numeric constant 1 moved minus one
+    mutant that walked through - calc.py - constant_shift at line 6 - numeric constant 18 moved plus one
+    mutant that walked through - calc.py - constant_shift at line 6 - numeric constant 18 moved minus one
+  this file turned red under 9 of 9 mutants in the fixed panel
+test_greeter.py - decorative_candidate
+  function - test_fetch_returns_what_it_was_told - decorative_candidate
+    decorative candidate - this function stayed green under every applicable mutant in the fixed panel
+    mutant that walked through - greeter.py - return_none at line 2 - return value 'hello'
+  decorative candidate - every judged function in this file stayed green under every applicable mutant in the fixed panel
+
+A surviving mutant is evidence about this fixed panel only. It does not prove a test is worthless and a killed mutant does not prove a test is strong.
+```
+
 ## What this is
 
 Agent written suites flood repos with tests that cannot fail for a real reason, including tests that assert a mock returns what the mock was told to return. Ostensible applies a fixed panel of small, fast mutations per test file and reports the tests that stayed green under every applicable mutant. A decorative test is named in plain language on the pull request, next to the mutant that walked through it. The boundary with its siblings is one sentence. Ostensible asks whether a test can fail, canaryfield asks whether the harness catches planted defects, greenharvest asks which tests earn their runtime.
 
+## Install
+
+Build and install from source with Cargo (Rust 1.80 or newer).
+
+```sh
+cargo install --git https://github.com/david-engelmann/ostensible --locked
+```
+
+For releases tagged from `v0.20.0` onward, prebuilt archives for Linux and macOS can also be installed with the checksum-verifying installer script.
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/david-engelmann/ostensible/main/install.sh | sh
+```
+
+From a local checkout, `cargo build --release --locked` places the binary at `target/release/ostensible`.
+
+## Quickstart
+
+Ostensible executes `pytest` through the first `python3` executable on `PATH`. Activate your project virtual environment first (or prepend `.venv/bin` to `PATH`) so `python3 -m pytest` resolves to the environment that runs your suite, then pass the project folder.
+
+```sh
+./target/release/ostensible examples/demo_project
+```
+
+The command prints the human-readable report shown in `examples/demo_report.txt`, or prints the `cantfail-report/3` JSON document under `--json` (`examples/demo_report.json`).
+
 ## Running it
 
-Build the binary with cargo build --release and run it against a project folder.
+Build the binary with `cargo build --release --locked` and run it against a project folder.
 
-    ostensible [--json] [--timeout SECONDS] <project>
+```
+ostensible [--json] [--timeout SECONDS] <project>
+```
 
-The report prints as text, or as JSON under --json. The timeout bounds each single test file run and stands at 30 seconds where no flag gives it. The runs the tool makes are pytest runs, read under the python3 the path provides, and the naming settings of the project are read from the one config source pytest itself would use.
+The report prints as text, or as JSON under `--json`. The timeout bounds each single test file run and stands at 30 seconds where no flag gives it. The runs the tool makes are `pytest` runs, read under the `python3` the path provides, and the naming settings of the project are read from the one config source `pytest` itself would use.
+
+## Schema and Guides
+
+Both text and JSON reports retain the `cantfail-report/3` schema identifier established before the package was renamed from `cantfail` to `ostensible` so downstream consumers remain compatible. Read [docs/GUIDE.md](docs/GUIDE.md) for the full operator manual, static mock rules, mutation families, verdict rollups, and a GitHub Actions workflow.
 
 ## Status
 
